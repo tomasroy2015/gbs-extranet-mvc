@@ -1,0 +1,279 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_FirmRequest")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_FirmRequestCaption("FirmID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="Firm" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_FirmRequestCaption("RequestTypeID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="RequestType" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label style="width: 130px; padding-top: 7px;">@Resources.ReservationID</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtreservationid" type="text" class="k-textbox" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label style="width: 130px; padding-top: 7px; ">@Resources.Active</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input type="checkbox" id="active" value="" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_FirmRequestExt>()
+                                .Name("TB_FirmRequest_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                            .Create(update => update.Action("_Create", "TB_FirmRequest"))
+                            .Read(read => read.Action("_Read", "TB_FirmRequest", new { TableID = (int)ViewBag.TableID }))
+                            .Update(update => update.Action("_Update", "TB_FirmRequest"))
+                            .Destroy(destroy => destroy.Action("_Destroy", "TB_FirmRequest"))
+
+
+        )
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Locked(true).Width(180);
+
+                        columns.Bound(p => p.ID).Width(80).Title(MessageColumnCaptions.TB_FirmRequestCaption("ID"));
+                        columns.Bound(p => p.Firm).EditorTemplateName("Firm").Title(MessageColumnCaptions.TB_FirmRequestCaption("FirmID")).Width(140);
+                        columns.Bound(p => p.RequestType).EditorTemplateName("RequestType").Title(MessageColumnCaptions.TB_FirmRequestCaption("RequestTypeID")).Width(120);
+                        columns.Bound(p => p.ReservationID).EditorTemplateName("ReservationID").Title(MessageColumnCaptions.TB_FirmRequestCaption("ReservationID")).Width(150);
+                        columns.Bound(p => p.FirmRequestStatus).EditorTemplateName("FirmRequestStatus").Title(MessageColumnCaptions.TB_FirmRequestCaption("FirmRequestStatusID")).Width(150);
+                        columns.Bound(p => p.CheckInDate).Title(MessageColumnCaptions.TB_FirmRequestCaption("CheckInDate")).ClientTemplate("#= kendo.toString(CheckInDate,'dd/MM/yyyy HH:mm:ss') #").Width(120);
+                        columns.Bound(p => p.CheckOutDate).Title(MessageColumnCaptions.TB_FirmRequestCaption("CheckOutDate")).ClientTemplate("#= kendo.toString(CheckOutDate,'dd/MM/yyyy HH:mm:ss') #").Width(120);
+                        columns.Bound(p => p.Active).Width(130).Title(MessageColumnCaptions.TB_FirmRequestCaption("Active"))
+                             .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                             .Width(100);
+                        columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.TB_FirmRequestCaption("IPAddress")).Width(100);
+
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                        .FileName("TB_FirmRequestExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_FirmRequest_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+    });
+</script>
+<script>
+
+
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+        $PartText = $("#Firm").data("kendoDropDownList").text();
+        $PartValue = $("#Firm").val();
+        //  alert($PartValue)
+        $RequestText = $("#RequestType").data("kendoDropDownList").text();
+        $RequestValue = $("#RequestType").val();
+        //   alert($RequestValue)
+        $reservationid = $("#txtreservationid").val();
+
+        $Active = "false";
+        if ($('#active').prop('checked')) {
+            $Active = "true";
+        }
+
+        if ($PartValue) {
+            $filter.push({ field: "Firm", operator: "contains", value: $PartText });
+        }
+
+        if ($RequestValue) {
+            $filter.push({ field: "RequestType", operator: "contains", value: $RequestText });
+        }
+        if ($reservationid != '') {
+            $filter.push({ field: "ReservationID", operator: "equals", value: $reservationid });
+        }
+        if ($Active == "true") {
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        var grid = $("#TB_FirmRequest_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+    //$("#btnfilter").click(function () {
+    //    $filter = new Array();
+
+    //    $PartText = $("#Firm").data("kendoDropDownList").text();
+    //    $PartValue = $("#Firm").val();
+    //  //  alert($PartValue)
+    //    $RequestText = $("#RequestType").data("kendoDropDownList").text();
+    //    $RequestValue = $("#RequestType").val();
+    // //   alert($RequestValue)
+        
+    //    if ($PartValue) {
+    //        $filter.push({ field: "Firm", operator: "contains", value: $PartText });
+    //    }
+
+    //    if ($RequestValue) {
+    //        $filter.push({ field: "RequestType", operator: "contains", value: $RequestText });
+    //    }
+    //    var grid = $("#TB_FirmRequest_Grid").data("kendoGrid");
+    //    grid.dataSource.filter($filter);
+    //});
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/Firm",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Firm").kendoDropDownList({
+                    filter: "contains",
+                    Name: "FirmID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "FirmID",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/RequestType",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#RequestType").kendoDropDownList({
+                    filter: "contains",
+                    Name: "RequestTypeID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "RequestType",
+                    dataValueField: "RequestTypeID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_FirmRequest_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+
+        $("#txtreservationid").val('');
+
+
+        document.getElementById('active').checked = false
+
+        var dropdownlistPart = $("#RequestType").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+
+
+        var dropdownlistPart1 = $("#Firm").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+    });
+
+</script>
+

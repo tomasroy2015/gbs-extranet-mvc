@@ -1,0 +1,138 @@
+/**
+ *
+ * Apply Here your Custom CSS
+ *
+*/
+
+body {
+	color:black;
+}
+.table th{
+    font-weight:bold;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td
+{
+    vertical-align:middle;
+}
+
+
+
+.table input[type=text]
+{
+    width:200px;
+}
+
+.requiredfield{
+    color:red;
+    font-size:15px;
+}
+
+
+   .k-header
+    {
+        white-space: normal !important;
+        background-color:#007894;
+        background-image: none;
+    }
+    /*.k-grid-lockedcolumns
+    {
+         white-space: normal !important;
+    }*/
+    .k-autocomplete, .k-combobox, .k-datepicker, .k-timepicker, .k-datetimepicker, .k-colorpicker, .k-numerictextbox, .k-dropdown, .k-selectbox, .k-toolbar .k-split-button
+    {
+         white-space: nowrap !important;
+    }
+   
+    /*override from kendo.common.min.css*/
+   .k-grid-header th.k-header>.k-link{ color:#fff}
+    
+    .k-grid-header th.k-header
+    {
+        vertical-align:bottom;
+        background-color: #007894;
+        background-image: none;
+    }
+    /*end*/
+
+    /*override from kendo.default.min.css*/
+    .k-pager-wrap{
+        background-color:#007894;
+        color:#ffffff;
+        background-image: none;
+    }
+    .k-alt, .k-separator, .k-resource.k-alt, .k-pivot-layout>tbody>tr:first-child>td:first-child
+    {
+        background-color: #edffff;
+    } 
+    .k-grouping-header
+    {
+        background-color:#007894;
+        color:#ffffff;
+        background-image: none;
+    } 
+    .k-datepicker{
+       background-color:#eeeeee;
+   }
+   .k-pager-numbers .k-link{
+      color:#ffffff;
+   }
+   .k-calendar .k-link.k-nav-fast {
+      color: #fff;
+   }
+   .k-link:link, .k-link:visited, .k-nav-current.k-state-hover .k-link{
+     color:#fff;
+   }
+   .k-calendar .k-content .k-other-month .k-link{
+     color:#9f9f9f;
+   }
+  .k-calendar .k-content .k-link{
+      color:#2e2e2e;
+   }
+    /*end*/
+input[type=checkbox] {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  top: -1px;
+  left: -7px; 
+  float: left;
+  text-align: center; 
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -o-transition: 0.3s;
+  -ms-transition: 0.3s;
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+
+input[type=checkbox]:after {
+    content: " ";
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    width: 18px;
+    height: 18px; 
+    border-radius:2px;
+}
+
+input[type=checkbox]:checked:after {
+     content: "\2714";
+     background: #ed8323;
+     color: #fff;
+     font-weight:bold;
+}
+
+ul li ul.dropdown li {
+    display: block;
+    border-top: 1px solid #fff;
+    margin-left: -4px;
+}

@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                        .Name("DepositCurrencyID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                            .DataTextField("DepositCurrencyName")
+                            .DataValueField("DepositCurrencyID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetDepositCurrency", "DropDownLists");
+        });
+    })
+)

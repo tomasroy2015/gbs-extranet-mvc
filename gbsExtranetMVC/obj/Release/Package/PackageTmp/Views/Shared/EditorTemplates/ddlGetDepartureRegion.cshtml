@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                    .Name("GetDepartureRegion")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                            .DataTextField("DepartureRegionName")
+                            .DataValueField("DepartureRegionID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetDepartureRegion", "DropDownLists");
+        });
+    })
+)

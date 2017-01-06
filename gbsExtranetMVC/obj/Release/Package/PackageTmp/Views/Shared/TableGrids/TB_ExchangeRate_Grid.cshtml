@@ -1,0 +1,204 @@
+﻿
+@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_ExchangeRate")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+           
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.Currency</label>
+                <input id="drbCurrency" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.Date</label>
+                <input id="drbDate" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+
+    </div>
+    
+    </div>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_ExchangeRateExt>()
+                .Name("TB_ExchangeRateExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            //model.Field(p => p.Date).Editable(false);
+        })
+               .Create(update => update.Action("_Create", "TB_ExchangeRate"))
+                .Read(read => read.Action("_Read", "TB_ExchangeRate", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "TB_ExchangeRate"))
+                .Destroy(destroy => destroy.Action("_Destroy", "TB_ExchangeRate"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(170).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_ExchangeRateCaption("CurrencyID")).EditorTemplateName("ddlCurrencies").Width(200);
+                    columns.Bound(p => p.Date).Title(MessageColumnCaptions.TB_ExchangeRateCaption("DateID")).EditorTemplateName("ddlDates").Width(200).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy HH:mm:ss') #");
+                    columns.Bound(p => p.Rate).Title(MessageColumnCaptions.TB_ExchangeRateCaption("Rate")).Width(200);
+                   
+                   
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                  .Text(Resources.NewRecord)
+                  .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_ExchangeRateExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#TB_ExchangeRateExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+       // alert("$CurrencyText")
+        $CurrencyText = $("#drbCurrency").data("kendoDropDownList").text();
+        //alert($CurrencyText)
+        $CurrencyValue = $("#drbCurrency").val();
+        $DateText = $("#drbDate").data("kendoDropDownList").text();
+        $DateValue = $("#drbDate").val();
+        //alert($DateText)
+       
+        if ($CurrencyValue) {
+            $filter.push({ field: "Currency", operator: "contains", value: $CurrencyText });
+        }
+        if ($DateValue) {
+            $filter.push({ field: "Date", operator: "EqualTo", value: $DateText });
+        }
+        var grid = $("#TB_ExchangeRateExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCurrencies",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbCurrency").kendoDropDownList({
+                    filter: "contains",
+                    Name: "CurrencyID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Currency",
+                    dataValueField: "CurrencyID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetDates",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                //alert
+                $("#drbDate").kendoDropDownList({
+                    filter: "contains",
+                    Name: "DateID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Date",
+                    dataValueField: "DateID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_ExchangeRateExt_Grid").data("kendoGrid").dataSource;
+        datasource.filter([]);
+
+        var dropdownlistPart = $("#drbCurrency").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+        var dropdownlistPart1 = $("#drbDate").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+    });
+
+</script>
+
+
+
+
+

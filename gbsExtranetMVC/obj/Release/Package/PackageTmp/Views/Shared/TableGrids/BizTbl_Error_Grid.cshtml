@@ -1,0 +1,60 @@
+﻿
+@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_Error")</h1>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_ErrorExt>()
+                .Name("BizTbl_ErrorExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Read(read => read.Action("_Read", "BizTbl_Error", new { TableID = (int)ViewBag.TableID }))
+
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                    command =>
+                    {
+
+                    }
+                    );
+
+                    columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.Page).Width(150).Title(MessageColumnCaptions.BizTbl_ErrorCaption("Page")).Locked(true);
+                    columns.Bound(p => p.Message).Width(180).Title(MessageColumnCaptions.BizTbl_ErrorCaption("Message")).Locked(true);
+                    columns.Bound(p => p.Detail).Title(MessageColumnCaptions.BizTbl_ErrorCaption("Detail")).Width(700);
+                    columns.Bound(p => p.Date).Title(MessageColumnCaptions.BizTbl_ErrorCaption("Date")).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                    columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.BizTbl_ErrorCaption("IPAddress")).Width(150);
+                })
+                     .ToolBar(tool =>
+                    {
+                        tool.Excel().Text(Resources.ExporttoExcel);
+                    })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_Error.xlsx")
+                .Filterable(true))
+
+)
+

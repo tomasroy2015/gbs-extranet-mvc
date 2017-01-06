@@ -1,0 +1,140 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_Promotion")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-2  col-sm-2">
+            <label> @MessageColumnCaptions.TB_PromotionCaption("Active")</label> &nbsp;<input id="ChkFilterCommon" name="ChkFilterCommon" type="checkbox" />
+        </div>
+        <div class="col-md-4  col-sm-4">
+            <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+            <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $Active = "false";
+        if ($('#ChkFilterCommon').prop('checked')) {
+            $Active = "true";
+        }
+
+        if ($Active == "true") {
+            //alert($Commom)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        var grid = $("#TB_Promotion_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_Promotion_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        document.getElementById('ChkFilterCommon').checked = false
+    });
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_PromotionExt>()
+        .Name("TB_Promotion_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                        .Create(update => update.Action("_Create", "TB_Promotion"))
+                        .Read(read => read.Action("_Read", "TB_Promotion", new { TableID = (int)ViewBag.TableID }))
+                        .Update(update => update.Action("_Update", "TB_Promotion"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "TB_Promotion"))
+        )
+
+
+            .Columns(columns =>
+            {
+                columns.Command(
+                 command =>
+                 {
+                     command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                     command.Destroy().Text(Resources.Delete);
+                 }).Locked(true).Width(180);
+
+                columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+                columns.Bound(p => p.PartName).EditorTemplateName("ddlPart").Title(MessageColumnCaptions.TB_PromotionCaption("PartID")).Width(150);
+                columns.Bound(p => p.Type).Title(MessageColumnCaptions.TB_PromotionCaption("Type")).Width(210);
+                columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_PromotionCaption("Name")).Width(210);
+                columns.Bound(p => p.Description).Title(MessageColumnCaptions.TB_PromotionCaption("Description")).EditorTemplateName("TextArea").Width(210);
+                columns.Bound(p => p.GeneralPromotion).Title(MessageColumnCaptions.TB_PromotionCaption("GeneralPromotion"))
+                .ClientTemplate("<div style='text-align:center;'> #if(GeneralPromotion){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+                columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_PromotionCaption("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy HH:mm:ss') #").Width(210);
+                columns.Bound(p => p.EndDate).Title(MessageColumnCaptions.TB_PromotionCaption("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy HH:mm:ss') #").Width(210);
+                columns.Bound(p => p.TargetStartDate).Title(MessageColumnCaptions.TB_PromotionCaption("TargetStartDate")).ClientTemplate("#= kendo.toString(TargetStartDate,'dd/MM/yyyy HH:mm:ss') #").Width(210);
+                columns.Bound(p => p.TargetEndDate).Title(MessageColumnCaptions.TB_PromotionCaption("TargetEndDate")).ClientTemplate("#= kendo.toString(TargetEndDate,'dd/MM/yyyy HH:mm:ss') #").Width(210);
+                columns.Bound(p => p.Count).Title(MessageColumnCaptions.TB_PromotionCaption("Count")).Width(210);
+                columns.Bound(p => p.DiscountPercentage).Title(MessageColumnCaptions.TB_PromotionCaption("DiscountPercentage")).Width(210);
+                columns.Bound(p => p.Region).Title(MessageColumnCaptions.TB_PromotionCaption("RegionID")).EditorTemplateName("ddlRegion").Width(210);
+                columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_PromotionCaption("Sort")).Width(100);
+                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_PromotionCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                        .FileName("TB_Promotion.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_Promotion_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

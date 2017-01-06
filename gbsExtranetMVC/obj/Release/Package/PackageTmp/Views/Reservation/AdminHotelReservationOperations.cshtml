@@ -1,0 +1,488 @@
+﻿@model gbsExtranetMVC.Models.Repositories.ReservationExt
+@using Resources
+
+@{
+    ViewBag.Title = "AdminHotelReservationOperations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+ $(document).ready(function ()
+   {
+       usershowreservation();
+   });
+ function usershowreservation() {
+     var ReservationID = '@ViewBag.ReservationID'
+     //alert(ReservationID)
+ }
+   // var json = { ReservationID: ReservationID }
+
+
+   // if (ReservationID != "") {
+   // $.ajax({
+   // type: "get",
+   // url: "/Reservation/GetReservationOperations",
+   // data: json,
+   // dataType: "Json",
+   // traditional: true,
+   // success: function (res) {
+   //     alert(res)
+   // }
+   // })
+   // }
+   //}
+    </script>
+
+
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("PropertyReservations", "Reservation", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.ReservationID)
+        <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+                @if (ViewBag.Operations == "CC") { 
+                <table class="table table-bordered table-striped" style="width: 40%;">
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.ReservationID, Resources.ReservationID)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.ReservationID)
+                            @Html.HiddenFor(m => m.ReservationID, new { @id = "hiddenReservationID" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.ReservationOwner, Resources.Reserver)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.ReservationOwner)
+                            @Html.HiddenFor(m => m.ReservationOwner, new { @id = "hiddenReservationOwner" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.StatusName, Resources.Status)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.StatusName)
+                            @Html.HiddenFor(m => m.StatusName, new { @id = "hiddenStatusName" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.ReservationDate, Resources.ReservationDate)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.ReservationDate, "{dd/MM/yyyy HH:mm:ss}")
+                            @Html.HiddenFor(m => m.ReservationDate, new { @id = "hiddenReservationDate" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.CheckInDate, Resources.CheckInDate)
+                        </th>
+
+                        <td style="border-top: none;">
+                            @*@Html.ValueFor(model => model.CheckInDate, )*@
+                            @Html.DisplayFor(m => m.CheckInDate, "{0:dd/mmmm/yyyy}")
+                            @Html.HiddenFor(m => m.CheckInDate, new { @id = "hiddenCheckInDate" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.CheckOutDate, Resources.CheckOutDate)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.CheckOutDate, "{0:dd/mmmm/yyyy}")
+                            @Html.HiddenFor(m => m.CheckOutDate, new { @id = "hiddenCheckOutDate" })
+                        </td>
+                    </tr>
+                    @*@if (m => m.CreditCardProvider != 0)
+                                    {
+                                         Html.DisplayFor(modelItem => model.EndDate)
+                                    }*@
+                          @if (ViewBag.NameontheCreditCard != null)
+                         {
+                        <tr>
+                        <td colspan="2" style="border-top: none;">
+                            <div id="divCCDisplayWarning" style="width: 100%; height: auto; padding: 15px; border: 1px solid rgb(208, 156, 205); background-color: rgb(244, 218, 242);">
+                                <span id="lblCCDisplayWarning" style="color:Red;">Because of security concerns, this credit card information is displayed <b>only once</b>. Please, plan your operations accordingly.</span>
+                            </div>
+                        </td>
+                        </tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.CreditCardProvider, Resources.CCType)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.CreditCardProvider)
+        @Html.HiddenFor(m => m.CreditCardProvider, new { @id = "hiddenCCType" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.NameontheCreditCard, Resources.CCFullName)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.NameontheCreditCard)
+        @Html.HiddenFor(m => m.NameontheCreditCard, new { @id = "hiddenCCFullName" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.CreditCardNumber, Resources.CCNo)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.CreditCardNumber)
+        @Html.HiddenFor(m => m.CreditCardNumber, new { @id = "hiddenCCNo" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.ExpirationDate, Resources.CCExpiration)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.ExpirationDate)
+        @Html.HiddenFor(m => m.ExpirationDate, new { @id = "hiddenCCExpiration" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.CVCCode, Resources.CCCVC)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.CVCCode)
+        @Html.HiddenFor(m => m.CVCCode, new { @id = "hiddenCCCVC" })
+    </td>
+</tr>
+                         }
+                        
+                  
+                    @if (ViewBag.NameontheCreditCard == null )
+                    {
+
+                        if (Convert.ToBoolean(ViewBag.adminCreditCard) != true)
+                        {
+                            <tr>
+                            <td colspan="2" style="border-top: none;">
+                                <div id="divCCDisplayWarning" style="width: 100%; height: auto; padding: 15px; border: 1px solid rgb(208, 156, 205); background-color: rgb(244, 218, 242);">
+                                    <span id="lblCCDisplayWarning" style="color:Red;">@Resources.CreditCardAlreadyDisplayedWarning</span>
+                                </div>
+                            </td>
+                        </tr> 
+                        }
+                        
+                        
+                       
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.CreditCardProvider, Resources.CCType)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.CreditCardProvider)
+        @Html.HiddenFor(m => m.CreditCardProvider, new { @id = "hiddenCCType" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.NameontheCreditCard, Resources.CCFullName)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.NameontheCreditCard)
+        @Html.HiddenFor(m => m.NameontheCreditCard, new { @id = "hiddenCCFullName" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.CreditCardNumber, Resources.CCNo)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.CreditCardNumber)
+        @Html.HiddenFor(m => m.CreditCardNumber, new { @id = "hiddenCCNo" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.ExpirationDate, Resources.CCExpiration)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.ExpirationDate)
+        @Html.HiddenFor(m => m.ExpirationDate, new { @id = "hiddenCCExpiration" })
+    </td>
+</tr>
+<tr>
+    <th style="border-top: none;">
+        @Html.LabelFor(m => m.CVCCode, Resources.CCCVC)
+    </th>
+    <td style="border-top: none;">
+        @Html.DisplayFor(m => m.CVCCode)
+        @Html.HiddenFor(m => m.CVCCode, new { @id = "hiddenCCCVC" })
+    </td>
+</tr>
+                    }
+                    
+                </table>
+                }
+                  else if (ViewBag.Operations == "History")
+                {
+                    <table class="table table-bordered table-striped" style="width: 40%;">
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.ReservationID, Resources.ReservationID)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationID)
+                                @Html.HiddenFor(m => m.ReservationID, new { @id = "hiddenReservationID" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.ReservationOwner, Resources.Reserver)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationOwner)
+                                @Html.HiddenFor(m => m.ReservationOwner, new { @id = "hiddenReservationOwner" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.StatusName, Resources.Status)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.StatusName)
+                                @Html.HiddenFor(m => m.StatusName, new { @id = "hiddenStatusName" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.ReservationDate, Resources.ReservationDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationDate, "{dd/MM/yyyy HH:mm:ss}")
+                                @Html.HiddenFor(m => m.ReservationDate, new { @id = "hiddenReservationDate" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.CheckInDate, Resources.CheckInDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @*@Html.ValueFor(model => model.CheckInDate, )*@
+                                @Html.DisplayFor(m => m.CheckInDate, "{0:dd/mmmm/yyyy}")
+                                @Html.HiddenFor(m => m.CheckInDate, new { @id = "hiddenCheckInDate" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.CheckOutDate, Resources.CheckOutDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.CheckOutDate, "{0:dd/mmmm/yyyy}")
+                                @Html.HiddenFor(m => m.CheckOutDate, new { @id = "hiddenCheckOutDate" })
+                            </td>
+                        </tr>
+                    </table>
+    <table class="table table-responsive table-bordered table-striped"  style="width: 100%;">
+        
+        <tr>
+            
+            <th>
+                @Html.LabelFor(m => m.ReservationDate, Resources.Date)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.ReservationOwner, Resources.UserName)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.ReservationOperation, Resources.UserOperations)
+            </th>
+            
+        </tr>
+        @foreach (var item in ViewBag.HotelHistory)
+        {
+            <tr>
+            <td style="border-top: none;">
+                @*@Html.DisplayFor(m => m.ReservationDate, "{dd/MM/yyyy HH:mm:ss}")
+                @Html.HiddenFor(m => m.ReservationDate, new { @id = "hiddenReservationDate" })*@
+                @item.ReservationDate
+
+            </td>
+            <td style="border-top: none;">
+                @item.ReservationOwner
+                @*@Html.DisplayFor(m => m.ReservationOwner)
+                @Html.HiddenFor(m => m.ReservationOwner, new { @id = "hiddenReservationOwner" })*@
+            </td>
+            <td style="border-top: none;">
+                @item.ReservationOperation
+                @*@Html.DisplayFor(m => m.ReservationOperation)
+                @Html.HiddenFor(m => m.ReservationOperation, new { @id = "hiddenReservationOperation" })*@
+            </td>
+        </tr>
+        }
+    </table>
+
+                }
+                 else if (ViewBag.Operations == "ChangeDate")
+                {
+                    <table class="table table-bordered table-striped" style="width: 40%;">
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.ReservationID, Resources.ReservationID)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationID)
+                                @Html.HiddenFor(m => m.ReservationID, new { @id = "hiddenReservationID" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.ReservationOwner, Resources.Reserver)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationOwner)
+                                @Html.HiddenFor(m => m.ReservationOwner, new { @id = "hiddenReservationOwner" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.StatusName, Resources.Status)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.StatusName)
+                                @Html.HiddenFor(m => m.StatusName, new { @id = "hiddenStatusName" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.ReservationDate, Resources.ReservationDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationDate, "{dd/MM/yyyy HH:mm:ss}")
+                                @Html.HiddenFor(m => m.ReservationDate, new { @id = "hiddenReservationDate" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.CheckInDate, Resources.CheckInDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @*@Html.ValueFor(model => model.CheckInDate, )*@
+                                @Html.DisplayFor(m => m.CheckInDate, "{0:dd/mmmm/yyyy}")
+                                @Html.HiddenFor(m => m.CheckInDate, new { @id = "hiddenCheckInDate" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.CheckOutDate, Resources.CheckOutDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.CheckOutDate, "{0:dd/mmmm/yyyy}")
+                                @Html.HiddenFor(m => m.CheckOutDate, new { @id = "hiddenCheckOutDate" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.CheckInDate, Resources.CheckInDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.TextBoxFor(m => m.CheckInDate, new { @id = "txtCheckInDate" })  
+                                <label id="lblCheckInDate" style="color:red;"></label>                             
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="border-top: none;">
+                                @Html.LabelFor(m => m.CheckOutDate, Resources.CheckOutDate)
+                            </th>
+                            <td style="border-top: none;">
+                                @Html.TextBoxFor(m => m.CheckOutDate, new { @id = "txtCheckOutDate" })                                
+                                <label id="lblCheckOutDate" style="color:red;"></label>
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div align="center" style="padding-top:5px;">
+            @if (ViewBag.Operations == "ChangeDate")
+            {
+                <input type="submit" value="Save" class="k-button" style="width:80px; height:30px; background-color:#0062D9; color:white; font-weight:bold;" onclick="SaveDate();" />
+            }       
+            <a href="/Reservation/PropertyReservations"> <input type="button" value="Back" onclick="" class="k-button" style="width:80px; height:30px; background-color:#0062D9; color:white; font-weight:bold;" /></a>
+        
+    </div>
+    }
+    
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#txtCheckInDate").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#txtCheckOutDate").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+    });
+
+    function SaveDate() {       
+        var ID = document.getElementById("hiddenReservationID").value;       
+        var CheckInDate = document.getElementById("txtCheckInDate").value;
+        var CheckOutDate = document.getElementById("txtCheckOutDate").value;
+        var hdnCheckInDate = document.getElementById("hiddenCheckInDate").value;
+        var hdnCheckOutDate = document.getElementById("hiddenCheckOutDate").value;
+
+        //if (CheckInDate < hdnCheckInDate) {
+        //    document.getElementById("lblCheckInDate").innerHTML = "Date should not be lessthan CheckInDate";
+        //}
+
+        //if (CheckOutDate <= hdnCheckInDate) {
+        //    document.getElementById("lblCheckOutDate").innerHTML = "Date should not be GreterThan CheckInDate";
+        //}
+
+        //if (CheckOutDate < CheckInDate) {
+        //    document.getElementById("lblCheckOutDate").innerHTML = "Date should not be GreterThan CheckInDate";
+        //}
+
+        //if (CheckOutDate < hdnCheckOutDate) {
+        //    document.getElementById("lblCheckOutDate").innerHTML = "Date should not be GreterThan CheckOutDate";
+        //}
+
+        var json = { ID: ID, CheckInDate: CheckInDate, CheckOutDate: CheckOutDate };
+        $.ajax({
+            type: "GET",
+            url: "/Reservation/SaveDate",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+            }
+        });
+    }
+
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

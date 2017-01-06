@@ -1,0 +1,343 @@
+﻿@using Resources
+@using RegionColumnCaptions
+@{    
+    ViewBag.Title = "Region";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 style="color: black; text-align:center">Region</h1>
+<style>
+    .col-md-1 {
+        width: 12.333333%;
+    }
+    .col-md-2 {
+        width: 18.666667%;
+    }
+</style>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+    function OnEdit(e) {
+        if (e.model.isNew() == false) {
+            $('input[name=ID]').parent().html(e.model.ID);
+        }
+    }
+
+</script>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="col-md-3 col-sm-4">
+                    <div class="col-md-4 col-sm-4 col-xs-4" style="padding: 8px;">
+                        <label>@RegionColumnCaptions.Name</label>
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                        <input id="txtname" class="k-textbox" style="width: 100%; " />
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-4">
+                    <div class="col-md-4 col-sm-4 col-xs-4" style="padding: 8px;">
+                        <label>@RegionColumnCaptions.NameASCII</label>
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                        <input id="txtasciname" class="k-textbox" style="width: 100%;" />
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-4">
+                    <div class="col-md-4 col-sm-4 col-xs-4" style="padding: 8px;">
+                        <label>@RegionColumnCaptions.Country</label>
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                        <input id="drpcountry" style="width: 100%;" />
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <div class="col-md-4 col-sm-4 col-xs-4" style="padding:6px;">
+                        <label>@RegionColumnCaptions.ParentID</label>
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                        <input id="txtparenid" style="width: 100%;" class="k-textbox" />
+                    </div>
+
+                </div>
+            </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12" style="margin-top:20px">
+
+                <div class="col-md-3 col-sm-3">
+                    <div class="col-md-4 col-sm-4 col-xs-4" style="padding: 6px; padding-top: 0px;">
+                        <label>@RegionColumnCaptions.secondParentID</label>
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                        <input id="txtsecondparenid" style="width: 100%;" class="k-textbox" />
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-4">
+                    <div class="col-md-4 col-sm-4 col-xs-4" style="padding: 8px;">
+                        <label>@RegionColumnCaptions.RegionType</label>
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                        <input id="txtRegionType" class="k-textbox" style="width: 100%; " />
+                    </div>
+                </div>
+                <div class="col-md-1 col-sm-1" >
+                    <div style ="    margin-left: 8px;">
+                        <label>@RegionColumnCaptions.CityTax</label>
+                        <input style="margin-left: 7px;" type="checkbox" id="iscity" />
+
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-2" style="width: 15.5%; padding-left: 0px; ">
+
+                    <label>@RegionColumnCaptions.IsMainPageDisplay</label>
+                    <input style="margin-left: 7px;" type="checkbox" id="ismainpagedisplay" />
+
+                </div>
+
+                <div class="col-md-2  col-sm-2">
+                    <div class="col-md-12  col-sm-12" style="padding:0px;">
+                        <button id="btnfilter" class="k-button btn-info" onclick="Filter()">@Resources.Filter</button>
+
+                        <button class="k-button btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.FilterRemove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+   
+        </div>
+<script>
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpcountry").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "Country",
+                    dataValueField: "CountryID ",
+                    dataSource: data,
+                    optionLabel: "All..."
+                });
+
+            }
+        })
+    })
+
+   
+    $("#btnfilter").click(function () {
+     
+        $filter = new Array();
+        $name = $("#txtname").val();
+        $Asciname = $("#txtasciname").val();
+        $Parntid = $("#txtparenid").val();
+        $secondparentid = $("#txtsecondparenid").val();
+        $RegionType = $("#txtRegionType").val();
+        if ($RegionType) {
+            $filter.push({ field: "RegionType", operator: "contains", value: $RegionType });
+        }
+
+        if ($name) {
+            $filter.push({ field: "Name", operator: "contains", value: $name });
+        }
+
+        if ($Asciname) {
+            $filter.push({ field: "NameASCII", operator: "contains", value: $Asciname });
+        }
+        if ($Parntid) {
+            $filter.push({ field: "ParentID", operator: "equals", value: $Parntid });
+        }
+        if ($secondparentid) {
+            $filter.push({ field: "secondParentID", operator: "equals", value: $secondparentid });
+        }
+        $CountryID = $("#drpcountry").val();
+       
+        if ($CountryID) {
+                $filter.push({ field: "CountryID", operator: "equals", value: $CountryID });
+            }
+        
+            $Iscity = "false";
+            if ($('#iscity').prop('checked')) {
+                $Iscity = "true";
+            }
+
+            if ($Iscity == "true") {
+
+                $filter.push({ field: "IsCity", operator: "eq", value: $Iscity });
+            }
+
+            $maipagedisplay = "false";
+            if ($('#ismainpagedisplay').prop('checked')) {
+                $maipagedisplay = "true";
+            }
+
+            if ($maipagedisplay == "true") {
+
+                $filter.push({ field: "IsMainPageDisplay", operator: "eq", value: $maipagedisplay });
+            }
+        var grid = $("#Region_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#Region_Grid").data("kendoGrid").dataSource;
+        datasource.filter([]);
+        var dropdownlist = $("#drpcountry").data("kendoDropDownList");
+        dropdownlist.select("");
+        $("#txtname").val("")
+        $("#txtasciname").val("")
+        $("#txtparenid").val("")
+        $("#txtsecondparenid").val("");
+        $("#txtRegionType").val("");
+        document.getElementById('iscity').checked = false;
+        document.getElementById('ismainpagedisplay').checked = false;
+
+    });
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.RegionExt>()
+                    .Name("Region_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID);
+        })
+
+                .Create(update => update.Action("_Create", "Region"))
+                .Read(read => read.Action("_Read", "Region"))
+                .Destroy(destroy => destroy.Action("_Destroy", "Region"))
+                .Update(update => update.Action("_Update", "Region"))
+        )
+
+        .Columns(columns =>
+        {
+            columns.Command(
+
+                         command =>
+                         {
+                             command.Edit().Text(Resources.Edit);
+                             command.Destroy().Text(Resources.Delete);
+                         }).Locked(true).Width(180);
+                
+            columns.Bound(p => p.ID).Width(80).Locked(true);
+            //columns.Bound(p => p.CountryID).Title(RegionColumnCaptions.Country).HtmlAttributes(new { style = "white-space: normal" }).Width(150).Locked(true);
+            columns.Bound(p => p.Country).EditorTemplateName("ddlCountries").Title(RegionColumnCaptions.Country).Width(150);
+            columns.Bound(p => p.ParentID).Title(RegionColumnCaptions.ParentID).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.secondParentID).Title(RegionColumnCaptions.secondParentID).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.RegionType).Title(RegionColumnCaptions.RegionType).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.SubRegionType).Title(RegionColumnCaptions.SubRegionType).HtmlAttributes(new { style = "white-space: normal" }).Width(120);
+            columns.Bound(p => p.Name).Title(RegionColumnCaptions.Name).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.NameASCII).Title(RegionColumnCaptions.NameASCII).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_en).Title(RegionColumnCaptions.Name_en).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_tr).Title(RegionColumnCaptions.Name_tr).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_de).Title(RegionColumnCaptions.Name_de).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_es).Title(RegionColumnCaptions.Name_es).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_fr).Title(RegionColumnCaptions.Name_fr).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_ru).Title(RegionColumnCaptions.Name_ru).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_it).Title(RegionColumnCaptions.Name_it).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_ar).Title(RegionColumnCaptions.Name_ar).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_ja).Title(RegionColumnCaptions.Name_ja).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_pt).Title(RegionColumnCaptions.Name_pt).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Name_zh).Title(RegionColumnCaptions.Name_zh).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Code).Title(RegionColumnCaptions.Code).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Population).Title(RegionColumnCaptions.Population).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            //columns.Bound(p => p.IsIncludedInSearch).Title(RegionColumnCaptions.IsIncludedInSearch).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            //columns.Bound(p => p.IsCity).Title(RegionColumnCaptions.IsCity).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            //columns.Bound(p => p.IsPopular).Title(RegionColumnCaptions.IsPopular).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            //columns.Bound(p => p.IsFilter).Title(RegionColumnCaptions.IsFilter).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            //columns.Bound(p => p.IsMainPageDisplay).Title(RegionColumnCaptions.IsMainPageDisplay).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.IsIncludedInSearch).Title(RegionColumnCaptions.IsIncludedInSearch).ClientTemplate("<div style='text-align:center;'> #if(IsIncludedInSearch ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.IsCity).Title(RegionColumnCaptions.IsCity).ClientTemplate("<div style='text-align:center;'> #if(IsCity ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.IsPopular).Title(RegionColumnCaptions.IsPopular).ClientTemplate("<div style='text-align:center;'> #if(IsPopular ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.IsFilter).Title(RegionColumnCaptions.IsFilter).ClientTemplate("<div style='text-align:center;'> #if(IsFilter ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.IsMainPageDisplay).Title(RegionColumnCaptions.IsMainPageDisplay).ClientTemplate("<div style='text-align:center;'> #if(IsMainPageDisplay ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.MainPageDisplaySort).Title(RegionColumnCaptions.MainPageDisplaySort).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.HitCount).Title(RegionColumnCaptions.HitCount).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Sort).Title(RegionColumnCaptions.Sort).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Latitude).Title(RegionColumnCaptions.Latitude).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.Longitude).Title(RegionColumnCaptions.Longitude).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.MapZoomIndex).Title(RegionColumnCaptions.MapZoomIndex).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            //columns.Bound(p => p.CityTax).Title(RegionColumnCaptions.CityTax).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            //columns.Bound(p => p.Active).Title(RegionColumnCaptions.Active).HtmlAttributes(new { style = "white-space: normal" }).Width(100);
+            columns.Bound(p => p.CityTax).Title(RegionColumnCaptions.CityTax).ClientTemplate("<div style='text-align:center;'> #if(CityTax ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.Active).Title(RegionColumnCaptions.Active).ClientTemplate("<div style='text-align:center;'> #if(Active ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+    
+        })
+        .ToolBar(tool =>
+        {
+            tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+            tool.Excel();
+        })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Regions.xlsx")
+                .Filterable(true))
+
+)
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#Region_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+
+
+
+

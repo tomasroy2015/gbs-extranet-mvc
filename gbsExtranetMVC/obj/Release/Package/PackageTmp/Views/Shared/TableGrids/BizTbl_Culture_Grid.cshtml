@@ -1,0 +1,94 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_Culture")</h1>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+    function OnEdit(e) {
+        if (e.model.isNew() == false) {
+            $('input[name=ID]').parent().html(e.model.ID);
+        }
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_CultureExt>()
+                .Name("BizTbl_CultureExt_Grid")
+                    .Events(events => events.Edit("OnEdit"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            //model.Field(p => p.ID).Editable(false);
+        })
+                .Create(update => update.Action("_Create", "BizTbl_Culture"))
+                .Read(read => read.Action("_Read", "BizTbl_Culture", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "BizTbl_Culture"))
+                .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_Culture"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Locked(true).Width(250);
+
+                        columns.Bound(p => p.ID).Width(200).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.Code).Width(300).Locked(true);
+                        columns.Bound(p => p.SystemCode).Width(300);
+                        columns.Bound(p => p.Description).Width(310);
+                        columns.Bound(p => p.Active).Width(300)
+                              .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>");
+                        //columns.Bound(p => p.OpDateTime).Hidden(true);
+                        //columns.Bound(p => p.OpUserID).Hidden(true);
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_Culture.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#BizTbl_CultureExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

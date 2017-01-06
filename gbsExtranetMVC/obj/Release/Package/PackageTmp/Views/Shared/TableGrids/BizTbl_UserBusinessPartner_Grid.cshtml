@@ -1,0 +1,180 @@
+﻿
+
+@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_UserBusinessPartner")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-1 col-sm-1">
+
+                <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                   <label>@Resources.BusinessPartner</label>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-4">
+
+                <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                    <input id="drbBusiness" type="text"style="width:100%"  />
+                </div>
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_UserBusinessPartnerExt>()
+                .Name("BizTbl_UserBusinessPartnerExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Read(read => read.Action("_Read", "BizTbl_UserBusinessPartner", new { TableID = (int)ViewBag.TableID }))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           // command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           //command.Destroy();
+                       });
+
+                    columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.User).Title(MessageColumnCaptions.BizTbl_UserBusinessPartnerCaption("UserID")).Width(350).Locked(true);
+                    columns.Bound(p => p.BusinessPartner).Title(MessageColumnCaptions.BizTbl_UserBusinessPartnerCaption("BusinessPartnerID")).Width(350).Locked(true);
+                    columns.Bound(p => p.OpDateTime).Hidden(true);
+                    columns.Bound(p => p.OpUserID).Hidden(true);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_UserBusinessPartnerExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#BizTbl_UserBusinessPartnerExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+    
+
+        $PartText = $("#drbBusiness").data("kendoDropDownList").text();
+        $PartValue = $("#drbBusiness").val();
+        // $Part1 = $("#drpPart").data("kendoDropDownList").value();
+        //alert($PartText)
+
+       
+        if ($PartValue) {
+            $filter.push({ field: "BusinessPartner", operator: "contains", value: $PartText });
+        }
+
+        var grid = $("#BizTbl_UserBusinessPartnerExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+        $(document).ready(function () {
+            var json = {}
+            $.ajax({
+                type: "GET",
+                url: "/BizTbl_UserBusinessPartner/_ReadPart",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#drbBusiness").kendoDropDownList({
+                        filter: "contains",
+                        Name: "TableID",
+                        optionLabel: AllSelectText,
+                        dataTextField: "Name",
+                        dataValueField: "ID ",
+                        // dataValueField: "Name",
+                        dataSource: data
+                    });
+
+                }
+            })
+        });
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_UserBusinessPartnerExt_Grid").data("kendoGrid").dataSource;
+
+        //Clear Custom filters:
+        datasource.filter([]);
+
+        var dropdownlistPart = $("#drbBusiness").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        //Clear Fields
+        ///$("#txtUserID").val('')
+        //$("#txtName").val('');
+        //$("#datetimepickerStart").val('');
+       //// $("#datetimepickerEnd").val('');
+       // $("#txtSurName").val('');
+
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>
+
+

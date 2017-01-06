@@ -1,0 +1,298 @@
+﻿@using Resources
+@using mailColumnCaptions
+@using MessageColumnCaptions
+
+
+
+<h1 style="text-align:center;">BizTbl_MailQueue</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6 col-sm-6">
+                <div class="col-md-1 col-sm-1 " style="padding: 8px;">
+                    <label>@mailColumnCaptions.Template</label>
+                </div>
+                <div class="col-md-10 col-sm-10 " style="padding: 8px;">
+                    <input id="drpPart" style="width: 100%;" />
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@mailColumnCaptions.MailTo</label>
+                </div>
+                <div class="col-md-8 col-sm-8 " style="padding: 8px;">
+                    <input id="txtMailTo" type="text" class="form-control" style="width:100%" placeholder="@mailColumnCaptions.MailTo" />
+                </div>
+
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@mailColumnCaptions.Subject</label>
+                </div>
+                <div class="col-md-8 col-sm-8 " style="padding: 8px;">
+                    <input id="txtSubject" type="text" class="form-control" style="width:100%" placeholder="@mailColumnCaptions.Subject" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding-top:20px;">
+        <div class="col-md-12" style="padding: 8px;">
+            <div class="col-md-2  col-sm-2">
+                <div class="col-md-8  col-sm-5">
+                    <label>@mailColumnCaptions.SentStatus</label>
+                </div>
+                <div class="col-md-2  col-sm-7">
+                    <input type="checkbox" id="chkStatus" />
+                </div>
+
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 0px;">
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@mailColumnCaptions.SendingDate (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-3 col-sm-3" style="padding: 0px;">
+
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@mailColumnCaptions.SendingDate (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 8px;">
+                <div class="col-md-6  col-sm-6">
+                    <label>@mailColumnCaptions.SentStatus</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input id="txtRecordID" type="text" class="form-control" style="width:100%" placeholder="@mailColumnCaptions.Record" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+    var AllSelectText = '@Resources.ListAllExpression'
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.EmailExt>()
+                    .Name("BizTbl_MailQueueExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                    .Create(update => update.Action("_Create", "EMails"))
+                    .Read(read => read.Action("_Read", "EMails", new { TableID = (int)ViewBag.TableID }))
+                    .Update(update => update.Action("_Update", "EMails"))
+                    .Destroy(destroy => destroy.Action("_Destroy", "EMails"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(100).Locked(true);
+                    columns.Bound(p => p.Template).EditorTemplateName("ddlTemplate").Width(400);
+                    columns.Bound(p => p.MailFrom).Width(150);
+                    columns.Bound(p => p.MailTo).EditorTemplateName("TextArea").Width(200);
+                    columns.Bound(p => p.MailCC).EditorTemplateName("TextArea").Width(200);
+                    columns.Bound(p => p.Subject).EditorTemplateName("TextArea").Width(200);
+                    columns.Bound(p => p.Content).EditorTemplateName("TextArea").Width(250).Encoded(false);
+                    columns.Bound(p => p.SentStatus).EditorTemplateName("Checkbox").ClientTemplate("<div style='text-align:center;'> #if(SentStatus =='True'){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                    columns.Bound(p => p.ResentCount).Width(100);
+                    columns.Bound(p => p.SendingDate).EditorTemplateName("Date").ClientTemplate("#= kendo.toString(SendingDate,'MM/dd/yyyy') #").Width(250);
+                    columns.Bound(p => p.Record).Width(120);
+                       //columns.Bound(p => p.OpDateTime).Hidden(true);
+                       //columns.Bound(p => p.OpUserID).Hidden(true);
+                   })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_MailQueueExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#BizTbl_MailQueueExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+<script>
+
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $MailTo = $("#txtMailTo").val();
+        $Subject = $("#txtSubject").val();
+        $SentStatus = "false";
+        if ($('#chkStatus').prop('checked')) {
+            $SentStatus = "true";
+        }
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+        $Record = $("#txtRecordID").val();
+
+        $PartText = $("#drpPart").data("kendoDropDownList").text();
+        $PartValue = $("#drpPart").val();
+        // $Part1 = $("#drpPart").data("kendoDropDownList").value();
+        //alert($PartText)
+
+        if ($MailTo) {
+            $filter.push({ field: "MailTo", operator: "contains", value: String($MailTo) });
+        }
+        if ($Subject) {
+            $filter.push({ field: "Subject", operator: "contains", value: String($Subject) });
+        }
+        if ($SentStatus == "true") {
+            //alert($SentStatus)
+            $filter.push({ field: "SentStatus", operator: "eq", value: $SentStatus });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "SendingDate", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "SendingDate", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        if ($Record) {
+            $filter.push({ field: "Record", operator: "equals", value: String($Record) });
+        }
+        if ($PartValue) {
+            $filter.push({ field: "Template", operator: "contains", value: $PartText });
+        }
+
+        var grid = $("#BizTbl_MailQueueExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+    $(document).ready(function () {
+        // create DateTimePicker from input HTML element
+        //$("#datetimepicker").kendoDateTimePicker({
+        //    value: new Date()
+        //});
+
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/Emails/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPart").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#Email_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtMailTo").val('')
+        $("#txtSubject").val('');
+        document.getElementById('chkStatus').checked = false
+        $("#datetimepickerStart").val('');
+        $("#datetimepickerEnd").val('');
+        $("#txtRecordID").val('');
+        var dropdownlistPart = $("#drpPart").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>

@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                .Name("DealCostCurrencyID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+               .DataTextField("DealCostCurrency")
+              .DataValueField("DealCostCurrencyID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetDealCostCurrency", "DropDownLists");
+        });
+    })
+)

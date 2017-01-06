@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                    .Name("RoleID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                        .DataTextField("Role")
+                        .DataValueField("RoleID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("Role", "DropDownLists");
+        });
+    })
+)

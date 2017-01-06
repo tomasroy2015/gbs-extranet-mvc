@@ -1,0 +1,196 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_HotelCreditCardHistory")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("HotelCreditCardID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtFilterID" type="text" class="form-control" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("HotelID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtFilterCode" style="width:100%" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4  col-sm-4" style="padding: 0px;">
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.LogDate (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-4 col-sm-4" style="padding: 0px;">
+
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.LogDate (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelCreditCardHistoryExt>()
+                                            .Name("TB_HotelCreditCardHistory_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+
+                              .Read(read => read.Action("_Read", "TB_HotelCreditCardHistory", new { TableID = (int)ViewBag.TableID }))
+
+        )
+
+        .Columns(columns =>
+        {
+
+
+            columns.Bound(p => p.ID).Width(100).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("ID"));
+            columns.Bound(p => p.HotelCreditCardID).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("HotelCreditCardID")).Width(120);
+            columns.Bound(p => p.Hotel).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("HotelID")).Width(100);
+            columns.Bound(p => p.CreditCardType).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("CreditCardTypeID")).Width(120);
+            columns.Bound(p => p.OperationDate).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("OpDateTime")).Width(120);
+            columns.Bound(p => p.OperationUser).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("OpUserID")).Width(100);
+            columns.Bound(p => p.LogDate).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+            columns.Bound(p => p.LogUser).Title(MessageColumnCaptions.TB_HotelCreditCardHistoryCaption("LogUserID")).Width(120);
+        })
+            .ToolBar(tool =>
+            {
+                tool.Excel().Text(Resources.ExporttoExcel);
+            })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                     .Excel(excel => excel
+                                        .FileName("TB_HotelCreditCardHistory_Grid.xlsx")
+                    .Filterable(true))
+
+)
+
+<script>
+    $("#btnfilter").click(function () {
+        // alert("dfgd")
+        $filter = new Array();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        //  alert($StartDate)
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+        //  alert($EndDate)
+        $PartText = $("#txtFilterCode").data("kendoDropDownList").text();
+        $PartValue = $("#txtFilterCode").val();
+        //   alert($PartValue)
+        $Code = $("#txtFilterID").val();
+        //   alert($Code)
+
+        if ($PartValue) {
+            $filter.push({ field: "Hotel", operator: "contains", value: $PartText });
+        }
+        if ($Code) {
+            $filter.push({ field: "HotelCreditCardID", operator: "Equals", value: $Code });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDate", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDate", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+
+        var grid = $("#TB_HotelCreditCardHistory_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotels",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#txtFilterCode").kendoDropDownList({
+                    filter: "contains",
+                    Name: "Hotel",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        function clearFiter() {
+            $("form.k-filter-menu button[type='reset']").trigger("click");
+        }
+
+        $("#btnClearFilter").click(function (e) {
+            e.preventDefault();
+            var datasource = $("#TB_HotelCreditCardHistory_Grid").data("kendoGrid").dataSource;
+            datasource.filter([]);
+           
+            $("#datetimepickerStart").data("kendoDatePicker").value(null);
+            $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+            var dropdownlistPart = $("#txtFilterCode").data("kendoDropDownList");
+            dropdownlistPart.select("");
+
+        });
+
+    });
+
+
+</script>
+
+

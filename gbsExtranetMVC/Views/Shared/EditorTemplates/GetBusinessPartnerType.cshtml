@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                .Name("BusinessPartnerTypeID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                            .DataTextField("BusinessPartnerType")
+                        .DataValueField("BusinessPartnerTypeID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetBusinessPartnerType", "DropDownLists");
+        });
+    })
+)

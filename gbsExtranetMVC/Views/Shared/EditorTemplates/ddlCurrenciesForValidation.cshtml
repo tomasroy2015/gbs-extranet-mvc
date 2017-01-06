@@ -1,0 +1,16 @@
+﻿@model gbsExtranetMVC.Models.Repositories.TB_TypeHotelBudgetExt
+
+@(Html.Kendo().DropDownListFor(model => model.Currency)
+                .Name("CurrencyID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                        .DataTextField("Currency")
+                    .DataValueField("CurrencyID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetCurrencies", "DropDownLists");
+        });
+    })
+)

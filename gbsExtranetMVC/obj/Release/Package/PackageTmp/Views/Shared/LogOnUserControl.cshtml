@@ -1,0 +1,21 @@
+﻿
+@using gbsExtranetMVC.Helpers
+@using gbsExtranetMVC.Models.Enumerations
+
+
+    @if (Session["UserID"] != null)
+    {
+            <text>Welcome <strong> @User.Identity.Name  </strong></text> 
+       
+            @*<text>[ @Html.Raw(GlobalHelper.LogOnActionLink("Change Password", "ChangePassword", "Account")) ]</text>*@
+            <text>[ @Html.Raw(@GlobalHelper.LogOnActionLink("Log Off", "LogOff", "Account")) ]</text>
+      
+    }
+    else
+    {
+      <text>[ @Html.Raw(GlobalHelper.LogOnActionLink("Log On", "LogOn", "Account")) ]</text>
+    }
+    
+    
+
+

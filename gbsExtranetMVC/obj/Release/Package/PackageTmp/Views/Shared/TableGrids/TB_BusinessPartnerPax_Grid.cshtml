@@ -1,0 +1,231 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_BusinessPartnerPax")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-3" style="display: inline-flex;">
+                <label>@Resources.BusinessPartner</label>&nbsp;&nbsp;
+                &nbsp;<input type="text" id="drbBusiness" style="width: 100%;" />
+            </div>
+            <div class="col-md-2  col-sm-2">
+                <div class="col-md-8  col-sm-5">
+                    <label>@mailColumnCaptions.SentStatus</label>
+                </div>
+                <div class="col-md-2  col-sm-7">
+                    <input type="checkbox" id="chkStatus" />
+                </div>
+
+            </div>
+
+            <div class="col-md-3  col-sm-3" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+    
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_BusinessPartnerPaxExt>()
+        .Name("TB_BusinessPartnerPaxExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                         .Create(update => update.Action("_Create", "TB_BusinessPartnerPax"))
+                         .Read(read => read.Action("_Read", "TB_BusinessPartnerPax", new { TableID = (int)ViewBag.TableID }))
+                        .Update(update => update.Action("_Update", "TB_BusinessPartnerPax"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "TB_BusinessPartnerPax"))
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Width(170).Locked(true);
+
+                        columns.Bound(p => p.ID).Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.BusinessPartner).EditorTemplateName("ddlBusinessPartner").Title(MessageColumnCaptions.TB_BusinessPartnerPaxCaption("BusinessPartnerID")).Width(200).Locked(true);
+                        columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_BusinessPartnerPaxCaption("Name")).Width(200);
+                        columns.Bound(p => p.MinPeopleCount).Title(MessageColumnCaptions.TB_BusinessPartnerPaxCaption("MinPeopleCount")).Width(200);
+                        columns.Bound(p => p.MaxPeopleCount).Title(MessageColumnCaptions.TB_BusinessPartnerPaxCaption("MaxPeopleCount")).Width(200);
+                        columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_BusinessPartnerPaxCaption("Active"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+
+
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                .Text(Resources.NewRecord)
+                .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_BusinessPartnerPaxExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_BusinessPartnerPaxExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $BusinessText = $("#drbBusiness").data("kendoDropDownList").text();
+        $BusinessValue = $("#drbBusiness").val();
+        $SentStatus = "false";
+        if ($('#chkStatus').prop('checked')) {
+            $SentStatus = "true";
+        }
+
+
+        if ($BusinessValue) {
+            $filter.push({ field: "BusinessPartner", operator: "contains", value: $BusinessText });
+        }
+        if ($SentStatus == "true") {
+            //alert($SentStatus)
+            $filter.push({ field: "Active", operator: "eq", value: $SentStatus });
+        }
+
+
+        var grid = $("#TB_BusinessPartnerPaxExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/BizTbl_UserBusinessPartner/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbBusiness").kendoDropDownList({
+                    filter: "contains",
+                    Name: "TableID",
+
+                    optionLabel: AllSelectText,
+
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    // dataValueField: "Name",
+                    dataSource: data
+                });
+
+            }
+        })
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegion",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbregion").kendoDropDownList({
+
+                    filter: "contains",
+
+                    optionLabel: AllSelectText,
+
+                    dataTextField: "Region",
+                    dataValueField: "RegionID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_BusinessPartnerPaxExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        //$("#txtBusinessPartnerRegionID").val('')
+        ////$("#txtPromotionCode").val('');
+        ////$("#txtGuestName").val('');
+        //$("#datetimepickerStart").val('');
+        //$("#datetimepickerEnd").val('');
+        document.getElementById('chkStatus').checked = false
+        var dropdownlistPart = $("#drbBusiness").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        var dropdownlistPart1 = $("#drbregion").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

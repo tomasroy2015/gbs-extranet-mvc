@@ -1,0 +1,187 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_ReservationReviewDetail")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-4 col-sm-4">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewDetailCaption("ReservationReviewID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtReservationReviewID" type="text" class="form-control" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationReviewDetailCaption("ReservationReviewID")' />
+                </div>                
+            </div>
+
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-4 col-sm-4">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewDetailCaption("ReviewTypeID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="drpReviewType" style="width: 100%;" />
+                    </div>
+                </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-4 col-sm-4">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewDetailCaption("ReviewScaleTypeID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="drpReviewScale" style="width: 100%;" />
+                    </div>
+                </div>             
+            <div class="col-md-3  col-sm-3">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>          
+        </div>
+            
+    </div>
+</div>
+
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_ReservationReviewDetailExt>()
+                    .Name("TB_ReservationReviewDetail_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+        //.Create(update => update.Action("_Create", "Message"))
+            .Read(read => read.Action("_Read", "TB_ReservationReviewDetail", new { TableID = (int)ViewBag.TableID }))
+        //.Update(update => update.Action("_Update", "Message"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "Message"))
+        )
+
+        .Columns(columns =>
+        {
+
+            columns.Bound(p => p.ID).Title("ID").Width(200).Locked(true);
+            columns.Bound(p => p.ReservationReviewID).Title(MessageColumnCaptions.TB_ReservationReviewDetailCaption("ReservationReviewID")).Width(400);
+            columns.Bound(p => p.ReviewType).Title(MessageColumnCaptions.TB_ReservationReviewDetailCaption("ReviewTypeID")).Width(330);
+            columns.Bound(p => p.ReviewScale).Title(MessageColumnCaptions.TB_ReservationReviewDetailCaption("ReviewScaleTypeID")).Width(330);            
+        })
+             .ToolBar(tool =>
+                                        {
+                                            tool.Excel().Text(Resources.ExporttoExcel);
+                                        })
+
+                        .Scrollable(scrollable => scrollable.Height(430))
+                        .Pageable(p => p.Refresh(true))
+                        .Sortable()
+                        .Navigatable()
+                        .Groupable()
+                        .Scrollable(scr => scr.Height(370))
+                        .Filterable()
+                        .Excel(excel => excel
+                        .FileName("TB_ReservationReviewDetail.xlsx")
+                        .Filterable(true))
+)
+
+<script>
+
+   
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+      //  alert('hi');
+        var json = {}    
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetReviewTypeDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpReviewType").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "ReviewTypeName",
+                    dataValueField: "ReviewTypeID",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+            }
+        })
+     
+       
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetReviewScaleDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpReviewScale").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "ReviewScaleName",
+                    dataValueField: "ReviewScaleID",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })      
+      
+
+
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+
+        $ReservationReviewID = $("#txtReservationReviewID").val();
+      //  alert($ReservationReviewID)
+
+        $ReviewTypeText = $("#drpReviewType").data("kendoDropDownList").text();
+        $ReviewTypeValue = $("#drpReviewType").val();
+      //  alert($ReviewTypeValue)
+
+        $ReviewScaleTypeText = $("#drpReviewScale").data("kendoDropDownList").text();
+        $ReviewScaleTypeValue = $("#drpReviewScale").val();
+      //  alert($ReviewScaleTypeValue)
+        
+
+        
+        if ($ReservationReviewID) {
+            $filter.push({ field: "ReservationReviewID", operator: "contains", value: String($ReservationReviewID) });
+        }       
+       // alert($filter)
+        if ($ReviewTypeValue) {
+            $filter.push({ field: "ReviewType", operator: "contains", value: $ReviewTypeText });
+        }
+
+        if ($ReviewScaleTypeValue) {
+            $filter.push({ field: "ReviewScale", operator: "contains", value: $ReviewScaleTypeText });
+        }
+     // alert($filter)
+        var grid = $("#TB_ReservationReviewDetail_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_ReservationReviewDetail_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtReservationReviewID").val('');
+        var dropdownlistPart = $("#drpReviewType").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        var dropdownlistPart1 = $("#drpReviewScale").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+    });
+
+
+</script>

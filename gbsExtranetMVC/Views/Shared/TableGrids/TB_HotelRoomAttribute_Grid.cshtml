@@ -1,0 +1,192 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelRoomAttribute")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelRoomAttribute("HotelRoomID")</label>
+                </div>
+                <div class="col-md-6 col-sm-6 " style="padding: 8px;">
+                    <input id="txtroomid" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-5 col-sm-5 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelRoomAttribute("AttributeID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7 " style="padding: 8px;">
+                    <input style="width:100%" id="drpattribute" />
+
+                </div>
+            </div>
+           
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.Filter</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $hotelreservationid = $("#txthotelreservationid").val();
+        $Active = "false";
+        if ($('#chkactive').prop('checked')) {
+            $Active = "true";
+        }
+        $dateText = $("#drpdate").data("kendoDropDownList").text();
+        $dateid = $("#drpdate").val();
+        if ($dateid) {
+            $filter.push({ field: "Date", operator: "contains", value: String($dateText) });
+        }
+        if ($hotelreservationid) {
+            $filter.push({ field: "HotelReservationID", operator: "equals", value: $Reservationid });
+        }
+
+        if ($Active == "true") {
+
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+
+
+        var grid = $("#TB_HotelRoomAttribute_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRelatedAttribute",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpattribute").kendoDropDownList({
+
+                    filter: "contains",
+                    optionLabel: AllSelectText,
+                    dataTextField: "RelatedAttribute",
+                    dataValueField: "RelatedAttributeID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelRoomAttribute_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+
+        $("#txthotelreservationid").val('');
+        document.getElementById('chkactive').checked = false
+        var dropdownlistPart = $("#drpattribute").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+    });
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelRoomAttributeExt>()
+                                .Name("TB_HotelRoomAttribute_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                                        .Create(update => update.Action("_Create", "TB_HotelRoomAttribute"))
+                                        .Read(read => read.Action("_Read", "TB_HotelRoomAttribute", new { TableID = (int)ViewBag.TableID }))
+                                        .Update(update => update.Action("_Update", "TB_HotelRoomAttribute"))
+                                        .Destroy(destroy => destroy.Action("_Destroy", "TB_HotelRoomAttribute"))
+                
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                      command =>
+                      {
+                          command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                          command.Destroy().Text(Resources.Delete);
+                      }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.HotelRoomID).Width(200).Title(MessageColumnCaptions.TB_HotelRoomAttribute("HotelRoomID")).EditorTemplateName("ddlHotelRoomID").Width(350);
+                    columns.Bound(p => p.Attribute).Width(200).Title(MessageColumnCaptions.TB_HotelRoomAttribute("AttributeID")).EditorTemplateName("ddlHotelAttribute").Width(350); 
+                    columns.Bound(p => p.Charged).Width(150).ClientTemplate("<div style='text-align:center;'> #if(Charged){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_HotelRoomAttribute("Charged"));
+                    columns.Bound(p => p.Unitvalue).Width(250).Title(MessageColumnCaptions.TB_HotelRoomAttribute("UnitValue"));
+                    columns.Bound(p => p.Charge).Width(250).Title(MessageColumnCaptions.TB_HotelRoomAttribute("Charge"));
+                    columns.Bound(p => p.CurrencyID).Width(250).Title(MessageColumnCaptions.TB_HotelRoomAttribute("CurrencyID"));
+                   
+
+                })
+                .ToolBar(tool =>
+                {
+                     tool.Custom().Name("cmdAddNewRecord")
+                    .Text(Resources.NewRecord)
+                    .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                     tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                        .FileName("TB_HotelRoomAttribute.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelRoomAttribute_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

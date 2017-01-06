@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                        .Name("HotelID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                            .DataTextField("Hotel")
+                        .DataValueField("HotelID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetHotelsdropdown", "DropDownLists");
+        });
+    })
+)

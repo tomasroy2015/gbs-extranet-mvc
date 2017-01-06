@@ -1,0 +1,596 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .divCaption {
+        margin-left: 5px;
+        margin-top: 3px;
+        font-weight: bold;
+        color: black;
+        font-size: 14px;
+    }
+
+    .GridBar2 {
+        background-color: #ede8d7;
+        color: Maroon;
+        font-weight: bold;
+        padding: 5px;
+        border: 1px solid #c5ccda;
+    }
+    .Available {
+        background-color: #e8eefb;
+        /*width: 20px;*/
+    }
+
+    .Closed {
+        background-color: red;
+        /*width: 20px;*/
+    }
+
+    .Full {
+        background-color: yellow;
+        /*width: 20px;*/
+    }
+    .RateMissing {
+        background-color: #fbeec5;
+        /*width: 20px;*/
+    }
+</style>
+
+@*<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageTitle("AdminRoomRateAndAvailability.aspx")</h1>*@
+
+<h1 style="text-align:center;">@Resources.RateAndAvailability</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 16px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-bottom: 12px;">
+        <div class="col-md-12">
+            <div class="row" style="padding-top: 15px; margin-left: 20px; display: flex;">
+                <label style="width: 180px; padding-top: 7px;">@Resources.StartDate</label>
+                <input type="text" id="datetimepickerStart" value="@ViewBag.StartDate" placeholder="@Resources.DateFieldDescription" onblur="CheckTodayDate()" style=" width: 170px; height: 25px; " />&nbsp;&nbsp;
+                <label style="margin-top: 6px;" class="requiredfield" for="">*</label>
+                <label id="lblTodayComparisionWarning" style="color: red; font-size: medium; display: none; margin: 5px;">@Resources.TodayComparisionWarning</label>
+            </div>
+            <div class="row" style="padding-top: 15px; margin-left: 20px; display: flex; ">
+                <label style="width: 180px; padding-top: 7px; ">@Resources.EndDate</label>
+                <input type="text" id="datetimepickerEnd" value="@ViewBag.EndDate" placeholder="@Resources.DateFieldDescription" onblur="CheckDateDifference()" style=" width: 170px; height: 25px;" />&nbsp;&nbsp;
+                <label style="margin-top: 6px;" class="requiredfield" for="">*</label>
+                <label id="lblDateComparisionWarning" style="color: red; font-size: medium; display: none; margin: 5px; ">@Resources.DateComparisionWarning</label>
+            </div>
+            <div class="row" style="padding-top: 15px; margin-left: 20px; display: flex;">
+                <label style="width: 180px; padding-top: 7px; ">@Resources.RoomType</label>
+                <select onchange="LoadHotelAvailabilityAndRate()" style="width: 220px;" id="ddlRoomType"></select>
+            </div>
+            <div class="row" style="padding-top: 15px; margin-left: 20px; display: flex;">
+                <label style="width: 180px; padding-top: 7px; ">@Resources.PricePolicy</label>
+                <select onchange="LoadHotelAvailabilityAndRate()" style=" width: 170px;" id="ddlPricePolicy"></select>
+            </div>
+            <div class="row" style="padding-top: 15px; margin-left: 20px; display: flex;">
+                <label style="width: 180px; padding-top: 7px; ">@Resources.AccommodationType</label>
+                <select onchange="LoadHotelAvailabilityAndRate()" style=" width: 170px;" id="ddlTypeAccommodation"></select>
+            </div>
+            <div class="row" style="padding-top: 15px; margin-left: 20px; display: flex;">
+                <label style="width: 180px; padding-top: 7px; ">@Resources.Days</label>
+                <div style="position: relative;display: flex; margin-left: 14px;padding-top:9px;">
+                    @foreach (var item in ViewBag.DaysDetails)
+                    {
+                        <input style="font-size: 13px;" type="checkbox" id="chkDay_@item.ID" name="chkDay" value="@item.ID" checked>
+                        <label style="font-weight: bold; margin-right: 30px;">@item.Name</label>
+                    }
+                </div>
+
+            </div>
+            <div class="row" style="margin-top: 15px;" align="center">
+                <button id="btnShow" class="k-button btn btn-info" onclick="LoadHotelAvailabilityAndRate()">@Resources.Show</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div align="center">
+    <label style="color: Blue; font-size: 15pt; font-weight: bold"> @Resources.Currency : @ViewBag.CurrencyName</label>
+</div>
+<div class="col-md-12" align="left">
+    <div class="row">
+        <div class="col-md-2" style=" display: flex;">
+            <div style="width: 25px; height: 25px; border: 1px solid #c5ccda;background-color: #e8eefb;"></div>
+            <label class="divCaption">@Resources.Available</label>
+        </div>
+        <div class="col-md-2" style=" display: flex;">
+            <div style="width: 25px; height: 25px; border: 1px solid #c5ccda; background-color:red;"></div>
+            <label class="divCaption">@Resources.Closed</label>
+        </div>
+        <div class="col-md-2" style=" display: flex;">
+            <div style="width: 25px; height: 25px; border: 1px solid #c5ccda; background-color: #fbeec5; "></div>
+            <label style="margin-top:0px;" class="divCaption">@Resources.RateMissing</label>
+        </div>
+        <div class="col-md-2" style=" display: flex;">
+            <div style="width: 25px; height: 25px; border: 1px solid #c5ccda; background-color: yellow; "></div>
+            <label class="divCaption">@Resources.Full</label>
+        </div>
+    </div>
+    <div class="row">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" id="tblRateAndAvailability" >
+           
+            </table>
+        <div class="row" style="margin-top: 15px;" align="center">
+            <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label> <br/>
+            <button id="btnSave" class="k-button btn btn-info" onclick="SaveRoomAvailabilityAndRate()">@Resources.Save</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        //alert(charCode)
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+    function SaveRoomAvailabilityAndRate()
+    {
+
+        var StartDate = document.getElementById('datetimepickerStart').value
+        var Enddate = document.getElementById('datetimepickerEnd').value
+        var RoomType = document.getElementById('ddlRoomType').value
+        var PricePolicy = document.getElementById('ddlPricePolicy').value
+        var AccommodationType = document.getElementById('ddlTypeAccommodation').value
+        var MaxPeopleCount = document.getElementById('hdnMaxPeopleCount').value;
+        var WeekDay = [];
+        var chkDay = document.getElementsByName('chkDay');
+        for (var i = 0; i < chkDay.length; i++) {
+            if (chkDay[i].checked == true) {
+                WeekDay.push(chkDay[i].value)
+            }
+        }
+        if (WeekDay == "") {
+            WeekDay = "1,2,3,4,5,6,7"
+        }
+        var DateID = document.getElementsByName('hiddenDateID');
+        var WeekDayID = document.getElementsByName('hiddenWeekDayID');
+        var SinglePriceName = document.getElementsByName('txtSinglePriceName');
+        if (MaxPeopleCount > 1) {
+            var DoublePriceName = document.getElementsByName('txtDoublePriceName');
+        }
+        if (MaxPeopleCount > 2) {
+            var RoomPriceName = document.getElementsByName('txtRoomPriceName');
+
+        }
+        var AvailableRoomCountName = document.getElementsByName('txtAvailableRoomCountName');
+        var MinimumStayName = document.getElementsByName('txtMinimumStayName');
+        var CloseToArrival = document.getElementsByName('CheckCloseToArrival');
+        var CloseToDeparture = document.getElementsByName('CheckCloseToDeparture');
+        var Closed = document.getElementsByName('CheckClosed');
+
+        var DateIDArray = [];
+        var WeekDayIDArray = [];
+        var SinglePriceNameArray = [];
+        var DoublePriceNameArray = [];
+        var RoomPriceNameArray = [];
+        var AvailableRoomCountNameArray = [];
+        var MinimumStayNameArray = [];
+        var CloseToArrivalArray = [];
+        var CloseToDepartureArray = [];
+        var ClosedArray = [];
+
+        for (var i = 0; i < DateID.length; i++) {
+
+            if (WeekDay.indexOf(WeekDayID[i].value)!=-1) {
+                DateIDArray.push(DateID[i].value)
+                WeekDayIDArray.push(WeekDayID[i].value)
+                SinglePriceNameArray.push(SinglePriceName[i].value)
+                if (MaxPeopleCount > 1) {
+                    DoublePriceNameArray.push(DoublePriceName[i].value)
+                }
+                if (MaxPeopleCount > 2) {
+                    RoomPriceNameArray.push(RoomPriceName[i].value)
+                }
+                AvailableRoomCountNameArray.push(AvailableRoomCountName[i].value)
+                MinimumStayNameArray.push(MinimumStayName[i].value)
+
+                if (CloseToArrival[i].checked == true) {
+                    CloseToArrivalArray.push(1)
+                }
+                else {
+                    CloseToArrivalArray.push(0)
+                }
+                if (CloseToDeparture[i].checked == true) {
+                    CloseToDepartureArray.push(1)
+                }
+                else {
+                    CloseToDepartureArray.push(0)
+                }
+                if (Closed[i].checked == true) {
+                    ClosedArray.push(1)
+                }
+                else {
+                    ClosedArray.push(0)
+                }
+            }
+            else
+            {
+              //alert(DateID[i].value)
+              //alert(  WeekDay.indexOf(WeekDayID[i].value))
+            }
+        }
+
+        //DateIDArray:[DateIDArray],WeekDayIDArray:[WeekDayIDArray],SinglePriceNameArray:[SinglePriceNameArray],
+        //DoublePriceNameArray:[DoublePriceNameArray],RoomPriceNameArray:[RoomPriceNameArray],AvailableRoomCountNameArray:[AvailableRoomCountNameArray],
+        //MinimumStayNameArray:[MinimumStayNameArray],CloseToArrivalArray:[CloseToArrivalArray],CloseToDepartureArray:[CloseToDepartureArray],ClosedArray:[ClosedArray]
+
+        if (StartDate != "" && Enddate != "") {
+            //  alert("hi")
+            var Dates;
+            var GetHotelAvailability;
+            var GetHotelRate;
+            var jsonLoadData = { StartDate: StartDate, Enddate: Enddate, RoomType: RoomType, PricePolicy: PricePolicy, AccommodationType: AccommodationType, WeekDay: [WeekDay],
+                DateIDArray:[DateIDArray],WeekDayIDArray:[WeekDayIDArray],SinglePriceNameArray:[SinglePriceNameArray],DoublePriceNameArray:[DoublePriceNameArray],
+                RoomPriceNameArray:[RoomPriceNameArray],AvailableRoomCountNameArray:[AvailableRoomCountNameArray],MinimumStayNameArray:[MinimumStayNameArray],
+                CloseToArrivalArray:[CloseToArrivalArray],CloseToDepartureArray:[CloseToDepartureArray],ClosedArray:[ClosedArray]}
+            $.ajax({
+                type: "Get",
+                url: "/RoomRateAndAvailability/SaveRoomAvailabilityAndRate",
+                data: jsonLoadData,
+                datatype: "JSON",
+                traditional: true,
+                success: function (res) {
+                    document.getElementById("lblSuccess").style.display = "";
+                    setTimeout("Hidelabel()", 2000);
+                  
+                }
+            })
+        }
+
+      
+    }
+    function Hidelabel() {
+        document.getElementById("lblSuccess").style.display = "none";
+        LoadHotelAvailabilityAndRate();
+    }
+
+    function AppendSinglePrice()
+    {
+        var SinglePriceAppend = document.getElementById('txtSinglePriceAppend').value
+        if (SinglePriceAppend != "")
+        {
+            var SinglePriceName = document.getElementsByName('txtSinglePriceName');
+            for(var i=0;i<SinglePriceName.length;i++)
+            {
+                SinglePriceName[i].value = SinglePriceAppend;
+            }
+        }
+    }
+    function AppendDoublePrice() {
+        var DoublePriceAppend = document.getElementById('txtDoublePriceAppend').value
+        if (DoublePriceAppend != "") {
+            var DoublePriceName = document.getElementsByName('txtDoublePriceName');
+            for (var i = 0; i < DoublePriceName.length; i++) {
+                DoublePriceName[i].value = DoublePriceAppend;
+            }
+        }
+    }
+    function AppendRoomPrice() {
+        var RoomPriceAppend = document.getElementById('txtRoomPriceAppend').value
+        if (RoomPriceAppend != "") {
+            var RoomPriceName = document.getElementsByName('txtRoomPriceName');
+            for (var i = 0; i < RoomPriceName.length; i++) {
+                RoomPriceName[i].value = RoomPriceAppend;
+            }
+        }
+    }
+    function AppendRoomAvailability() {
+        var AvailabilityAppend = document.getElementById('txtAvailabilityAppend').value
+        if (AvailabilityAppend != "") {
+            var AvailableRoomCountName = document.getElementsByName('txtAvailableRoomCountName');
+            for (var i = 0; i < AvailableRoomCountName.length; i++) {
+                AvailableRoomCountName[i].value = AvailabilityAppend;
+            }
+        }
+    }
+
+    
+    function LoadHotelAvailabilityAndRate() {
+        var StartDate = document.getElementById('datetimepickerStart').value
+        var Enddate = document.getElementById('datetimepickerEnd').value
+        var RoomType = document.getElementById('ddlRoomType').value
+        var PricePolicy = document.getElementById('ddlPricePolicy').value
+        var AccommodationType = document.getElementById('ddlTypeAccommodation').value
+        var WeekDay = [];
+        var chkDay = document.getElementsByName('chkDay');
+        for (var i = 0; i < chkDay.length; i++) {
+            if (chkDay[i].checked == true) {
+                WeekDay.push(chkDay[i].value)
+            }
+        }
+        if (WeekDay == "") {
+            WeekDay = "1,2,3,4,5,6,7"
+        }
+        if (StartDate != "" && Enddate != "" && DateValidationToday == "Valid" && DateValidationDiff == "Valid") {
+            //  alert("hi")
+            var Dates;
+            var GetHotelAvailability;
+            var GetHotelRate;
+            var jsonLoadData = { StartDate: StartDate, Enddate: Enddate, RoomType: RoomType, PricePolicy: PricePolicy, AccommodationType: AccommodationType, WeekDay: [WeekDay] }
+            $.ajax({
+                type: "Get",
+                url: "/RoomRateAndAvailability/LoadHotelAvailabilityAndRate",
+                data: jsonLoadData,
+                datatype: "JSON",
+                traditional: true,
+                success: function (res) {
+                    $('#tblRateAndAvailability').empty();
+                    var LoopCount = 0;
+                    $.each(res, function (key, val) {
+                        if (LoopCount == 0) {
+                            $('#tblRateAndAvailability').append(
+                            '<thead>' +
+                                '<tr align="center">' +
+                                    '<input type="hidden" value=' + val.MaxPeopleCount + ' id="hdnMaxPeopleCount" />'+
+                                    '<td class="GridBar2"><label id="lblDate">@Resources.Date</label></td>' +
+                                    '<td class="GridBar2"><label id="lblDay">@Resources.Day</label></td>' +
+                                    '<td class="GridBar2"><label id="lblSinglePrice">@Resources.SinglePrice</label>' +
+                                   '<div>'+
+                                   '<input id="txtSinglePriceAppend" type="text" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;margin-left: 29px;background-color:#bc312e;color:White;"/>&nbsp;&nbsp;' +
+                                   '<img src="/Image/down.png" style="cursor:pointer;" id="imgSinglePrice" onclick="AppendSinglePrice()" />'+
+                                   '</div>' +
+                                    '</td>' +
+                            (val.MaxPeopleCount>1 ?
+                                    '<td class="GridBar2"><label id="lblDoublePrice">@Resources.DoublePrice</label>' +
+                                      '<div>' +
+                                   '<input id="txtDoublePriceAppend" type="text" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;margin-left: 29px;background-color:#bc312e;color:White;"/>&nbsp;&nbsp;' +
+                                   '<img src="/Image/down.png" style="cursor:pointer;" id="imgDoublePrice" onclick="AppendDoublePrice()" />' +
+                                   '</div>' +
+                                    '</td>' : '') +
+                             (val.MaxPeopleCount > 2 ?
+                                    '<td class="GridBar2"><label id="lblRoomPrice">@Resources.RoomPrice</label>' +
+                                       '<div>' +
+                                   '<input id="txtRoomPriceAppend" type="text" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;margin-left: 29px;background-color:#bc312e;color:White;"/>&nbsp;&nbsp;' +
+                                   '<img src="/Image/down.png" style="cursor:pointer;" id="imgRoomPrice" onclick="AppendRoomPrice()" />' +
+                                   '</div>' +
+                                    '</td>' : '') +
+                                    '<td class="GridBar2"><label id="lblRoomAvailability">@Resources.RoomAvailability</label>' +
+                 
+                                       '<div>' +
+                                   '<input id="txtAvailabilityAppend" type="text" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;margin-left: 29px;background-color:#bc312e;color:White;"/>&nbsp;&nbsp;' +
+                                   '<img src="/Image/down.png" style="cursor:pointer;" id="imgAvailability" onclick="AppendRoomAvailability()" />' +
+                                   '</div>' +
+                                    '</td>' +
+                                    '<td class="GridBar2"><label id="lblMinimumStay">@Resources.MinimumStay</label></td>' +
+                                    '<td class="GridBar2"><label id="lblCloseToArrival">@Resources.CloseToArrival</label></td>' +
+                                    '<td class="GridBar2"><label id="lblCloseToDeparture">@Resources.CloseToDeparture</label></td>' +
+                                    '<td class="GridBar2"><label id="lblClosed">@Resources.Closed</label></td>' +
+                                '</tr>' +
+                            '</thead>')
+                        }
+                        $('#tblRateAndAvailability').append(
+                            '<tr class="Available">' +
+                            '<td class="GridBar2" align="center">' +
+                            '<label id="lblDateName' + val.DayID + '">' + val.Day + ' ' + val.MonthName + ' ' + val.Year + ' </label>' +
+                            '<input type="hidden" name="hiddenDateID" value=' + val.DateID + ' id="hdnDateID' + val.DateID + '" />' +
+                            '<input type="hidden" name="hiddenWeekDayID" value=' + val.WeekDay + '  id="hdnWeekDayID' + val.WeekDay + '" />' +
+                            '</td>' +
+                             '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                            '<label id="lblDayName' + val.DateID + '">' + val.DayName + ' </label>' +
+                            '</td>' +
+                            '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                            (val.Closed == true ? '<input name="txtSinglePriceName" type="text" disabled style="height:30px;width:60px;" id="txtSinglePrice' + val.DateID + '" value=' + val.SinglePrice + ' />' : '') +
+                            (val.Closed == false ? '<input name="txtSinglePriceName" type="text" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;" id="txtSinglePrice' + val.DateID + '" value=' + val.SinglePrice + ' />' : '') +
+                            '</td>' +
+                              (val.MaxPeopleCount>1 ? '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                            (val.Closed == true ? '<input type="text" name="txtDoublePriceName" disabled style="height:30px;width:60px;" id="txtDoublePrice' + val.DateID + '" value=' + val.DoublePrice + ' />' : '') +
+                             (val.Closed == false ? '<input type="text" name="txtDoublePriceName" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;" id="txtDoublePrice' + val.DateID + '" value=' + val.DoublePrice + ' />' : '') +
+                            '</td>':'') +
+                             (val.MaxPeopleCount>2 ? '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                           (val.Closed == true ? '<input type="text" disabled name="txtRoomPriceName" style="height:30px;width:60px;" id="txtRoomPrice' + val.DateID + '" value=' + val.RoomPrice + ' />' : '') +
+                             (val.Closed == false ? '<input type="text" name="txtRoomPriceName" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;" id="txtRoomPrice' + val.DateID + '" value=' + val.RoomPrice + ' />' : '') +
+                            '</td>' : '') +
+                            '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                           (val.Closed == true ? '<input type="text" name="txtAvailableRoomCountName" disabled style="height:30px;width:60px;" id="txtAvailableRoomCount' + val.DateID + '" value=' + val.AvailableRoomCount + ' />' : '') +
+                           (val.Closed == false ? '<input type="text" name="txtAvailableRoomCountName" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;" id="txtAvailableRoomCount' + val.DateID + '" value=' + val.AvailableRoomCount + ' />' : '') +
+                            '</td>' +
+                             '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '"  align="center">' +
+                            (val.Closed == true ? '<input type="text" name="txtMinimumStayName" disabled style="height:30px;width:60px;" id="txtMinimumStay' + val.DateID + '" value=' + val.MinimumStay + ' />' : '') +
+                            (val.Closed == false ? '<input type="text" name="txtMinimumStayName" onkeypress="return isNumberKey(event);" style="height:30px;width:60px;" id="ltxtMinimumStay' + val.DateID + '" value=' + val.MinimumStay + ' />' : '') +
+                            '</td>' +
+                            '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                          (val.Closed == true ? 
+                          (val.CloseToArrival == true ?
+                           '<input type="checkbox" style="left:8px;" disabled checked id="ChkCloseToArrival' + val.DateID + '" name="CheckCloseToArrival" />' : '') +
+                            (val.CloseToArrival == false ?
+                           '<input type="checkbox" style="left:8px;" disabled id="ChkCloseToArrival' + val.DateID + '" name="CheckCloseToArrival" />' : '') : '') +
+                            (val.Closed == false ?
+                          (val.CloseToArrival == true ?
+                           '<input type="checkbox" style="left:8px;"  checked id="ChkCloseToArrival' + val.DateID + '" name="CheckCloseToArrival" />' : '') +
+                            (val.CloseToArrival == false ?
+                           '<input type="checkbox" style="left:8px;"  id="ChkCloseToArrival' + val.DateID + '" name="CheckCloseToArrival" />' : '') : '') +
+                           '</td>' +
+                           '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                           (val.Closed == true ? 
+                           (val.CloseToDeparture == true ?
+                           '<input type="checkbox" style="left:8px;" disabled checked id="ChkCloseToDeparture' + val.DateID + '" name="CheckCloseToDeparture" />' : '') +
+                            (val.CloseToDeparture == false ?
+                           '<input type="checkbox" style="left:8px;" disabled id="ChkCloseToDeparture' + val.DateID + '" name="CheckCloseToDeparture" />' : '') : '') +
+                               (val.Closed == false ?
+                           (val.CloseToDeparture == true ?
+                           '<input type="checkbox" style="left:8px;" checked id="ChkCloseToDeparture' + val.DateID + '" name="CheckCloseToDeparture" />' : '') +
+                            (val.CloseToDeparture == false ?
+                           '<input type="checkbox" style="left:8px;" id="ChkCloseToDeparture' + val.DateID + '" name="CheckCloseToDeparture" />' : '') : '') +
+                            '</td>' +
+                            '<td style="border:1px solid #c5ccda;color:black;font-weight:bold" class="' + val.CssClass + '" align="center">' +
+                            (val.Closed == true ? 
+                           '<input type="checkbox" style="left:8px;" checked id="ChkClosed' + val.DateID + '" name="CheckClosed" />' : '') +
+                            (val.Closed == false ?
+                           '<input style="border:1px solid #c5ccda;color:black;font-weight:bold;left:8px;" type="checkbox" id="ChkClosed' + val.DateID + '" name="CheckClosed" />' : '') +
+                            '</td>' +
+                            '</tr>'
+                        )
+                        LoopCount++;
+                    })
+                }
+            })
+        }
+        //alert("WeekDay  "+WeekDay)
+        //alert("StartDate  " + StartDate)
+        //alert("Enddate  " + Enddate)
+        //alert("RoomType  " + RoomType)
+        //alert("PricePolicy  " + PricePolicy)
+        //alert("AccommodationType  " + AccommodationType)
+    }
+
+    var DateValidationToday = "Valid";
+
+    var DateValidationDiff = "Valid";
+
+    function CheckTodayDate() {
+
+        var StartDate = document.getElementById('datetimepickerStart').value
+
+        var jsonStart = { StartDate: StartDate }
+        if (StartDate != "") {
+           // alert(StartDate)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckTodayDate",
+                data: jsonStart,
+                datatype: "json",
+                success: function (data) {
+                     //alert("TodayDate" + data)
+                    if(data>=1)
+                    {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "";
+                        DateValidationToday = "Invalid"
+                    }
+                    else {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "none";
+                        DateValidationToday = "Valid"
+                    }
+                }
+            })
+        }
+    }
+    var enddate90 = '@ViewBag.EndDate90';
+    function CheckDateDifference() {
+      
+        var StartDate = document.getElementById('datetimepickerStart').value
+        var Enddate = document.getElementById('datetimepickerEnd').value
+        var json = { StartDate: StartDate, Enddate: Enddate }
+        if (StartDate != "" && Enddate != "") {
+           // alert("hi")
+           // alert(json)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckDateDiff",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+                   //alert("TodayDateDiff" + data)
+                    if (data >= 1) {
+                        document.getElementById("lblDateComparisionWarning").style.display = "";
+                        DateValidationDiff = "Invalid"
+                    }
+                    else
+                    {
+                        if (data<-90)
+                        {
+                            document.getElementById('datetimepickerEnd').value = enddate90;
+                        }
+                        document.getElementById("lblDateComparisionWarning").style.display = "none";
+                        DateValidationDiff = "Valid"
+                    }
+
+                }
+            })
+        }
+    }
+
+
+    $(document).ready(function () {
+        setTimeout("LoadHotelAvailabilityAndRate()",1500)
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+    })
+
+    var json = {}
+    $.ajax({
+        type: "GET",
+        url: "/DropDownLists/GetRoomsByHotel",
+        data: json,
+        datatype: "json",
+        success: function (data) {
+
+            $("#ddlRoomType").kendoDropDownList({
+                dataTextField: "RoomTypeName",
+                dataValueField: "RoomID ",
+                dataSource: data
+            });
+
+        }
+    })
+    $.ajax({
+        type: "GET",
+        url: "/DropDownLists/GetPricePlicy",
+        data: json,
+        datatype: "json",
+        success: function (data) {
+
+            $("#ddlPricePolicy").kendoDropDownList({
+                dataTextField: "Name",
+                dataValueField: "ID",
+                dataSource: data
+            });
+
+        }
+    })
+    $.ajax({
+        type: "GET",
+        url: "/DropDownLists/GetAccomodationByID",
+        data: json,
+        datatype: "json",
+        success: function (data) {
+
+            $("#ddlTypeAccommodation").kendoDropDownList({
+                dataTextField: "Name",
+                dataValueField: "ID",
+                dataSource: data
+            });
+
+        }
+    })
+</script>
+
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

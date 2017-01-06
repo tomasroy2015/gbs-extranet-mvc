@@ -1,0 +1,30 @@
+﻿@(Html.Kendo().DropDownList()
+                    .Name("BusinessPartnerID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                        .DataTextField("BusinessPartner")
+                    .DataValueField("BusinessPartnerID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetBusinessPartner", "DropDownLists");
+        });
+    })
+)
+
+
+@*@(Html.Kendo().DropDownList()
+               .Name("ID")
+        //.OptionLabel("-- Select --")
+           .HtmlAttributes(new { style = "width:100%" })
+                       .DataTextField("Name")
+                   .DataValueField("ID")
+   .DataSource(source =>
+   {
+       source.Read(read =>
+       {
+           read.Action("_ReadPart", "BizTbl_UserBusinessPartner");
+       });
+   })
+)*@

@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                            .Name("BusinessPartnerCancelPolicyID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                                    .DataTextField("BusinessPartnerCancelPolicyID")
+                                .DataValueField("BusinessPartnerCancelPolicyID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetBusinessPartnerCancelPolicyID", "DropDownLists");
+        });
+    })
+)

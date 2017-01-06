@@ -1,0 +1,51 @@
+﻿@using Resources
+@using ReservationscolumnCaption
+@using PropertyReservationsColumnCaption
+
+
+<span style="color: black; text-align:center;font-size:13px;font-weight:bold">
+    @Resources.HotelRecentReservation
+</span>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.HomeExt>()
+            .Name("HotelRecentReservation_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(5)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ReservationID);
+            //model.Field(p => p.ID).Editable(false);
+        })
+             .Read(read => read.Action("_recentHotelReservations", "Home"))
+
+
+        )
+
+
+            .Columns(columns =>
+            {
+
+
+                columns.Bound(p => p.ReservationID).ClientTemplate("<a style='text-decoration:underline;' href='/PropertyReservations/View/#=EncryptReservationID#' title='View Reservations'>#=ReservationID#</a>").Title(ReservationscolumnCaption.dgReservationID).Width(120);
+                columns.Bound(p => p.ReservationOwener).Title(ReservationscolumnCaption.dgReservationFullName).Width(130);
+                columns.Bound(p => p.Resrvationdate).Title(ReservationscolumnCaption.dgHotelReservationReservationDate).Width(150);
+
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Excel();
+                })
+                        .Scrollable(scrollable => scrollable.Height(120))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                        .Scrollable(scr => scr.Height(120))
+                .Filterable()
+                .Excel(excel => excel
+                    .FileName("HotelRecentReservation.xlsx")
+                .Filterable(true))
+
+)

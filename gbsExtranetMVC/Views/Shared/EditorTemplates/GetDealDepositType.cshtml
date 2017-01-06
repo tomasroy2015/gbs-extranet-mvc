@@ -1,0 +1,15 @@
+﻿@(Html.Kendo().DropDownList()
+          .Name("DealDepositTypeID")
+     .OptionLabel("-- Select --")
+     .HtmlAttributes(new { style = "width:100%" })
+        .DataTextField("DealDepositType")
+   .DataValueField("DealDepositTypeID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetDealDepositType", "DropDownLists");
+        });
+    })
+)
+

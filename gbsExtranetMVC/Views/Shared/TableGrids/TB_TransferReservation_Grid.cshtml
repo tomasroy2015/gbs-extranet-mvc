@@ -1,0 +1,125 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TransferReservation")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-2  col-sm-2">
+            <label> @MessageColumnCaptions.TB_TransferReservationCaption("Active")</label> &nbsp;<input id="ChkFilterCommon" name="ChkFilterCommon" type="checkbox" />
+        </div>
+        <div class="col-md-4  col-sm-4">
+            <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+            <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $Active = "false";
+        if ($('#ChkFilterCommon').prop('checked')) {
+            $Active = "true";
+        }
+
+        if ($Active == "true") {
+            //alert($Commom)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        var grid = $("#TB_TransferReservation_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_TransferReservation_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        document.getElementById('ChkFilterCommon').checked = false
+    });
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TransferReservationExt>()
+                .Name("TB_TransferReservation_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+        })
+
+        )
+
+
+            .Columns(columns =>
+            {
+
+                columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+                columns.Bound(p => p.Reservation).Title(MessageColumnCaptions.TB_TransferReservationCaption("ReservationID")).Width(150);
+                columns.Bound(p => p.Firm).Title(MessageColumnCaptions.TB_TransferReservationCaption("FirmID")).Width(150);
+                columns.Bound(p => p.Transfer).Title(MessageColumnCaptions.TB_TransferReservationCaption("TransferID")).Width(150);
+                columns.Bound(p => p.TransferDate).Title(MessageColumnCaptions.TB_TransferReservationCaption("TransferDate")).ClientTemplate("#= kendo.toString(TransferDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.TransferTime).Title(MessageColumnCaptions.TB_TransferReservationCaption("TransferTime")).Width(150);
+                columns.Bound(p => p.GuestFullName).Title(MessageColumnCaptions.TB_TransferReservationCaption("GuestFullName")).Width(150);
+                columns.Bound(p => p.TransferAddress).Title(MessageColumnCaptions.TB_TransferReservationCaption("TransferAddress")).Width(150);
+                columns.Bound(p => p.PassangerCount).Title(MessageColumnCaptions.TB_TransferReservationCaption("PassangerCount")).Width(150);
+                columns.Bound(p => p.FlightNumber).Title(MessageColumnCaptions.TB_TransferReservationCaption("FlightNumber")).Width(150);
+                columns.Bound(p => p.ReturnTransfer).Title(MessageColumnCaptions.TB_TransferReservationCaption("ReturnTransfer"))
+                .ClientTemplate("<div style='text-align:center;'> #if(ReturnTransfer){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+                columns.Bound(p => p.ReturnDate).Title(MessageColumnCaptions.TB_TransferReservationCaption("ReturnDate")).ClientTemplate("#= kendo.toString(ReturnDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.ReturnTime).Title(MessageColumnCaptions.TB_TransferReservationCaption("ReturnTime")).Width(150);
+                columns.Bound(p => p.ReturnFlightNumber).Title(MessageColumnCaptions.TB_TransferReservationCaption("ReturnFlightNumber")).Width(150);
+                columns.Bound(p => p.BusinessPartnerCancelPolicy).Title(MessageColumnCaptions.TB_TransferReservationCaption("BusinessPartnerCancelPolicyID")).Width(150);
+                columns.Bound(p => p.NonRefundable).Title(MessageColumnCaptions.TB_TransferReservationCaption("NonRefundable"))
+                .ClientTemplate("<div style='text-align:center;'> #if(NonRefundable){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+                columns.Bound(p => p.Amount).Title(MessageColumnCaptions.TB_TransferReservationCaption("Amount")).Width(150);
+                columns.Bound(p => p.GeneralPromotionDiscountPercentage).Title(MessageColumnCaptions.TB_TransferReservationCaption("GeneralPromotionDiscountPercentage")).Width(150);
+                columns.Bound(p => p.PromotionDiscountPercentage).Title(MessageColumnCaptions.TB_TransferReservationCaption("PromotionDiscountPercentage")).Width(150);
+                columns.Bound(p => p.PayableAmount).Title(MessageColumnCaptions.TB_TransferReservationCaption("PayableAmount")).Width(150);
+                columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_TransferReservationCaption("CurrencyID")).Width(150);
+                columns.Bound(p => p.Cost).Title(MessageColumnCaptions.TB_TransferReservationCaption("Cost")).Width(150);
+                columns.Bound(p => p.CostCurrency).Title(MessageColumnCaptions.TB_TransferReservationCaption("CostCurrencyID")).Width(150);
+                columns.Bound(p => p.ComissionRate).Title(MessageColumnCaptions.TB_TransferReservationCaption("ComissionRate")).Width(150);
+                columns.Bound(p => p.ComissionAmount).Title(MessageColumnCaptions.TB_TransferReservationCaption("ComissionAmount")).Width(150);
+                columns.Bound(p => p.ComissionCurrency).Title(MessageColumnCaptions.TB_TransferReservationCaption("ComissionCurrencyID")).Width(150);
+                columns.Bound(p => p.Deposit).Title(MessageColumnCaptions.TB_TransferReservationCaption("Deposit")).Width(150);
+                columns.Bound(p => p.DepositType).Title(MessageColumnCaptions.TB_TransferReservationCaption("DepositTypeID")).Width(150);
+                columns.Bound(p => p.DepositCurrency).Title(MessageColumnCaptions.TB_TransferReservationCaption("DepositCurrencyID")).Width(150);
+                columns.Bound(p => p.DepositInTL).Title(MessageColumnCaptions.TB_TransferReservationCaption("DepositInTL")).Width(150);
+                columns.Bound(p => p.Status).Title(MessageColumnCaptions.TB_TransferReservationCaption("StatusID")).Width(150);
+                columns.Bound(p => p.ReservationOperation).Title(MessageColumnCaptions.TB_TransferReservationCaption("ReservationOperationID")).Width(150);
+                columns.Bound(p => p.CancelDateTime).Title(MessageColumnCaptions.TB_TransferReservationCaption("CancelDateTime")).ClientTemplate("#= kendo.toString(CancelDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_TransferReservationCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_TransferReservation.xlsx")
+                .Filterable(true))
+
+)
+
+

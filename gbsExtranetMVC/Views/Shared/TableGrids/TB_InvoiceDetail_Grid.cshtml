@@ -1,0 +1,145 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_InvoiceDetail")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+
+
+        <div class="col-md-12">
+            <div class="col-md-5  col-sm-5">
+                <div class="col-md-3  col-sm-3" style="padding: 5px;">
+                    <label> @MessageColumnCaptions.TB_InvoiceDetail("InvoiceID") </label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input id="drpinvoiceid" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-5  col-sm-5">
+
+                <div class="col-md-3  col-sm-3" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.TB_InvoiceDetail("ReservationID")</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" style="width: 100%;" class="form-control" id="txtreservationid"/>
+                </div>
+
+            </div>
+
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetInvoiceID",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpinvoiceid").kendoDropDownList({
+
+                    filter: "contains",
+                    optionLabel: AllSelectText,
+                    dataTextField: "InvoiceID",
+                    dataValueField: "InvoiceID",
+                    dataSource: data
+                });
+
+            }
+        })
+
+    });
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+
+        $InvoiceID = $("#drpinvoiceid").val();
+
+        $InvoiceText = $("#drpinvoiceid").data("kendoDropDownList").text();
+        $ReservationID = $("#txtreservationid").val();
+        if ($InvoiceID) {
+            $filter.push({ field: "InvoiceID", operator: "Equal", value: $InvoiceText });
+        }
+        if ($ReservationID) {
+            $filter.push({ field: "ReservationID", operator: "Equal", value: $ReservationID });
+        }
+        var grid = $("#TB_InvoiceDetail_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_InvoiceDetail_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+
+        $("#txtreservationid").val('');
+
+        var dropdownlistPart = $("#drpinvoiceid").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_InvoiceDetailExt>()
+              .Name("TB_InvoiceDetail_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                            .Read(read => read.Action("_Read", "TB_InvoiceDetail", new { TableID = (int)ViewBag.TableID }))
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.InvoiceID).Width(150).Title(MessageColumnCaptions.TB_InvoiceDetail("InvoiceID")).Width(150);
+                    columns.Bound(p => p.ReservationID).Width(200).Title(MessageColumnCaptions.TB_InvoiceDetail("ReservationID")).Width(250);
+                  
+
+
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+        //.Editable(editable => editable.Mode(GridEditMode.InLine))
+        //    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_Invoice.xlsx")
+                .Filterable(true))
+
+)
+

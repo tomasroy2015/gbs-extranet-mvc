@@ -1,0 +1,96 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TourHistory")</h1>
+
+
+
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TourHistoryExt>()
+                                    .Name("TB_TourHistory_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+           
+           .Read(read => read.Action("_Read", "TB_TourHistory", new { TableID = (int)ViewBag.TableID }))   
+        )
+
+        .Columns(columns =>
+        {
+
+            columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+            columns.Bound(p => p.TourID).Title(MessageColumnCaptions.TB_TourHistoryCaption("TourID")).Width(200).Locked(true);
+            columns.Bound(p => p.BusinessPartnerID).Title(MessageColumnCaptions.TB_TourHistoryCaption("BusinessPartnerID")).Width(200).Locked(true);
+            columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_TourHistoryCaption("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+            columns.Bound(p => p.EndDate).Title(MessageColumnCaptions.TB_TourHistoryCaption("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+            columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_TourHistoryCaption("Name_en")).Width(200);
+            columns.Bound(p => p.Description).Title(MessageColumnCaptions.TB_TourHistoryCaption("Description_en")).Width(200);
+            columns.Bound(p => p.SpecialNote_tr).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_tr")).Width(200);
+
+            columns.Bound(p => p.SpecialNote_en).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_en")).Width(200);
+            columns.Bound(p => p.SpecialNote_de).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_de")).Width(200);
+            columns.Bound(p => p.SpecialNote_es).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_es")).Width(200);
+            columns.Bound(p => p.SpecialNote_fr).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_fr")).Width(200);
+            columns.Bound(p => p.SpecialNote_ru).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_ru")).Width(200);
+            columns.Bound(p => p.SpecialNote_it).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_it")).Width(200);
+            columns.Bound(p => p.SpecialNote_ar).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_ar")).Width(200);
+            columns.Bound(p => p.SpecialNote_jp).Title(MessageColumnCaptions.TB_TourHistoryCaption("SpecialNote_jp")).Width(200);
+            
+            columns.Bound(p => p.Quota).Title(MessageColumnCaptions.TB_TourHistoryCaption("Quota")).Width(200);
+            columns.Bound(p => p.TourFrequencyID).Title(MessageColumnCaptions.TB_TourHistoryCaption("TourFrequencyID")).Width(200);
+            columns.Bound(p => p.Duration).Title(MessageColumnCaptions.TB_TourHistoryCaption("Duration")).Width(200);
+            columns.Bound(p => p.DurationUnitID).Title(MessageColumnCaptions.TB_TourHistoryCaption("DurationUnitID")).Width(200);
+            columns.Bound(p => p.TourStartDateTime).Title(MessageColumnCaptions.TB_TourHistoryCaption("TourStartDateTime")).Width(200);
+            columns.Bound(p => p.StartRegionID).Title(MessageColumnCaptions.TB_TourHistoryCaption("StartRegionID")).Width(200);
+
+            columns.Bound(p => p.ChildAge).Title(MessageColumnCaptions.TB_TourHistoryCaption("ChildAge")).Width(200);
+            columns.Bound(p => p.Amount).Title(MessageColumnCaptions.TB_TourHistoryCaption("Amount")).Width(200);
+            columns.Bound(p => p.CurrencyID).Title(MessageColumnCaptions.TB_TourHistoryCaption("CurrencyID")).Width(200);
+            columns.Bound(p => p.Cost).Title(MessageColumnCaptions.TB_TourHistoryCaption("Cost")).Width(200);
+            columns.Bound(p => p.CostCurrencyID).Title(MessageColumnCaptions.TB_TourHistoryCaption("CostCurrencyID")).Width(200);
+            columns.Bound(p => p.Deposit).Title(MessageColumnCaptions.TB_TourHistoryCaption("Deposit")).Width(200);
+            columns.Bound(p => p.DepositCurrencyID).Title(MessageColumnCaptions.TB_TourHistoryCaption("DepositCurrencyID")).Width(200);
+
+            columns.Bound(p => p.DepositTypeID).Title(MessageColumnCaptions.TB_TourHistoryCaption("DepositTypeID")).Width(200);
+            columns.Bound(p => p.BusinessPartnerCancelPolicyID).Title(MessageColumnCaptions.TB_TourHistoryCaption("BusinessPartnerCancelPolicyID")).Width(200);
+
+            columns.Bound(p => p.HitCount).Title(MessageColumnCaptions.TB_TourHistoryCaption("HitCount")).Width(200);
+            columns.Bound(p => p.IsPopular).Title(MessageColumnCaptions.TB_TourHistoryCaption("IsPopular"))
+                .ClientTemplate("<div style='text-align:center;'> #if(IsPopular){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+            columns.Bound(p => p.Sort).Title(MessageColumnCaptions.TB_TourHistoryCaption("Sort")).Width(200);
+            columns.Bound(p => p.RoutingName).Title(MessageColumnCaptions.TB_TourHistoryCaption("RoutingName")).Width(200);
+            columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_TourHistoryCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+            columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.TB_TourHistoryCaption("IPAddress")).Width(200);
+            columns.Bound(p => p.LogDateTime).Title(MessageColumnCaptions.TB_TourHistoryCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+            columns.Bound(p => p.LogUserID).Title(MessageColumnCaptions.TB_TourHistoryCaption("LogUserID")).Width(200); 
+                      
+        })
+             .ToolBar(tool =>
+                            {
+                                tool.Excel().Text(Resources.ExporttoExcel);
+                            })
+                            .Editable(editable => editable.Mode(GridEditMode.InLine))
+                                .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                            .Pageable(p => p.Refresh(true))
+                            .Sortable()
+                            .Navigatable()
+                            .Groupable()
+                            .Scrollable(scr => scr.Height(370))
+                            .Filterable()
+                            .Excel(excel => excel
+                                    .FileName("TB_TourHistoryRpt.xlsx")
+                            .Filterable(true))
+)
+

@@ -1,0 +1,146 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_Region")</h1>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+    function OnEdit(e) {
+        if (e.model.isNew() == false) {
+            $('input[name=ID]').parent().html(e.model.ID);
+        }
+    }
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_RegionExt>()
+                        .Name("TB_RegionGrid")
+                        .Events(events => events.Edit("OnEdit"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID);
+        })
+                            .Create(update => update.Action("_Create", "TB_Region"))
+                            .Read(read => read.Action("_Read", "TB_Region", new { TableID = (int)ViewBag.TableID }))
+                            .Update(update => update.Action("_Update", "TB_Region"))
+                            .Destroy(destroy => destroy.Action("_Destroy", "TB_Region"))
+        )
+
+                            .Columns(columns =>
+                            {
+                                columns.Command(
+
+                                    command =>
+                                    {
+                                        command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                                        command.Destroy().Text(Resources.Delete);
+                                    }).Locked(true).Width(180);
+
+                                columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                                columns.Bound(p => p.Country).Title(MessageColumnCaptions.TB_RegionCaption("CountryID")).EditorTemplateName("ddlCountries").Width(150);
+                                
+                                columns.Bound(p => p.ParentID).Title(MessageColumnCaptions.TB_RegionCaption("ParentID")).Width(150);
+                                columns.Bound(p => p.SecondParentID).Title(MessageColumnCaptions.TB_RegionCaption("SecondParentID")).Width(150);
+                                columns.Bound(p => p.RegionType).Title(MessageColumnCaptions.TB_RegionCaption("RegionType")).Width(150);
+                                columns.Bound(p => p.SubRegionType).Title(MessageColumnCaptions.TB_RegionCaption("SubRegionType")).Width(150);
+                                columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_RegionCaption("Name")).Width(150);
+                                columns.Bound(p => p.ASCIIName).Title(MessageColumnCaptions.TB_RegionCaption("NameASCII")).Width(150);
+                                columns.Bound(p => p.Name_tr).Title(MessageColumnCaptions.TB_RegionCaption("Name_tr")).Width(150);
+                                columns.Bound(p => p.Name_en).Title(MessageColumnCaptions.TB_RegionCaption("Name_en")).Width(150);
+                                columns.Bound(p => p.Name_de).Title(MessageColumnCaptions.TB_RegionCaption("Name_de")).Width(150);
+                                columns.Bound(p => p.Name_es).Title(MessageColumnCaptions.TB_RegionCaption("Name_es")).Width(150);
+                                columns.Bound(p => p.Name_fr).Title(MessageColumnCaptions.TB_RegionCaption("Name_fr")).Width(150);
+                                columns.Bound(p => p.Name_ru).Title(MessageColumnCaptions.TB_RegionCaption("Name_ru")).Width(150);
+                                columns.Bound(p => p.Name_it).Title(MessageColumnCaptions.TB_RegionCaption("Name_it")).Width(150);
+                                columns.Bound(p => p.Name_ar).Title(MessageColumnCaptions.TB_RegionCaption("Name_ar")).Width(150);
+                                columns.Bound(p => p.Name_ja).Title(MessageColumnCaptions.TB_RegionCaption("Name_ja")).Width(150);
+                                columns.Bound(p => p.Code).Title(MessageColumnCaptions.TB_RegionCaption("Code")).Width(150);
+                                columns.Bound(p => p.Population).Title(MessageColumnCaptions.TB_RegionCaption("Population")).Width(150);
+                                
+                                columns.Bound(p => p.IsIncludedInDestinationSearch).Title(MessageColumnCaptions.TB_RegionCaption("IsIncludedInDestinationSearch"))
+                                      .ClientTemplate("<div style='text-align:center;'> #if(IsIncludedInDestinationSearch){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+                                columns.Bound(p => p.IsCity).Title(MessageColumnCaptions.TB_RegionCaption("IsCity"))
+                                      .ClientTemplate("<div style='text-align:center;'> #if(IsCity){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+                                columns.Bound(p => p.IsPopular).Title(MessageColumnCaptions.TB_RegionCaption("IsPopular"))
+                                     .ClientTemplate("<div style='text-align:center;'> #if(IsPopular){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+
+                                columns.Bound(p => p.IsFilter).Title(MessageColumnCaptions.TB_RegionCaption("IsFilter"))
+                                    .ClientTemplate("<div style='text-align:center;'> #if(IsFilter){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+                                columns.Bound(p => p.IsMainPageDisplay).Title(MessageColumnCaptions.TB_RegionCaption("IsMainPageDisplay"))
+                                    .ClientTemplate("<div style='text-align:center;'> #if(IsMainPageDisplay){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+                                columns.Bound(p => p.MainPageDisplaySort).Title(MessageColumnCaptions.TB_RegionCaption("MainPageDisplaySort")).Width(150);
+                                columns.Bound(p => p.HitCount).Title(MessageColumnCaptions.TB_RegionCaption("HitCount")).Width(150);
+
+                                columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_RegionCaption("Sort")).Width(150);
+                                columns.Bound(p => p.Latitude).Title(MessageColumnCaptions.TB_RegionCaption("Latitude")).Width(150);
+                                columns.Bound(p => p.Longitude).Title(MessageColumnCaptions.TB_RegionCaption("Longitude")).Width(150);
+                                columns.Bound(p => p.MapZoomIndex).Title(MessageColumnCaptions.TB_RegionCaption("MapZoomIndex")).Width(150);
+
+                                columns.Bound(p => p.HasCityTax).Title(MessageColumnCaptions.TB_RegionCaption("HasCityTax"))
+                                    .ClientTemplate("<div style='text-align:center;'> #if(HasCityTax){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+                                
+                                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_RegionCaption("Active"))
+                                     .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+                            })
+                        .ToolBar(tool =>
+                        {
+                            tool.Custom().Name("cmdAddNewRecord")
+                           .Text(Resources.NewRecord)
+                           .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                            tool.Excel().Text(Resources.ExporttoExcel);
+                        })
+                        .Editable(editable => editable.Mode(GridEditMode.InLine))
+                            .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                        .Pageable(p => p.Refresh(true))
+                        .Sortable()
+                        .Navigatable()
+                        .Groupable()
+                        .Scrollable(scr => scr.Height(370))
+                        .Filterable()
+                        .Excel(excel => excel
+                                .FileName("TB_RegionRpt.xlsx")
+                        .Filterable(true))
+
+)
+
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_RegionGrid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+
+
+
+

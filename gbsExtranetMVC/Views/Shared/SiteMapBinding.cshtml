@@ -1,0 +1,103 @@
+﻿<script>
+    function Menu_OnSelect(e) {
+        var itemText = $(e.item).children(".k-link").text(); //Get Command Text
+        if (itemText == "validationText") {
+            //call another Function or perform Logic here
+        }
+    }
+</script>
+
+@if (Request.IsAuthenticated)
+{
+    //Following logic used to Display Back button on Menu Bar by getting string data from View bag set when calling that View from Controller
+    int menuItem = 0;
+    string[] menuParam = new string[2];
+    if (ViewData["BacktoButtonOnMenu"] != null)
+    {
+        menuParam = ViewData["BacktoButtonOnMenu"].ToString().ToLower().Split('_');
+
+        if (menuParam[0].Equals("somestring"))
+        {
+            menuItem = 1; //if it is on Client Edit Screen
+        }
+        else
+        {
+            menuItem = 0;
+        }
+    }
+
+
+    @*<div id="tabs-container">
+        <ul class="tabs">
+            <li class="active"><a href="/">Home</a></li>
+            <li><a href="#">Management</a></li>
+            <li><a href="#">Configurations</a></li>
+            <li><a href="#">Section four</a></li>
+        </ul>
+    </div>
+
+    <!-- defining top menu -->
+    <div id="nav-container">
+        <ul class="nav" id="1">
+            <!-- defining top menu elements -->
+           
+        </ul>
+        <ul class="nav" id="2" style="display:none;">
+            <li><a href="/Maintenance/Invoice">Invoice</a></li>
+            <li><a href="#">Menus #9</a></li>
+            <li><a href="#">Menus #10</a></li>
+        </ul>
+        <ul class="nav" id="3" style="display:none;">
+            <li><a href="/Maintenance/Authorization">Authorization</a></li>
+            <li><a href="/Maintenance/Bank">Bank</a></li>
+            <li><a href="/Maintenance/Countries">Countries</a></li>
+        </ul>
+        <ul class="nav" id="4" style="display:none;">
+            <li><a href="#">Menus #11</a></li>
+            <li><a href="#">Menus #12</a></li>
+        </ul>
+    </div>
+
+    <div style="clear:both"></div>*@
+
+    @(Html.Kendo().Menu()
+       .Name("Menu")
+       .Orientation(MenuOrientation.Horizontal)
+       .HighlightPath(true)
+     
+
+      // .Events(ev => ev.Select("Menu_OnSelect"))
+        // .BindTo("NonAdmin")
+    .Items(menu =>
+    {
+        menu.Add().Text("Home").Url("/Home");
+
+        menu.Add().Text("Management").Items(submenu =>
+        {
+            submenu.Add().Text("Invoice").Url("/Maintenance/Invoice");
+
+        });
+
+        menu.Add().Text("Configurations").Items(submenu =>
+        {
+            submenu.Add().Text("Authorization").Url("/Maintenance/Authorization");
+            submenu.Add().Text("Bank").Url("/Maintenance/Bank");
+            submenu.Add().Text("Countries").Url("/Maintenance/Countries");
+            submenu.Add().Text("Daily Statistics").Url("/Maintenance/DailyStatistics");
+            submenu.Add().Text("EMails").Url("/Maintenance/EMails");
+            submenu.Add().Text("Firms").Url("/Maintenance/Firms");
+            submenu.Add().Text("Hotel Search Parameter").Url("/Maintenance/HotelSearchParameter");
+            submenu.Add().Text("Message").Url("/Maintenance/Message");
+            submenu.Add().Text("Parameter").Url("/Maintenance/Parameter");
+            submenu.Add().Text("Region").Url("/Maintenance/Region");
+            submenu.Add().Text("Tables").Url("/Maintenance/Tables");
+            submenu.Add().Text("User Operation").Url("/Maintenance/UserOperation");
+
+        });
+
+        if (menuItem == 1)
+            menu.Add().Text("Back to Search").Url("#");
+    })
+)
+
+}

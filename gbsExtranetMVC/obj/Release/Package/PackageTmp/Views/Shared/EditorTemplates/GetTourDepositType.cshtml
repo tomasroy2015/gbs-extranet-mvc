@@ -1,0 +1,15 @@
+﻿@(Html.Kendo().DropDownList()
+          .Name("TourDepositTypeID")
+     .OptionLabel("-- Select --")
+     .HtmlAttributes(new { style = "width:100%" })
+        .DataTextField("TourDepositType")
+   .DataValueField("TourDepositTypeID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetTourDepositType", "DropDownLists");
+        });
+    })
+)
+

@@ -1,0 +1,574 @@
+﻿@using Resources
+@using PropertyOperationColumnCaption
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="color: black; text-align: center;">@Resources.HotelOperations</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 14px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-bottom: 12px;">
+        <div class="col-md-12">
+            <div class="col-lg-5">
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px;">@Resources.HotelName</label>
+                    <input id="txtPropertyName" type="text" class="k-textbox" style="width: 220px; " placeholder="@Resources.HotelName" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px; ">@Resources.Country</label>
+                    <input onchange="ChangeRegionAndCity()" id="drpCountry" style="width:220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px; ">@Resources.Region</label>
+                    <input id="drpRegion" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px; ">@Resources.HotelType</label>
+                    <input id="drpHotelType" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px;">@Resources.HotelChain</label>
+                    <input id="drpHotelChain" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px;">@Resources.Status</label>
+                    <input id="drpStatus" style="width: 220px" />
+
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.Firm</label>
+                    <input id="drpFirm" style="width: 220px" />
+
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.City</label>
+                    <input id="drpCity" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.HotelAddress</label>
+                    <input id="txtPropertyAddress" type="text" class="k-textbox" style="width: 220px" placeholder="@Resources.HotelAddress" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.HotelClass</label>
+                    <input id="drpHotelClass" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.AccommodationType</label>
+                    <input id="drpAccommodationType" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.ActiveStatus</label>
+                    @*<input id="drpActiveStatus" style="width:100%" />*@
+                    <select id="drpActiveStatus" style="width: 220px">
+                        <option value="true">@Resources.Active</option>
+                        <option value="false">@Resources.Passive</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-lg-2">
+                <div class="row" style="margin-top: 125px;">
+                    <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                    <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.FilterRemove</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+            @(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.HotelExt>()
+                    .Name("PropertyOperation_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+
+                        .Create(update => update.Action("_Create", "PropertyOperations"))
+                        .Read(read => read.Action("_Read", "PropertyOperations"))
+                        .Update(update => update.Action("_Update", "PropertyOperations"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "PropertyOperations"))
+        )
+
+        .Columns(columns =>
+        {
+           //columns.Bound("").Width(50).ClientTemplate("<div style='text-align:center;'> <a title='Go To Hotel' href='/PropertyInformation/PropertyInformation/#=ID#'><img src='/Images/goto.png' style='width:30px;cursor:pointer;' alt='goto'></a> </div>").Locked(true);
+            columns.Bound("").Title(Resources.Operation).Sortable(false).Width(150).ClientTemplate("<div style='text-align:center;'> <img title='Go to Hotel' onclick='StoreHotelInfo(#=ID#,#=FirmID#,#=HotelAccommodationTypeID#)' src='/Images/goto.png' style='width:30px;cursor:pointer;' alt='goto'># # <a title='Update' href='/PropertyOperations/Edit/?HotelID=#=EncryptHotelID#'><img src='/Image/update.png' style='width:30px;cursor:pointer;' alt='update'></a> # # <img title='Delete' onclick='DeleteHotel(#=ID#)' src='/Images/delete.png' style='width:30px;cursor:pointer;' alt='delete'> </div>").Locked(true);
+            columns.Bound(p => p.ID).Width(70).ClientTemplate("<a title='Click here to Edit Property Details' style='text-decoration:underline;' href='/PropertyOperations/Edit/?HotelID=#=EncryptHotelID#''>#=ID#</a>").Width(100).Locked(true);
+
+            columns.Bound(p => p.Name).Title(PropertyOperationColumnCaption.dgHotelName).Width(150);
+            columns.Bound(p => p.FirmName).Title(PropertyOperationColumnCaption.dgHotelFirmName).Width(150);
+            columns.Bound(p => p.HotelTypeName).Title(PropertyOperationColumnCaption.dgHotelHotelTypeName).Width(100);
+            columns.Bound(p => p.HotelClassName).Title(PropertyOperationColumnCaption.dgHotelHotelClassName).Width(100);
+            columns.Bound(p => p.HotelAccommodationTypeName).Title(PropertyOperationColumnCaption.dgHotelHotelAccommodationTypeName).Width(150);
+            columns.Bound(p => p.HotelChainName).Title(PropertyOperationColumnCaption.dgHotelHotelChainName).Width(100);
+            columns.Bound(p => p.CountryName).Title(PropertyOperationColumnCaption.dgHotelCountryName).Width(100);
+            columns.Bound(p => p.RegionName).Title(PropertyOperationColumnCaption.dgHotelRegionName).Width(100);
+            columns.Bound(p => p.CityName).Title(PropertyOperationColumnCaption.dgHotelCityName).Width(100);
+            columns.Bound(p => p.MainRegionName).Title(PropertyOperationColumnCaption.dgHotelMainRegionName).Width(100);
+            columns.Bound(p => p.Address).Title(PropertyOperationColumnCaption.dgHotelAddress).Width(150);
+            columns.Bound(p => p.PostCode).Title(PropertyOperationColumnCaption.dgHotelPostCode).Width(100);
+            columns.Bound(p => p.Phone).Title(PropertyOperationColumnCaption.dgHotelPhone).Width(100);
+            columns.Bound(p => p.Fax).Title(PropertyOperationColumnCaption.dgHotelFax).Width(100);
+            columns.Bound(p => p.Email).Title(PropertyOperationColumnCaption.dgHotelEmail).Width(150);
+            columns.Bound(p => p.WebAddress).Title(PropertyOperationColumnCaption.dgHotelWebAddress).Width(150);
+            columns.Bound(p => p.StatusName).Title(PropertyOperationColumnCaption.dgHotelStatusName).Width(150);
+            columns.Bound(p => p.Active).Title(PropertyOperationColumnCaption.dgHotelAktif)
+            .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.CreateDateTime).Title(PropertyOperationColumnCaption.dgHotelCreateDateTime).ClientTemplate("#= kendo.toString(CreateDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+            columns.Bound(p => p.OpDateTime).Title(PropertyOperationColumnCaption.dgHotelOpDateTime).ClientTemplate("#= kendo.toString(OpDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+
+
+        })
+        .ToolBar(tool =>
+            {
+                // tool.Custom().Name("cmdAddNewRecord").Text(Resources.NewRecord).HtmlAttributes(new { @id = "cmdAddNewRecord" });
+
+                tool.Custom().Name("cmdAddNewUser").Text(Resources.NewRecord).Action("Create", "PropertyOperations");
+                tool.Excel();
+            })
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                    .FileName("PropertyOperations.xlsx")
+                .Filterable(true))
+
+            )
+
+            <br /><br />
+            <div align="center">
+                <a title='Click here to Edit Property Details' style='text-decoration:underline;' href='/PropertyOperations/Create'>
+                    <input type="button" value="@Resources.NewRecord" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+                </a>
+                <br />
+
+            </div>
+<script>
+    
+    function  DeleteHotel(HotelID)
+    {
+        var json={HotelID:HotelID}
+        $.ajax({
+            type: "GET",
+            url: "/PropertyOperations/DeleteHotelFunc",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+            }})
+    }
+    function StoreHotelInfo(HotelID,FirmID,HotelAccommodationTypeID,CurrencyName)
+    {
+       // alert("hi")
+       // alert(HotelID)
+
+       // alert(FirmID)
+        var JsonStore={HotelID:HotelID,FirmID:FirmID,HotelAccommodationTypeID:HotelAccommodationTypeID};
+        $.ajax({
+            type: "GET",
+            url: "/PropertyOperations/StoreBizContext",
+            data: JsonStore,
+            datatype: "json",
+            success: function (data) {
+              window.location.href="/PropertyInformation/PropertyInformation";
+            }
+        })
+    }
+
+          function ChangeRegionAndCity()
+            {
+              $Country = $("#drpCountry").val();
+             // alert();
+              var JsonCounrty = { CountryID: $Country }
+              $.ajax({
+                  type: "GET",
+                  url: "/DropDownLists/GetCityByCountry",
+                  data: JsonCounrty,
+                  datatype: "json",
+                  success: function (data) {
+
+                      $("#drpCity").kendoDropDownList({
+                          filter: "contains",
+                          Name: "ID",
+                          optionLabel: "@Resources.All",
+                          dataTextField: "Name",
+                          dataValueField: "ID",
+                          dataSource: data
+                      });
+
+                  }
+              })
+
+              $.ajax({
+                  type: "GET",
+                  url: "/DropDownLists/GetRegionsByCountry",
+                  data: JsonCounrty,
+                  datatype: "json",
+                  success: function (data) {
+
+                      $("#drpRegion").kendoDropDownList({
+                          filter: "contains",
+                          Name: "ID",
+                          optionLabel: "@Resources.All",
+                          dataTextField: "Name",
+                          dataValueField: "ID",
+                          dataSource: data
+                      });
+
+                  }
+              })
+            }
+
+        $("#btnfilter").click(function () {
+
+            $filter = new Array();
+
+            $PropertyName = $("#txtPropertyName").val();
+            $PropertyAddress = $("#txtPropertyAddress").val();
+            $Country = $("#drpCountry").val();
+            $Region = $("#drpRegion").val();
+            $HotelType = $("#drpHotelType").val();
+            $HotelChain = $("#drpHotelChain").val();
+            $Status = $("#drpStatus").val();
+            $Firm = $("#drpFirm").val();
+            $City = $("#drpCity").val();
+            $HotelClass = $("#drpHotelClass").val();
+            $AccommodationTypes = $("#drpAccommodationType").val();
+            $ActiveStatus = $("#drpActiveStatus").val();
+
+            if ($PropertyName) {
+                $filter.push({ field: "Name", operator: "contains", value: $PropertyName });
+            }
+            if ($PropertyAddress) {
+                $filter.push({ field: "Address", operator: "contains", value: $PropertyAddress });
+            }
+            if ($Country) {
+                $filter.push({ field: "CountryID", operator: "equals", value: $Country });
+            }
+            if ($Region) {
+                $filter.push({ field: "RegionID", operator: "equals", value: $Region });
+            }
+            if ($HotelType) {
+                $filter.push({ field: "HotelTypeID", operator: "equals", value: $HotelType });
+            }
+            if ($HotelChain) {
+                $filter.push({ field: "HotelChainID", operator: "equals", value: $HotelChain });
+            }
+            if ($Status) {
+                $filter.push({ field: "StatusID", operator: "equals", value: $Status });
+            }
+            if ($Firm) {
+                $filter.push({ field: "FirmID", operator: "equals", value: $Firm });
+            }
+            if ($City) {
+                $filter.push({ field: "CityID", operator: "equals", value: $City });
+            }
+            if ($HotelClass) {
+                $filter.push({ field: "HotelClassID", operator: "equals", value: $HotelClass });
+            }
+            if ($AccommodationTypes) {
+                $filter.push({ field: "HotelAccommodationTypeID", operator: "contains", value: $AccommodationTypes });
+            }
+            if ($ActiveStatus) {
+                $filter.push({ field: "Active", operator: "eq", value: $ActiveStatus });
+            }
+            var grid = $("#PropertyOperation_Grid").data("kendoGrid");
+            grid.dataSource.filter($filter);
+        });
+
+        $("#btnClearFilter").click(function (e) {
+            e.preventDefault();
+            var datasource = $("#PropertyOperation_Grid").data("kendoGrid").dataSource;
+            //Clear Custom filters:
+            datasource.filter([]);
+
+            $("#txtPropertyName").val('');
+            $("#txtPropertyAddress").val('');
+            var Country = $("#drpCountry").data("kendoDropDownList");
+            Country.value(69);
+            var HotelType = $("#drpHotelType").data("kendoDropDownList");
+            HotelType.select("");
+            var HotelChain = $("#drpHotelChain").data("kendoDropDownList");
+            HotelChain.select("");
+            var Status = $("#drpStatus").data("kendoDropDownList");
+            Status.select("");
+            var Firmsd = $("#drpFirm").data("kendoDropDownList");
+            Firmsd.select("");
+            var HotelClass = $("#drpHotelClass").data("kendoDropDownList");
+            HotelClass.select("");
+            var AccommodationType = $("#drpAccommodationType").data("kendoDropDownList");
+            AccommodationType.select("");
+            var ActiveStatus = $("#drpActiveStatus").data("kendoDropDownList");
+            ActiveStatus.select("");
+           // alert("hi")
+            var JsonCounrty = { CountryID: 69 }
+            $.ajax({
+                type: "GET",
+                url: "/DropDownLists/GetCityByCountry",
+                data: JsonCounrty,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#drpCity").kendoDropDownList({
+                        filter: "contains",
+                        Name: "ID",
+                        optionLabel: "@Resources.All",
+                        dataTextField: "Name",
+                        dataValueField: "ID",
+                        dataSource: data
+                    });
+
+                }
+            })
+
+            $.ajax({
+                type: "GET",
+                url: "/DropDownLists/GetRegionsByCountry",
+                data: JsonCounrty,
+                datatype: "json",
+                success: function(data) {
+
+                    $("#drpRegion").kendoDropDownList({
+                        filter: "contains",
+                        Name: "ID",
+                        optionLabel: "@Resources.All",
+                        dataTextField: "Name",
+                        dataValueField: "ID",
+                        dataSource: data
+                    });
+
+                }
+            });
+
+        });
+
+</script>
+
+<script>
+    function filterWhileLoad()
+    {
+     $("#btnfilter").click()
+    }
+
+    $(document).ready(function () {
+        
+        setTimeout("filterWhileLoad()", 3000);
+
+        var json = {}
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function(data) {
+
+                $("#drpCountry").kendoDropDownList({
+                    filter: "contains",
+                    Name: "CountryID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Country",
+                    dataValueField: "CountryID",
+                    dataSource: data,
+                    value: 69
+                });
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetFirmDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpFirm").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "FirmName",
+                    dataValueField: "FirmID",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+            }
+        });
+        $("#drpActiveStatus").kendoDropDownList({
+            optionLabel: "@Resources.All",
+            value:""
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/ReadFirmRequestStatus",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpStatus").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "FirmRequestStatus",
+                    dataValueField: "FirmRequestStatusID",
+                    dataSource: data,
+                    value:1
+                  
+                });
+                
+             
+            }
+        })
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPropertyType",
+            data: json,
+            datatype: "json",
+            success: function(data) {
+
+                $("#drpHotelType").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPropertyClass",
+            data: json,
+            datatype: "json",
+            success: function(data) {
+
+                $("#drpHotelClass").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetTypeHotelChain",
+            data: json,
+            datatype: "json",
+            success: function(data) {
+
+                $("#drpHotelChain").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotelTypeAccommodation",
+            data: json,
+            datatype: "json",
+            success: function(data) {
+
+                $("#drpAccommodationType").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        });
+        var JsonCounrty = {CountryID:69}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCityByCountry",
+            data: JsonCounrty,
+            datatype: "json",
+            success: function(data) {
+
+                $("#drpCity").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegionsByCountry",
+            data: JsonCounrty,
+            datatype: "json",
+            success: function(data) {
+
+                $("#drpRegion").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        });
+
+    });
+
+
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments);
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g;
+        m.parentNode.insertBefore(a, m);
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

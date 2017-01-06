@@ -1,0 +1,137 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TypeMonth")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-2  col-sm-2">
+            <label> @MessageColumnCaptions.TB_TypeMonthCaption("Active")</label> &nbsp;<input id="ChkFilterCommon" name="ChkFilterCommon" type="checkbox" />
+        </div>
+        <div class="col-md-4  col-sm-4">
+            <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+            <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $Active = "false";
+        if ($('#ChkFilterCommon').prop('checked')) {
+            $Active = "true";
+        }
+
+        if ($Active == "true") {
+            //alert($Commom)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        var grid = $("#TB_TypeMonth_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_TypeMonth_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        document.getElementById('ChkFilterCommon').checked = false
+    });
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TypeMonthExt>()
+                .Name("TB_TypeMonth_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                            .Create(update => update.Action("_Create", "TB_TypeMonth"))
+                            .Read(read => read.Action("_Read", "TB_TypeMonth", new { TableID = (int)ViewBag.TableID }))
+                            .Destroy(destroy => destroy.Action("_Destroy", "TB_TypeMonth"))
+                            .Update(update => update.Action("_Update", "TB_TypeMonth"))
+
+        )
+
+
+            .Columns(columns =>
+            {
+                columns.Command(
+                 command =>
+                 {
+                     command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                     command.Destroy().Text(Resources.Delete);
+                 }).Locked(true).Width(180);
+
+                columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true);
+                columns.Bound(p => p.Name_en).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_en")).Width(150);
+                columns.Bound(p => p.Name_tr).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_tr")).Width(200);
+                columns.Bound(p => p.Name_de).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_de")).Width(200);
+                columns.Bound(p => p.Name_es).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_es")).Width(200);
+                columns.Bound(p => p.Name_fr).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_fr")).Width(200);
+                columns.Bound(p => p.Name_ru).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_ru")).Width(200);
+                columns.Bound(p => p.Name_it).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_it")).Width(200);
+                columns.Bound(p => p.Name_ar).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_ar")).Width(200);
+                columns.Bound(p => p.Name_ja).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_ja")).Width(200);
+                columns.Bound(p => p.Name_pt).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_pt")).Width(200);
+                columns.Bound(p => p.Name_zh).Title(MessageColumnCaptions.TB_TypeMonthCaption("Name_zh")).Width(200);
+                columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_TypeMonthCaption("Sort")).Width(100);
+                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_TypeMonthCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_TypeMonth.xlsx")
+                .Filterable(true))
+
+)
+
+
+<script id="AddNewRecord">
+
+
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_TypeMonth_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

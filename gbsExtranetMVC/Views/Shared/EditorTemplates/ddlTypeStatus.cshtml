@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+            .Name("StatusID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                    .DataTextField("StatusName")
+                .DataValueField("StatusID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetTypeStatus", "DropDownLists");
+        });
+    })
+)

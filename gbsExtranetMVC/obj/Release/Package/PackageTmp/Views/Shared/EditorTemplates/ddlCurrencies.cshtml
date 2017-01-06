@@ -1,0 +1,16 @@
+﻿
+
+@(Html.Kendo().DropDownList()
+                .Name("CurrencyID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                        .DataTextField("Currency")
+                    .DataValueField("CurrencyID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetCurrencies", "DropDownLists");
+        });
+    })
+)

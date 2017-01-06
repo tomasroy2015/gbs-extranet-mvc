@@ -1,0 +1,249 @@
+﻿@using Resources
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    @@media (max-width:500px) {
+        #heading {
+            margin-top: 80px;
+        }
+    }
+</style>
+
+<h1 id="heading" style="text-align:center;">@Resources.Tables</h1>
+
+<div style="text-align:center; padding-bottom:5px;">
+    @(Html.Kendo().DropDownList()
+    .Name("drpTables")
+    .BindTo((SelectList)ViewData["TablesList"])
+    .Filter("contains")
+    .OptionLabel("-- Select --")
+            .Events(ev => ev.Change("GetTablePartialView"))
+    .HtmlAttributes(new { style="width:40%; text-align:left;"})
+    
+    )
+</div>
+
+<div id="divPartialView"></div>
+<div class="col-md-12 col-xs-12">
+    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px; top: 0px; width: 100%; height: 100%; background-color: #050506; z-index: 30001; opacity: .8; filter: alpha(opacity=70); display: none">
+        <p style="position: absolute; top: 40%; left: 45%; color: White;">
+           @*<img  src="~/Images/loadingbar.gif" />*@
+            <img src="~/Image/wait_.gif" />
+        </p>
+    </div>
+</div>
+
+@*<div class="container">
+    <div onchange="displaytable();">
+        <select id="drpPart" class="col-md-6 col-sm-8 col-xs-12" style="padding:0px;"></select>
+    </div>
+    <br />
+    <br />
+</div>*@
+@*<table id="tbledisp" style="width: 100%;"></table>
+<div data-bind="kendoGrid: items"> </div>*@
+
+@*@using Kendo.Mvc.UI
+
+    @(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TablesExt>()
+        .Name("grid")
+        .Columns(columns =>
+            {
+                columns.Bound(c => c.ID);
+                columns.Bound(c => c.Name);
+            })
+            .HtmlAttributes(new { style = "height: 380px" })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .Read(read => read.Action("User_Read", "Tables"))
+            )
+
+    )*@
+
+
+
+
+
+
+@*@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TablesExt>()
+                .Name("Table_Grid")
+            .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(25)
+            .ServerOperation(true)
+            //.Resizable(resizable => resizable.Content(true).Toolbar(true))
+            .Model(model =>
+            {
+                model.Id(p => p.ID);
+                //model.Field(p => p.ID).Editable(false);
+                //model.Field(p => p.Date).Editable(false);
+
+
+            })
+                //.Create(update => update.Action("_Create", "EMails"))
+                .Read(read => read.Action("Products_Read", "Tables"))
+                //.Update(update => update.Action("_Update", "EMails"))
+                //.Destroy(destroy => destroy.Action("_Destroy", "EMails"))
+
+            )
+
+                    //.Columns(columns =>
+                    //{
+                    //    columns.Bound(p => p.ID).Width(80).Locked(true);
+                    //    columns.Bound(p => p.Template).Title(mailColumnCaptions.Template).HtmlAttributes(new { style = "white-space: normal" }).Width(350).Locked(true);
+                    //    columns.Bound(p => p.MailFrom).Title(mailColumnCaptions.MailFrom).HtmlAttributes(new { style = "white-space: normal" }).Width(150).Locked(true);
+                    //    columns.Bound(p => p.MailTo).Title(mailColumnCaptions.MailTo).EditorTemplateName("TextArea").HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(200).Locked(true);
+                    //    columns.Bound(p => p.MailCC).Title(mailColumnCaptions.MailCC).EditorTemplateName("TextArea").HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(200).Locked(true);
+                    //    columns.Bound(p => p.Subject).Title(mailColumnCaptions.Subject).EditorTemplateName("TextArea").HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(200);
+                    //    columns.Bound(p => p.Content).Title(mailColumnCaptions.Content).Encoded(false).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(800);
+                    //    columns.Bound(p => p.SentStatus).Title(mailColumnCaptions.SentStatus).EditorTemplateName("Checkbox").ClientTemplate("<div style='text-align:center;'> #if(SentStatus =='True'){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(120);
+                    //    columns.Bound(p => p.ResentCount).Title(mailColumnCaptions.ResentCount).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(100);
+                    //    columns.Bound(p => p.SendingDate).ClientTemplate("#= kendo.toString(SendingDate,'dd/MM/yyyy HH:mm:ss') #").Title(mailColumnCaptions.SendingDate).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(150);
+                    //    columns.Bound(p => p.Record).Title(mailColumnCaptions.Record).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(120);
+                    //    //columns.Bound(p => p.Operation).Title("Operation").HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(150);
+
+
+
+                    //    columns.Command(
+
+                    //        command =>
+                    //        {
+                    //            //command.Edit();
+                    //            command.Destroy();
+                    //        }).Width(170);
+
+                    //})
+                    .ToolBar(tool =>
+                    {
+                        tool.Custom().Name("cmdAddNewRecord")
+                       .Text(Resources.NewRecord)
+                       .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                        tool.Excel();
+                    })
+                    .Editable(editable => editable.Mode(GridEditMode.InLine))
+                        .Scrollable(scrollable => scrollable.Height(430))
+                    //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                    .Pageable(p => p.Refresh(true))
+                    .Sortable()
+                    .Navigatable()
+                    .Groupable()
+                    .Scrollable(scr => scr.Height(370))
+                    .Filterable()
+                    .Excel(excel => excel
+                    .FileName("Tables.xlsx")
+                    .Filterable(true))
+
+    )*@
+<script>
+    //$(document).ready(function () {
+
+    //    Gettables();
+    //});
+
+    //function Gettables() {
+
+    //    $.ajax({
+    //        type: "Get",
+    //        url: "/Tables/GetTables",
+    //        data: "",
+    //        datatype: "JSON",
+    //        success: function (res) {
+    //            $("#drpPart").kendoDropDownList({
+    //                placeholder: "Select...",
+    //                dataTextField: "Name",
+    //                dataValueField: "ID ",
+    //                dataSource: res
+    //            });
+    //        }
+
+    //    })
+    //}
+
+    function GetTablePartialView() {
+      
+        var _TableID = $("#drpTables").data("kendoDropDownList").value();
+     //   alert("_TableID = " + _TableID);
+        //var value = $("#drpPart option:selected").text();
+        //var splitvalue = [];
+        //splitvalue = value.split("---");
+        //var TableName = splitvalue[0];
+        //alert(TableName)
+        //$("#tbledisp").empty();
+        $("#divLoading").show();
+        
+        $.ajax({
+            type: "Get",
+            url: "/Tables/GetTablePartialView",
+            data: { TableID: _TableID },
+            datatype: "JSON",
+            success: function (res) {
+                //alert(res)
+                //document.getElementById('tbledisp').value = res;
+                //var grid = $("#tbledisp").data("kendoGrid");
+                //alert(grid)
+                $("#divLoading").hide();
+                $("#divPartialView").html(res);
+
+
+            }
+        })
+    }
+</script>
+
+
+@*<script>
+    $("#tbledisp").kendoGrid({
+
+        serverPaging: true,
+        groupable: true,
+        sortable: true,
+        selectable: true,
+        filterable: true,
+        reorderable: true,
+        resizable: true,
+        columnMenu: true,
+        pageable: {
+            refresh: true,
+            pageSizes: true
+        },
+
+        content: {
+            url: "/userDetails",
+            dataType: "json",
+            iframe: false,
+            selectable: true,
+            columnResizeHandleWidth: 6,
+            editable: "popup",
+
+
+            //  height: 250,
+            //  pageable: false,
+            //  autoBind: false,
+
+            //dataSource: {
+            //    pageSize: 5
+            //}
+        }
+
+
+
+    });
+
+
+</script>*@
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

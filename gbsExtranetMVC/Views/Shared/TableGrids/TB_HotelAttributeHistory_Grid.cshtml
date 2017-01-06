@@ -1,0 +1,213 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_HotelAttributeHistory")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelAttributeHistoryCaption("HotelAttributeID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtFilterID" type="text" class="form-control" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelAttributeHistoryCaption("HotelID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtFilterCode" style="width:100%" />
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-4  col-sm-4" style="padding: 0px;">
+                    <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                        <label>@MessageColumnCaptions.LogDate (@Resources.FilterLowerLimitDescription)</label>
+                    </div>
+                    <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                        <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+
+                </div>
+                <div class="col-md-4 col-sm-4" style="padding: 0px;">
+
+                    <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                        <label>@MessageColumnCaptions.LogDate (@Resources.FilterUpperLimitDescription)</label>
+                    </div>
+                    <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                        <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+
+                </div>
+                <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                    <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                    <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelAttributeHistoryExt>()
+                            .Name("TB_HotelAttributeHistory_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+
+              .Read(read => read.Action("_Read", "TB_HotelAttributeHistory", new { TableID = (int)ViewBag.TableID }))
+                      
+        )
+
+        .Columns(columns =>
+        {
+
+
+            columns.Bound(p => p.ID).Width(100).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("ID"));
+            columns.Bound(p => p.HotelAttributeID).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("HotelAttributeID")).Width(150);
+            columns.Bound(p => p.Hotel).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("HotelID")).Width(300);
+            columns.Bound(p => p.Attribute).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("AttributeID")).Width(300);
+            columns.Bound(p => p.Charged).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("Charged"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Charged){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+            columns.Bound(p => p.Unit).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("UnitID")).Width(100);
+            columns.Bound(p => p.UnitValue).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("UnitValue")).Width(100);
+            columns.Bound(p => p.Charge).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("Charge")).Width(100);
+            columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("CurrencyID")).Width(100);
+            columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("StartDate")).Width(100);
+            columns.Bound(p => p.EndDate).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("EndDate")).Width(100);
+            columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+            columns.Bound(p => p.LogDate).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("OpDateTime")).ClientTemplate("#= kendo.toString(LogDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+            columns.Bound(p => p.LogUser).Title(MessageColumnCaptions.TB_HotelAttributeHistoryCaption("OpUserID")).Width(120);
+        })
+          .ToolBar(tool =>
+            {
+                tool.Excel().Text(Resources.ExporttoExcel);
+            })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                 .Excel(excel => excel
+                     .FileName("TB_HotelAttributeHistory.xlsx")
+                 .Filterable(true))
+               
+
+)
+
+<script>
+    $("#btnfilter").click(function () {
+        // alert("dfgd")
+        $filter = new Array();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+    //    alert($StartDate)
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+     //   alert($EndDate)
+        $PartText = $("#txtFilterCode").data("kendoDropDownList").text();
+        $PartValue = $("#txtFilterCode").val();
+     //   alert($PartValue)
+        $Code = $("#txtFilterID").val();
+    //    alert($Code)
+        if ($PartValue) {
+            $filter.push({ field: "Hotel", operator: "contains", value: $PartText });
+        }
+        if ($Code) {
+            $filter.push({ field: "HotelAttributeID", operator: "Equal", value: $Code });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDate", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDate", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+
+        var grid = $("#TB_HotelAttributeHistory_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotels",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#txtFilterCode").kendoDropDownList({
+                    filter: "contains",
+                    Name: "Hotel",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        function clearFiter() {
+            $("form.k-filter-menu button[type='reset']").trigger("click");
+        }
+
+        $("#btnClearFilter").click(function (e) {
+            e.preventDefault();
+            var datasource = $("#TB_HotelAttributeHistory_Grid").data("kendoGrid").dataSource;
+            datasource.filter([]);
+            $("#datetimepickerStart").data("kendoDatePicker").value(null);
+            $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+            $("#txtFilterID").val('');
+
+            var dropdownlistPart = $("#txtFilterCode").data("kendoDropDownList");
+            dropdownlistPart.select("");
+        });
+
+    });
+
+
+</script>
+
+
+
+
+
+
+

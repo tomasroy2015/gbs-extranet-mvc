@@ -1,0 +1,506 @@
+﻿@using Resources
+@using PropertyReservationsColumnCaption
+
+@{
+    ViewBag.Title = "PropertyReservations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2 style="color: black; text-align: center;">@Resources.PropertyReservations</h2>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4" style="padding: 8px;">
+                    <label>@Resources.ReservationID</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtReservationID" type="text" class="k-textbox" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@Resources.ReservationStatus</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="drpReservationStatus" style="width:100%" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px; margin-top: 20px;">
+                    <label>@Resources.ReservationDate</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div style=" margin-bottom: -11px;">
+                        <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+                    <br />
+                    <br />
+                    <div style=" margin-bottom: 20px;">
+                        <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px; margin-top: 20px;">
+                    <label>@Resources.GuestName</label>
+                </div>
+                <div class="col-md-8 col-sm-8" style="margin-top: 20px;">
+                    <input id="txtGuestName" type="text" class="k-textbox" style="width:100%" />
+                </div>
+            </div>
+
+            <div class="col-md-2  col-sm-2" style="margin-top: 60px;padding:0px;">
+
+                <button id="btnfilter" style="background: #25A6E1; color: white;" class="k-button" onclick="Filter()">@Resources.Filter</button>
+
+
+                <button class="k-button" style="background: #25A6E1; color:white" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px; margin-top: 20px;">
+                    <label>@Resources.CheckInDate</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div style=" margin-bottom: -11px;">
+                        <input type="text" id="CheckInDateStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+                    <br />
+                    <br />
+                    <div>
+                        <input type="text" id="CheckInDateEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px; margin-top: 20px;">
+                    <label>@Resources.CheckOutDate</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div style=" margin-bottom: -11px;">
+                        <input type="text" id="CheckOutDateStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+                    <br />
+                    <br />
+                    <div>
+                        <input type="text" id="CheckOutDateEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4" style="padding: 8px; margin-top: 12px;">
+                    <label>@Resources.HotelName</label>
+                </div>
+                <div class="col-md-8 col-sm-8" style="padding: 15px;">
+                    <input id="txtPropertyNameFilter" type="text" class="k-textbox" style="width:100%" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+@*<h1 style="color: black; text-align: center;">Property Reservations</h1>*@
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.PropertyReservationExt>()
+                .Name("PropertyReservation_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Aggregates(aggregates =>
+                {
+                    aggregates.Add(p => p.ComissionValue).Sum();
+                    aggregates.Add(p => p.PayableAmountValue).Sum();
+                }
+            )
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+            //.Create(update => update.Action("_Create", "TB_Photo"))
+                    .Read(read => read.Action("_Read", "PropertyReservations"))
+        //.Update(update => update.Action("_Update", "TB_Photo"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "TB_Photo"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Bound("").Title(Resources.Operation).Sortable(false).Width(180).ClientTemplate("<div style='text-align:center;'><a  href='/PropertyReservations/View/#=EncryptReservationID#'><img src='/Images/goto.png' style='width:20px;cursor:pointer;' alt='goto'></a> #if(lbtnCC){# <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#&Operation=#=Encryptcc#'><img src='/Images/creditcard.png' style='width:20px;margin-left:8px;cursor:pointer;' alt='creditcard'></a> #}#  #if(lbtnReportAsInvalidCC){# <a href='/Reservation/ReportAsInvalidCC?ReservationID=#=ReservationID#'><img src='/Images/invalidcreditcard.png' style='width:20px;margin-left:8px;cursor:pointer;'  alt='Invalid credit Card'></a> #}# #if(lbtnCancel){# <a href='/Reservation/CancelReservation?ReservationID=#=ReservationID#'><img src='/Image/cancel.png' style='width:20px;margin-left:8px;cursor:pointer;'  alt='Cancel Reservation'></a> #}# #if(lbtnMarkAsNoUse){# <a href='/Reservation/MarkAsNoUse?ReservationID=#=ReservationID#'><img src='/Images/exclamation.png' style='width:20px;margin-left:8px;cursor:pointer;'  alt='Reservation Not Used'></a> #}# #if(lbtnChangeDate){# <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#&Operation=#=EncryptChangeDate#'><img src='/Images/calendar.png' style='width:20px;margin-left:8px;cursor:pointer;'  alt='Change Check-in/ Check-out dates'></a> #}# <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#&Operation=#=Encrypthistory#'><img src='/Images/history.png' style='width:20px;margin-left:8px;cursor:pointer;'  alt='history'></a> </div>").Locked(true);
+                        //columns.Bound("").Width(150).ClientTemplate("<div style='text-align:center;'> <a  href='/PropertyReservations/View/#=EncryptReservationID#'><img src='/Images/goto.png' style='width:20px;cursor:pointer;' alt='goto'></a> # # <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#&Operation=#=Encryptcc#'><img src='/Images/creditcard.png' style='width:20px;margin-left:8px;cursor:pointer;' alt='creditcard'></a> <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#&Operation=#=Encrypthistory#'><img src='/Images/history.png' style='width:20px;margin-left:8px;cursor:pointer;'  alt='history'></a> <a href='/Reservation/ReportAsInvalidCC?ReservationID=#=ReservationID#'><img src='/Images/history.png' style='width:20px;margin-left:8px;cursor:pointer;'  alt='Invalid credit Card'></a> </div>").Locked(true);
+                        //columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.HotelName).Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationHotelName")).Width(150);
+                        columns.Bound(p => p.ReservationID).Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationRezervasyonNo")).ClientTemplate("<a title='Click here for Reservation Details' style='text-decoration:underline;' href='/PropertyReservations/View/#=EncryptReservationID#'>#=ReservationID#</a>").Width(150);
+                        columns.Bound(p => p.ReservationDate).ClientTemplate("#= kendo.toString(ReservationDate,'dd/MM/yyyy HH:mm:ss') #").Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationReservationDate")).Width(150);
+                        columns.Bound(p => p.FullName).Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationFullName")).Width(150);
+                        //columns.Bound(p => p.GuestFullName).Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationFullName")).Width(150);
+                        columns.Bound(p => p.CheckInDate).ClientTemplate("#= kendo.toString(CheckInDate,'dd/MM/yyyy') #").Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationCheckInDate")).Width(150);
+                        columns.Bound(p => p.CheckOutDate).ClientTemplate("#= kendo.toString(CheckOutDate,'dd/MM/yyyy') #").Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationCheckOutDate")).Width(150);
+                        columns.Bound(p => p.Note).Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationNote")).Width(150);
+                        columns.Bound(p => p.Status).Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationStatusName")).Width(150);
+                        columns.Bound(p => p.Rooms).ClientTemplate("<div style='text-align:left;'><label>#=Rooms#</label></div>").Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationOdalar")).Width(250);
+                        //columns.Bound(p => p.PayableAmount).ClientFooterTemplate("#=doMath()#").Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationOdenecekTutar")).Width(150);
+                        columns.Bound(p => p.PayableAmount).ClientFooterTemplate("#=doMath()#").Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationOdenecekTutar")).Width(150);
+                        columns.Bound(p => p.Commission).ClientFooterTemplate("#=doMath1()#").Title(PropertyReservationsColumnCaption.PropertyReservationsCaption("dgHotelReservationKomisyon")).Width(150);
+                        columns.Bound(p => p.EncryptReservationID).Hidden();
+                        columns.Bound(p => p.Encryptcc).Hidden();
+                        columns.Bound(p => p.Encrypthistory).Hidden();
+                        columns.Bound(p => p.EncryptChangeDate).Hidden();
+                    })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel();
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("PropertyReservationsRpt.xlsx")
+                .Filterable(true))
+
+)
+
+
+
+<script>
+
+    function doMath() {
+
+       // var ds = $("#PropertyReservation_Grid").data("kendoGrid").dataSource;
+        // alert(ds.length)
+        var data = $("#PropertyReservation_Grid").data("kendoGrid").dataSource._data;
+        var Currency = [];
+        var PayableAmount = [];
+        //var TotalPayable = [];
+        // var Amount = 0;
+        // var index = '';
+        for (i = 0; i < data.length; i++) {
+            if (Currency.indexOf(data[i].Currencysymbol) != -1) {
+                var index = Currency.indexOf(data[i].Currencysymbol);
+                // alert(index)
+                var Amount = PayableAmount[index]               
+                //var TotalAmount = parseInt(PayableAmount[index]) + parseInt(data[i].PayableAmountValue);
+                var TotalAmount = parseFloat(PayableAmount[index]) + parseFloat(data[i].PayableAmountValue);
+                // alert(Totalaqs)
+                //Amount += data[i].PayableAmountValue;
+                var rounded = Math.round(TotalAmount * 100) / 100;
+                PayableAmount[index] = rounded;
+            }
+            else {
+                Currency.push(data[i].Currencysymbol);
+                PayableAmount.push(data[i].PayableAmountValue)
+            }
+        }
+       
+
+        var name = '';
+        for (var i = 0; i < Currency.length; i++) {
+           
+            if (i == Currency.length - 1) {
+                name += Currency[i] + ' ' + PayableAmount[i];
+            }
+            else {
+                name += Currency[i] + ' ' + PayableAmount[i] + ' + ';
+            }
+        }
+        return name;
+        //var aggregates = ds.aggregates();
+        ////alert(aggregates);
+
+        //var margin = aggregates.PayableAmountValue.sum;
+
+        //return "€ " + margin;
+
+        
+    }
+
+    function doMath1() {
+
+        var data = $("#PropertyReservation_Grid").data("kendoGrid").dataSource._data;
+        var Currency = [];
+        var ComissionAmount = [];
+       
+        for (i = 0; i < data.length; i++) {
+            
+            if (Currency.indexOf(data[i].Currencysymbol) != -1) {
+                var index = Currency.indexOf(data[i].Currencysymbol);
+                // alert(index)
+               // var Amount = PayableAmount[index]
+                var TotalAmount = parseFloat(ComissionAmount[index]) + parseFloat(data[i].ComissionValue);
+                // alert(Totalaqs)
+                //Amount += data[i].PayableAmountValue;
+                var rounded = Math.round(TotalAmount * 100) / 100;
+                ComissionAmount[index] = rounded;
+            }
+            else {
+                Currency.push(data[i].Currencysymbol);
+                ComissionAmount.push(data[i].ComissionValue)
+            }
+        }       
+
+        var Commissionname = '';
+        for (var i = 0; i < Currency.length; i++) {
+
+            if (i == Currency.length - 1) {
+                Commissionname += Currency[i] + ' ' + ComissionAmount[i];
+            }
+            else {
+                Commissionname += Currency[i] + ' ' + ComissionAmount[i] + ' + ';
+            }
+        }
+        return Commissionname;
+
+        //var ds = $("#PropertyReservation_Grid").data("kendoGrid").dataSource;
+        //var aggregates = ds.aggregates();
+        //// alert(aggregates);
+        //var margin = aggregates.ComissionValue.sum;
+        ////alert(margin);
+        //return "€ " +margin;
+    }
+    var ChecinStartViewBag='@ViewBag.CheckinStart'
+    var ChecinEndViewBag = '@ViewBag.CheckinEnd'
+
+    var StartCheckin = new Date(ChecinStartViewBag);
+    var EndCheckin = new Date(ChecinEndViewBag);
+    //alert(StartCheckin)
+    //alert(EndCheckin)
+    function filterWhileLoad() {
+        $("#btnfilter").click()
+    }
+    $(document).ready(function () {
+        setTimeout("filterWhileLoad()", 2000);
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+
+        $("#CheckInDateStart").kendoDatePicker({
+            value: StartCheckin,
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#CheckInDateEnd").kendoDatePicker({
+            value: EndCheckin,
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+        $("#CheckOutDateStart").kendoDatePicker({
+           
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#CheckOutDateEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetReservationDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpReservationStatus").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "ReservationName",
+                    dataValueField: "ReservationID ",
+                    // dataValueField: "Name",
+                    dataSource: data,
+
+                    optionLabel: "All..."
+                });
+
+            }
+        })
+
+    });
+
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $ReservationID = $("#txtReservationID").val();
+        $PropertyName1 = $("#txtPropertyNameFilter").val();
+        
+        //alert($ReservationID)
+        $ReservationStatusText = $("#drpReservationStatus").data("kendoDropDownList").text();
+        $ReservationStatusValue = $("#drpReservationStatus").val();
+        // alert($ReservationStatusValue)
+        $ReservationStartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        // alert($ReservationStartDate)
+        $ReservationEndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+        // alert($ReservationEndDate)
+        $GuestName = $("#txtGuestName").val();
+        //  alert($GuestName)
+        $CheckInStartDate = $("#CheckInDateStart").data("kendoDatePicker").value();
+        // alert($CheckInStartDate)
+        $CheckInEndDate = $("#CheckInDateEnd").data("kendoDatePicker").value();
+        // alert($CheckInEndDate)
+        $CheckOutStartDate = $("#CheckOutDateStart").data("kendoDatePicker").value();
+        // alert($CheckOutStartDate)
+        $CheckOutEndDate = $("#CheckOutDateEnd").data("kendoDatePicker").value();
+        // alert($CheckOutEndDate)
+
+
+        if ($ReservationID) {
+            $filter.push({ field: "ReservationID", operator: "equals", value: String($ReservationID) });
+        }
+        
+        if ($PropertyName1) {
+            $filter.push({ field: "HotelName", operator: "contains", value: $PropertyName1 });
+        }
+
+        if ($GuestName) {
+            $filter.push({ field: "FullName", operator: "contains", value: $GuestName });
+        }
+
+        if ($ReservationStatusValue) {
+            $filter.push({ field: "statusID", operator: "equals", value: $ReservationStatusValue });
+        }
+
+        if ($ReservationStartDate) {
+            $filter.push({ field: "ReservationDate", operator: "IsGreaterThanOrEqualTo", value: $ReservationStartDate });
+        }
+        if ($ReservationEndDate) {
+            $filter.push({ field: "ReservationDate", operator: "IsLessThanOrEqualTo", value: $ReservationEndDate });
+        }
+
+        if ($CheckInStartDate) {
+            $filter.push({ field: "CheckInDate", operator: "IsGreaterThanOrEqualTo", value: $CheckInStartDate });
+        }
+        if ($CheckInEndDate) {
+            $filter.push({ field: "CheckInDate", operator: "IsLessThanOrEqualTo", value: $CheckInEndDate });
+        }
+
+        if ($CheckOutStartDate) {
+            $filter.push({ field: "CheckOutDate", operator: "IsGreaterThanOrEqualTo", value: $CheckOutStartDate });
+        }
+        if ($CheckOutEndDate) {
+            $filter.push({ field: "CheckOutDate", operator: "IsLessThanOrEqualTo", value: $CheckOutEndDate });
+        }
+
+        //alert($Record)
+
+        //alert($Record)
+        var grid = $("#PropertyReservation_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#PropertyReservation_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtReservationID").val('');
+        $("#txtPropertyNameFilter").val('');
+        var dropdownlist = $("#drpReservationStatus").data("kendoDropDownList");
+        dropdownlist.select("");
+        //$(".k-datepicker input").val('');
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+        $("#CheckInDateStart").data("kendoDatePicker").value(null);
+        $("#CheckInDateEnd").data("kendoDatePicker").value(null);
+        $("#CheckOutDateStart").data("kendoDatePicker").value(null);
+        $("#CheckOutDateEnd").data("kendoDatePicker").value(null);
+
+        //$("#datetimepickerStart").val('');
+        //$("#datetimepickerEnd").val('');
+
+        //$("#CheckInDateStart").val('');
+        //$("#CheckInDateEnd").val('');
+
+        //$("#CheckOutDateStart").val('');
+        //$("#CheckOutDateEnd").val('');
+
+        $("#txtGuestName").val('');
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>
+
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

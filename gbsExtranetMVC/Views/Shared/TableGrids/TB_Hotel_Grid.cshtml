@@ -1,0 +1,202 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_Hotel")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@Resources.Name</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtFilterID" type="text" class="form-control" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@Resources.ChannelManager</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtFilterCode"  style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 8px;">
+                <div class="col-md-6  col-sm-6">
+                    <label>@Resources.Active</label>
+                </div>
+                <div class="col-md-2  col-sm-7">
+                    <input type="checkbox" id="chkStatus" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelExt>()
+                                .Name("TB_Hotel_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+
+                            .Read(read => read.Action("_Read", "TB_Hotel", new { TableID = (int)ViewBag.TableID }))
+     
+        )
+
+        .Columns(columns =>
+        {
+
+
+            columns.Bound(p => p.ID).Width(100).Title(MessageColumnCaptions.TB_HotelCaption("ID"));
+            columns.Bound(p => p.Firm).Title(MessageColumnCaptions.TB_HotelCaption("FirmID")).Width(150);
+            columns.Bound(p => p.HotelType).Title(MessageColumnCaptions.TB_HotelCaption("HotelTypeID")).Width(150);
+            columns.Bound(p => p.HotelClass).Title(MessageColumnCaptions.TB_HotelCaption("HotelClassID")).Width(100);
+            columns.Bound(p => p.HotelChain).Title(MessageColumnCaptions.TB_HotelCaption("HotelChainID")).Width(100);
+            columns.Bound(p => p.HotelAccommodationType).Title(MessageColumnCaptions.TB_HotelCaption("HotelAccommodationTypeID")).Width(150);
+            columns.Bound(p => p.Country).Title(MessageColumnCaptions.TB_HotelCaption("CountryID")).Width(100);
+            columns.Bound(p => p.City).Title(MessageColumnCaptions.TB_HotelCaption("CityID")).Width(100);
+            columns.Bound(p => p.MainRegion).Title(MessageColumnCaptions.TB_HotelCaption("MainRegionID")).Width(150);
+            columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_HotelCaption("Name")).Width(100);
+            columns.Bound(p => p.Description).Title(MessageColumnCaptions.TB_HotelCaption("Description_en")).Width(300);
+            columns.Bound(p => p.Addres).Title(MessageColumnCaptions.TB_HotelCaption("Address")).Width(100);
+            columns.Bound(p => p.Phone).Title(MessageColumnCaptions.TB_HotelCaption("Phone")).Width(150);
+            columns.Bound(p => p.Fax).Title(MessageColumnCaptions.TB_HotelCaption("Fax")).Width(100);
+            columns.Bound(p => p.PostCode).Title(MessageColumnCaptions.TB_HotelCaption("PostCode")).Width(150);
+            columns.Bound(p => p.RoomCount).Title(MessageColumnCaptions.TB_HotelCaption("RoomCount")).Width(100);
+            columns.Bound(p => p.WebAddress).Title(MessageColumnCaptions.TB_HotelCaption("WebAddress")).Width(150);
+            columns.Bound(p => p.Email).Title(MessageColumnCaptions.TB_HotelCaption("Email")).Width(100);
+            columns.Bound(p => p.CheckinStartTime).Title(MessageColumnCaptions.TB_HotelCaption("CheckinStart")).Width(150);
+            columns.Bound(p => p.CheckinEndTime).Title(MessageColumnCaptions.TB_HotelCaption("CheckinEnd")).Width(100);
+            columns.Bound(p => p.CheckoutStartTime).Title(MessageColumnCaptions.TB_HotelCaption("CheckoutStart")).Width(150);
+            columns.Bound(p => p.CheckoutEndTime).Title(MessageColumnCaptions.TB_HotelCaption("CheckoutEnd")).Width(150);
+            columns.Bound(p => p.FloorCount).Title(MessageColumnCaptions.TB_HotelCaption("FloorCount")).Width(100);
+            columns.Bound(p => p.BuiltYear).Title(MessageColumnCaptions.TB_HotelCaption("BuiltYear")).Width(150);
+            columns.Bound(p => p.RenovationYear).Title(MessageColumnCaptions.TB_HotelCaption("RenovationYear")).Width(100);
+            columns.Bound(p => p.HitCount).Title(MessageColumnCaptions.TB_HotelCaption("HitCount")).Width(150);
+            columns.Bound(p => p.Sort).Title(MessageColumnCaptions.TB_HotelCaption("Sort")).Width(100);
+            columns.Bound(p => p.Status).Title(MessageColumnCaptions.TB_HotelCaption("StatusID")).Width(150);
+            columns.Bound(p => p.Preferred).Title(MessageColumnCaptions.TB_HotelCaption("IsPreferred")).Width(100);
+            columns.Bound(p => p.MainPageDisplay).Title(MessageColumnCaptions.TB_HotelCaption("MainPageDisplay")).Width(150);
+            columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_HotelCaption("CurrencyID")).Width(100);
+            columns.Bound(p => p.Latitude).Title(MessageColumnCaptions.TB_HotelCaption("Latitude")).Width(150);
+            columns.Bound(p => p.Longitude).Title(MessageColumnCaptions.TB_HotelCaption("Longitude")).Width(100);
+            columns.Bound(p => p.MapZoomIndex).Title(MessageColumnCaptions.TB_HotelCaption("MapZoomIndex")).Width(150);
+            columns.Bound(p => p.ClosestAirport).Title(MessageColumnCaptions.TB_HotelCaption("ClosestAirportID")).Width(100);
+            columns.Bound(p => p.ClosestAirportDistance).Title(MessageColumnCaptions.TB_HotelCaption("ClosestAirportDistance")).Width(150);
+            columns.Bound(p => p.ShowOffline).Title(MessageColumnCaptions.TB_HotelCaption("ShowOffline")).Width(100);
+            columns.Bound(p => p.CreditCardNotRequired).Title(MessageColumnCaptions.TB_HotelCaption("CreditCardNotRequired")).Width(150);
+            columns.Bound(p => p.Culture).Title(MessageColumnCaptions.TB_HotelCaption("CultureID")).Width(100);
+            columns.Bound(p => p.RoutingName).Title(MessageColumnCaptions.TB_HotelCaption("RoutingName")).Width(150);
+            columns.Bound(p => p.ChannelManager).Title(MessageColumnCaptions.TB_HotelCaption("ChannelManagerID")).Width(100);
+            columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_HotelCaption("Active"))
+                 .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                 .Width(100);
+            columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.TB_HotelCaption("IPAddress")).Width(100);
+            
+
+
+        }) 
+        .ToolBar(tool =>
+                            {
+                                tool.Excel().Text(Resources.ExporttoExcel);
+                            })
+       
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_Hotel_Grid.xlsx")
+                        .Filterable(true))
+
+)
+
+<script>
+    $("#btnfilter").click(function () {
+       
+        $filter = new Array();
+       
+        $PartText = $("#txtFilterCode").data("kendoDropDownList").text();
+        $PartValue = $("#txtFilterCode").val();
+       
+        $Code = $("#txtFilterID").val();
+
+        $Active = "false";
+        if ($('#chkStatus').prop('checked')) {
+            $Active = "true";
+        }
+      
+
+        if ($PartValue) {
+            $filter.push({ field: "ChannelManager", operator: "contains", value: $PartText });
+        }
+        if ($Code) {
+            $filter.push({ field: "Name", operator: "equal", value: $Code });
+        }
+        if ($Active == "true") {
+            //alert($SentStatus)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+
+        var grid = $("#TB_Hotel_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetChannelManager",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#txtFilterCode").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ChannelManager",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        function clearFiter() {
+            $("form.k-filter-menu button[type='reset']").trigger("click");
+        }
+
+        $("#btnClearFilter").click(function (e) {
+            e.preventDefault();
+            var datasource = $("#TB_Hotel_Grid").data("kendoGrid").dataSource;
+            datasource.filter([]);
+            document.getElementById('chkStatus').checked = false
+            $("#txtFilterID").val('');
+            var dropdownlistPart = $("#txtFilterCode").data("kendoDropDownList");
+            dropdownlistPart.select("");
+
+        });
+
+    });
+
+
+</script>

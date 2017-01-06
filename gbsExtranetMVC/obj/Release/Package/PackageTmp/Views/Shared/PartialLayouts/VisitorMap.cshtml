@@ -1,0 +1,102 @@
+﻿@model gbsExtranetMVC.Models.SelectStats_Result
+
+<div class="row">
+    <div class="col-md-9">
+
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                var map = $("#map-2");
+
+                map.vectorMap({
+                    map: 'europe_merc_en',
+                    zoomMin: '2',
+                    backgroundColor: '#f4f4f4',
+                    focusOn: { x: 0.5, y: 0.7, scale: 2 },
+                    markers: [
+                      { latLng: [50.9375, 6.9603], name: 'Cologne' },
+                      { latLng: [42.6629, 21.1655], name: 'Prishtina' },
+                      { latLng: [41.3851, 2.1734], name: 'Barcelona' },
+                      { latLng: [46.2276, 2.2137], name: 'France' },
+                        { latLng: [51.1657, 10.4515], name: 'Germany' },
+                           { latLng: [48.8566, 2.3522], name: 'Paris' },
+                    ],
+                    markerStyle: {
+                        initial: {
+                            fill: '#ff4e50',
+                            stroke: '#ff4e50',
+                            "stroke-width": 6,
+                            "stroke-opacity": 0.3,
+                        }
+                    },
+                    regionStyle:
+                        {
+                            initial: {
+                                fill: '#5F9EA0',
+                                "fill-opacity": 1,
+                                stroke: 'none',
+                                "stroke-width": 0,
+                                "stroke-opacity": 1
+                            },
+                            hover: {
+                                "fill-opacity": 0.8
+                            },
+                            selected: {
+                                fill: 'yellow'
+                            },
+                            selectedHover: {
+                            }
+                        }
+                });
+            });
+        </script>
+
+        <div class="tile-group tile-group-2">
+            <div class="tile-left tile-white">
+                <div class="tile-entry">
+                    <h3>Visitor Map</h3>
+                    <span>Where do our visitors come from</span>
+                </div>
+                <ul class="country-list" style="overflow:visible; overflow-y:scroll; height:200px; width:100%;">
+                    <li><span class="badge badge-secondary">3</span>  Cologne, Germany</li>
+                    <li><span class="badge badge-secondary">2</span>  Pristina, Kosovo</li>
+                    <li><span class="badge badge-secondary">1</span>  Barcelona, Spain</li>
+                    <li><span class="badge badge-secondary">8</span>  Barcelona, Spain</li>
+                    <li><span class="badge badge-secondary">10</span>  France, Paris</li>
+                    <li><span class="badge badge-secondary">25</span>  Germany, Germany</li>
+                </ul>
+            </div>
+
+            <div class="tile-right">
+
+                <div id="map-2" class="map"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="col-md-3" style="cursor:pointer;">
+        <div class="tile-stats tile-neon-red">
+            <div class="icon"><i class="entypo-chat"></i></div>
+            <div class="num" data-start="0" data-end="@Model.ActiveReviews" data-postfix="" data-duration="1400" data-delay="0">0</div>
+
+            <h3>Reviews</h3>
+            <a style="color: white; text-decoration: underline;" href="/Management/Reviews"><p>New Reviews </a></p>
+        </div>
+
+        <br />
+
+        <div class="tile-stats tile-primary" style="cursor:pointer;">
+            <div class="icon"><i class="entypo-users"></i></div>
+            <div class="num" data-start="0" data-end="@Model.NewBookings" data-postfix="" data-duration="1400" data-delay="0">0</div>
+
+            <h3>New Bookings</h3>
+            <a style="color:white; text-decoration:underline;" href="/Reservation/Reservations"><p>New Booking made</a></p>
+        </div>
+
+
+    </div>
+</div>

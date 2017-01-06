@@ -1,0 +1,284 @@
+﻿
+@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_User")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.Name</label>
+                <input id="txtName" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.Surname</label>
+                <input id="txtSurname" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.Email</label>
+                <input id="txtEmail" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.UserName</label>
+                <input id="txtUserName" class="form-control" type="text" style="width:100%" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-3" style="padding: 0px;display: inline-flex;">
+                <label>@Resources.Country</label>
+                <input type="text" id="drbCountry" style="width: 100%;" />
+            </div>
+            <div class="col-md-4 col-sm-3" style="display: inline-flex;">
+                <label>@Resources.Firm</label>
+                <input type="text" id="drbFirm" style="width: 100%;" />
+            </div>
+            <div class="col-md-2  col-sm-3"  style="display: inline-flex;">
+                <label>@Resources.Active</label><input type="checkbox" id="chkStatus" />
+            </div>
+            <div class="col-md-2  col-sm-3" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+    @*<div class="col-md-2 col-sm-2">
+
+            <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                <input id="txtPart" class="form-control" type="text" style="width:100%" />
+            </div>
+        </div>*@
+
+</div>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_UserExt>()
+                .Name("BizTbl_UserExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                        .Create(update => update.Action("_Create", "BizTbl_User"))
+                        .Read(read => read.Action("_Read", "BizTbl_User", new { TableID = (int)ViewBag.TableID }))
+                        .Update(update => update.Action("_Update", "BizTbl_User"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_User"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Locked(true).Width(100); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.Name).Locked(true).Title(MessageColumnCaptions.BizTbl_UserCaption("Name")).Width(150);
+                    columns.Bound(p => p.Surname).Locked(true).Title(MessageColumnCaptions.BizTbl_UserCaption("Surname")).Width(150);
+                    columns.Bound(p => p.Country).Locked(true).Title(MessageColumnCaptions.BizTbl_UserCaption("CountryID")).EditorTemplateName("ddlCountries").Width(150);
+                    columns.Bound(p => p.City).Title(MessageColumnCaptions.BizTbl_UserCaption("City")).Width(150);
+                    columns.Bound(p => p.Address).Title(MessageColumnCaptions.BizTbl_UserCaption("Address")).Width(200);
+                    columns.Bound(p => p.Email).Title(MessageColumnCaptions.BizTbl_UserCaption("Email")).Width(250);
+                    columns.Bound(p => p.Phone).Title(MessageColumnCaptions.BizTbl_UserCaption("Phone")).Width(200);
+                    columns.Bound(p => p.PostCode).Title(MessageColumnCaptions.BizTbl_UserCaption("PostCode")).Width(150);
+                    columns.Bound(p => p.UserName).Title(MessageColumnCaptions.BizTbl_UserCaption("UserName")).Width(150);
+                    columns.Bound(p => p.Password).Title(MessageColumnCaptions.BizTbl_UserCaption("Password")).Width(250);
+                    columns.Bound(p => p.Firm).Title(MessageColumnCaptions.BizTbl_UserCaption("FirmID")).EditorTemplateName("Firm").Width(150);
+                    columns.Bound(p => p.StatusName).Title(MessageColumnCaptions.BizTbl_UserCaption("StatusID")).EditorTemplateName("ddlTypeStatus").Width(200);
+                    //columns.Bound(p => p.PromotionalEmail).Title(MessageColumnCaptions.BizTbl_UserCaption("PromotionalEmail")).Width(150);
+                    columns.Bound(p => p.PromotionalEmail).Title(MessageColumnCaptions.BizTbl_UserCaption("PromotionalEmail"))
+                        .ClientTemplate("<div style='text-align:center;'> #if(PromotionalEmail){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+                    columns.Bound(p => p.VerificationCode).Title(MessageColumnCaptions.BizTbl_UserCaption("VerificationCode")).Width(200);
+                    columns.Bound(p => p.DisplayName).Title(MessageColumnCaptions.BizTbl_UserCaption("DisplayName")).Width(150);
+                    columns.Bound(p => p.Locked).Title(MessageColumnCaptions.BizTbl_UserCaption("Locked"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(Locked){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+                    columns.Bound(p => p.Active).Title(MessageColumnCaptions.BizTbl_UserCaption("Active"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+                    columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.BizTbl_UserCaption("IPAddress")).Width(150);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_User.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#BizTbl_UserExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $Name = $("#txtName").val();
+       // alert($Name)
+        $Surname = $("#txtSurname").val();
+        //alert($Surname)
+        $Mail = $("#txtEmail").val();
+        //alert($Mail)
+        $Username = $("#txtUserName").val();
+       // alert($Mail)
+        $CountryText = $("#drbCountry").data("kendoDropDownList").text();
+        $CountryValue = $("#drbCountry").val();
+        //alert($CountryValue)
+        $FirmText = $("#drbFirm").data("kendoDropDownList").text();
+        $FirmValue = $("#drbFirm").val();
+        //alert($FirmValue)
+        $SentStatus = "false";
+        if ($('#chkStatus').prop('checked')) {
+            $SentStatus = "true";
+        }
+       // alert($SentStatus)
+        if ($Name) {
+            $filter.push({ field: "Name", operator: "contains", value: String($Name) });
+        }
+        if ($Surname) {
+            $filter.push({ field: "Surname", operator: "contains", value: String($Surname) });
+        }
+        if ($Mail) {
+            $filter.push({ field: "Email", operator: "contains", value: String($Mail) });
+        }
+        if ($Username) {
+            $filter.push({ field: "UserName", operator: "contains", value: String($Username) });
+        }
+        if ($CountryValue) {
+            $filter.push({ field: "Country", operator: "contains", value: $CountryText });
+        }
+        if ($FirmValue) {
+            $filter.push({ field: "Firm", operator: "contains", value: $FirmText });
+        }
+        if ($SentStatus == "true") {
+            //alert($SentStatus)
+            $filter.push({ field: "Active", operator: "eq", value: $SentStatus });
+        }
+       
+       // alert($SentStatus)
+        var grid = $("#BizTbl_UserExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbCountry").kendoDropDownList({
+                    filter: "contains",
+                    Name: "CountryID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Country",
+                    dataValueField: "CountryID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/Firm",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                //alert(data)
+                $("#drbFirm").kendoDropDownList({
+                    filter: "contains",
+                    Name: "FirmID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "FirmID",
+                    dataSource: data
+                });
+
+            }
+        })
+
+
+    });
+
+
+      
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_UserExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtName").val('')
+        $("#txtSurame").val('');
+        $("#txtEmail").val('');
+        $("#txtUserName").val('');
+        document.getElementById('chkStatus').checked = false
+    });
+
+</script>
+
+

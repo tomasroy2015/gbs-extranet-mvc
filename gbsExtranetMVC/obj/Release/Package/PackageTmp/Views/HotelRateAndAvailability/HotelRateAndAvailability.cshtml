@@ -1,0 +1,359 @@
+﻿@model gbsExtranetMVC.Models.Repositories.HotelRateAndAvailabilityExt
+@using Resources
+@{
+    ViewBag.Title = "HotelRateAndAvailability";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="text-align:center;">@Resources.HotelRateAvailability</h1>
+<style>
+    .GridTable {
+        border-collapse: collapse;
+    }
+    .GridTable {
+        border-width: 1px;
+        border-style: solid;
+        border-color: #CCCCCC;
+        border-collapse: collapse;
+        background-color: #ebf4f8;
+    }
+
+        .GridTable th {
+            border-width: 1px;
+            padding: 1px;
+            border-style: inset;
+            border-color: gray;
+            background-color: white;
+            /*-moz-border-radius:;*/
+        }
+
+        .GridTable td {
+            border-width: 1px;
+            padding: 1px;
+            border-style: solid;
+            border-color: #CCCCCC;
+            /*-moz-border-radius:;*/
+        }
+
+    .GridBar {
+        background-color: #F7F2E0;
+        color: navy;
+        font-weight: bold;
+    }
+
+    .GridBar2 {
+        background-color: #ede8d7;
+        color: Maroon;
+        font-weight: bold;
+        padding: 5px;
+        border: 1px solid #c5ccda;
+    }
+
+    .GridBar3 {
+        background-color: #F7F2E0;
+        color: #DF7401;
+        font-weight: bold;
+        padding: 3px;
+    }
+
+    .GridBar4 {
+        background-color: #F7F2E0;
+        color: green;
+        font-weight: bold;
+    }
+    .Available {
+        background-color: #e8eefb;
+        width: 20px;
+    }
+
+    .Closed {
+        background-color: red;
+        width: 20px;
+    }
+
+    .Full {
+        background-color: yellow;
+        width: 20px;
+    }
+
+    .RateMissing {
+        background-color: #fbeec5;
+        width: 20px;
+    }
+
+    .BlueBar {
+        background-color: #c4daed;
+        color: Navy;
+        font-weight: bold;
+        height: 25px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .NoWrap {
+        white-space: nowrap;
+    }
+    .divCaption {
+        margin-left: 5px;
+        margin-top: 3px;
+        font-weight: bold;
+        color: black;
+        font-size: 14px;
+    }
+</style>
+
+@*<script>
+    var DisplayResult = '@ViewBag.DisplayResult'
+    alert(DisplayResult)
+    if (DisplayResult != 0) {
+        alert('hi')
+        document.getElementById('tblMain').style.display = '';
+        document.getElementById('errorDisplay').style.display = 'none';
+        $('#tblMain').show();
+        $("#errorDisplay").hide();
+    }
+    else {
+        alert('else')
+        document.getElementById('tblMain').style.display = 'none';
+        document.getElementById('errorDisplay').style.display = '';
+       // $('#tblMain').hide();
+        $("#errorDisplay").show();
+    }
+</script>*@
+@if (ViewBag.DisplayResult != "")
+{
+    
+    <table id="tblMain" style="width:100%;">
+    <tr>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+            <table class="GridTable" style="width:100%">
+                <tr style="height:30px"  class="GridBar">
+                    <td style="width:30%" align="center">
+                        <label>@Resources.Month</label>
+                        @*<asp:Label ID="lblMonth" runat="server" TextMessageCode="Month"></asp:Label>*@
+                    </td>
+                    <td colspan="@ViewBag.ColSpan" align="center">
+                        @*<asp:Label ID="lblMonth1" runat="server" OverwriteText="false"></asp:Label>*@
+                        <label>@ViewBag.Month1</label>
+                    </td>
+                    @if (ViewBag.Month2ColSpan!=0)
+                    {
+                        var Month2colspan = ViewBag.Month2ColSpan;
+                        <td colspan="@ViewBag.Month2ColSpan" id="cellMonth2" align="center">
+                        <label>@ViewBag.Month2</label>
+                         </td>
+                    }
+                    
+                </tr>
+                <tr style="height:30px">
+                    <td class="GridBar" align="center">
+                        @*<asp:Label ID="lblDay" runat="server" TextMessageCode="Day"></asp:Label>*@
+                        <label>@Resources.Day</label>
+                    </td>
+                        @foreach (var Day in ViewBag.Day)
+                        {
+                            if (Day.WeekDay == 1 || Day.WeekDay == 6 || Day.WeekDay == 7)
+                            {
+                                <td class="GridBar3" align="center" style="background-color:#e1e1e1;">@Day.Day</td>
+                            }
+                            else
+                            {
+                                <td class="GridBar4" align="center" style="background-color:#e1e1e1;">@Day.Day</td>
+                            }
+                         }                   
+                </tr> 
+                @foreach (var Room in ViewBag.Room)
+                        {
+                            var HotelRoomID = Room.ID;
+                <tr style="height:40px">
+                    <td class="GridBar2" align="center" style="white-space:nowrap;padding:5px;">                       
+                            <label>@Room.RoomTypeName</label>
+                        <a style="margin:10px;" href="/RoomRate/RoomRate?HotelRoomID=@Room.EncryptHotelRoomID"><input type="button" class="k-button btn-blue" value="@Resources.RoomRate" /></a>
+                        <a style="margin:10px;" href="/RoomAvailability/RoomAvailability?HotelRoomID=@Room.EncryptHotelRoomID"><input type="button" class="k-button btn-blue" value="@Resources.RoomAvailability" /></a>                        
+                    </td>  
+                    @foreach (var Day in ViewBag.RoomDay)
+{
+    var RoomID = Day.HotelRoomID;
+    var hotelRoomAvailabilityText = Day.hotelRoomAvailabilityText;
+    var DateIDValue = Day.DateID;
+    //  var HotelAvailableStatus=Day.HotelAvailableStatus;
+    if (RoomID == HotelRoomID)
+    {
+        if (hotelRoomAvailabilityText == "Closed")
+        {
+            <td id="cellRoomDay" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)" class="Closed" style="cursor:pointer" align="center">
+                <a title="@Resources.Closed"></a>
+                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+            </td>
+        }
+        else if (hotelRoomAvailabilityText == "RoomRateMissing")
+        {
+            <td onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)" style="cursor:pointer" class="RateMissing" align="center">
+                <a title="@Resources.RateMissing">@Day.lbtnAvailableRoomCount</a>
+                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+            </td>
+        }
+        else if (hotelRoomAvailabilityText == "AvailableRoomCount")
+        {
+            <td class="Full" align="center" style="cursor:pointer" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)">
+                <a title="@Resources.Full">@Day.lbtnAvailableRoomCount</a>
+                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+            </td>
+        }
+        else
+        {
+            <td class="Available" align="center" style="cursor:pointer" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)">
+                <a title="@Resources.Available">@Day.lbtnAvailableRoomCount</a>
+                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+            </td>
+        }
+    }
+
+}                  
+                </tr>
+                        }
+                <tr style="height:25px" class="GridBar">
+                    <td align="center">
+                        <label>@Resources.CloseOpenDailyAvailability</label>
+                        @*<asp:Label ID="lblCloseOpenDailyAvailability" runat="server" TextMessageCode="CloseOpenDailyAvailability" NoPreview></asp:Label>*@
+                        </td>
+                                 @foreach (var CloseOpenDailyAvailability in ViewBag.CloseOpenAvailabilityDay)
+                                 {
+                                    <td style="cursor:pointer;text-align:center" onclick="CloseOpenAvailabilityCheck(@CloseOpenDailyAvailability.DateID)">
+                                    <input type="hidden" id="hidValueDate_@CloseOpenDailyAvailability.DateID" value="@CloseOpenDailyAvailability.Date" />
+                                     @*<td  onclick="CloseOpenAvailabilityCheck(@CloseOpenDailyAvailability.Date)" align="center">*@
+                                    <a><img src="/Image/closeopen.png" /></a>
+                                    @*<asp:ImageButton ID="ibtnCloseOpenDailyAvailability" runat="server" ImageUrl="~/Image/closeopen.png" CommandName="CloseOpenAvailability" CommandArgument='<%# DataBinder.Eval(Container.DataItem, "Date")%>' ShowProgress NoPreview />*@
+                                    </td>
+                                 }   
+                </tr>   
+            </table>
+        </td>
+    </tr>
+   <tr>
+       <th></th>
+       <td></td>
+   </tr>
+    <tr>
+        <td>
+            <table border="0" cellpadding="0" cellspacing="5">
+                <tr style="height:50px">
+                    <td>
+                        <div class="Available" style="width:25px;height:25px;border:1px solid #c5ccda;"></div>
+                    </td>
+                    <td align="left" style="width:120px">
+                        <label class="divCaption">@Resources.Available</label>                       
+                    </td>
+                    <td >&nbsp;</td>
+                    <td style=" width: 35px;">
+                        <div class="Closed" style="width:25px;height:25px;border:1px solid #c5ccda;"></div>
+                    </td>
+                    <td align="left" style="width:120px">
+                        <label class="divCaption">@Resources.Closed</label>                       
+                    </td>
+                    <td >&nbsp;</td>
+                    <td style=" width: 35px;">
+                        <div class="RateMissing" style="width:25px;height:25px;border:1px solid #c5ccda;"></div>
+                    </td>
+                    <td align="left" style="width:120px">
+                        <label class="divCaption">@Resources.RateMissing</label>                       
+                    </td>
+                    <td>&nbsp;</td>
+                    <td style=" width: 35px;">
+                        <div class="Full" style="width:25px;height:25px;border:1px solid #c5ccda;"></div>
+                    </td>
+                    <td align="left" style="width:150px">
+                        <label class="divCaption">@Resources.Full</label>                        
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+</table>
+}
+else
+{
+    <div id="errorDisplay" style="text-align:center;color:red;font-size:15px;"><label>@Resources.NoRecordFoundMessage</label></div>
+}
+
+
+
+<script>    
+
+    function CloseOpenAvailabilityDay(DateIDValue, HotelRoomID, HotelAvailableStatus) {
+      //  alert(HotelAvailableStatus)
+        //  alert(DateIDValue)
+        var Datevalue = document.getElementById("hidDate_" + DateIDValue).value;
+        // alert(Datevalue);
+        //var HotelAvailabilityStatus=document.getElementById("hidHotelAvailabilityStatus_"+ DateIDValue).value;
+        var HotelAvailabilityStatus = HotelAvailableStatus;
+       // alert(HotelAvailabilityStatus)
+        var HotelRoomID = HotelRoomID;
+      //  alert(HotelRoomID)
+
+        var json = {
+            Datevalue: Datevalue, HotelAvailabilityStatus: HotelAvailabilityStatus, HotelRoomID: HotelRoomID
+        }
+
+        //  alert(json)
+        $.ajax({
+            type: "Get",
+            url: "/HotelRateAndAvailability/CloseOpenAvailabilityDayUpdate",
+            data: json,
+            datatype: "JSON",
+            traditional: true,
+            success: function (res) {                                 
+                    window.location.href = "/HotelRateandAvailability/HotelRateandAvailability";               
+
+            }
+        });
+    }
+
+    function CloseOpenAvailabilityCheck(DateIDValue) {
+       // alert(DateIDValue)
+        var date=document.getElementById("hidValueDate_"+DateIDValue).value;
+       // alert(date)
+
+        var json = { Datevalue: date }
+       // alert(json)
+        $.ajax({
+            type: "Get",
+            url: "/HotelRateAndAvailability/CloseOpenAvailabilityRefresh",
+            data: json,
+            datatype: "JSON",           
+            success: function (res) {
+               
+                    window.location.href = "/HotelRateandAvailability/HotelRateandAvailability";                    
+              
+            }
+        });
+    }
+
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

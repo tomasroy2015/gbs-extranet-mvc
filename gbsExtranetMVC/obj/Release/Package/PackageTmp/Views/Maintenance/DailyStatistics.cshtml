@@ -1,0 +1,208 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_HitCount")</h1>
+
+<style>
+    .col-md-4 {
+        width: 29.333333%;
+    }
+</style>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 14px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style=" margin-top: 15px;margin-bottom: 5px;">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="col-md-3 col-sm-3" style="display: flex; padding-right: 6px;">
+
+                <label style=" width: 48px; padding-top: 6px;">@MessageColumnCaptions.PartID</label>
+                <input id="drpPart" style="width: 100%;" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: flex">
+                <label style="width: 80px; padding-top: 6px; ">@MessageColumnCaptions.RecordID</label>
+                <input id="txtFilterRecordID" type="text" class="k-textbox" style="width:200px" placeholder="@MessageColumnCaptions.RecordID" />
+            </div>
+            
+        </div>
+    </div>
+    <div class="row" style=" margin-bottom: 10px;margin-top:20px" >
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="col-md-4 col-sm-4" style="display: flex; width: 25%;">
+
+                <label style="padding-top: 7px;">@Resources.Date (@Resources.FilterLowerLimitDescription)</label>
+                <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style=" width: 155px; height: 25px; left: 10px;" />
+            </div>
+            <div class="col-md-4 col-sm-4" style="display: flex; width: 22%;">
+                <label style="padding-top: 7px;">@Resources.Date (@Resources.FilterUpperLimitDescription)</label>
+                <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style=" width: 150px; height: 25px; left: 10px;" />
+            </div>
+            <div class="col-md-3  col-sm-3">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.FilterRemove</button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.HitcountExt>()
+                    .Name("HitCount_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+        })
+
+                                 .Read(read => read.Action("_Read", "DailyStatistics"))
+
+        )
+
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ID).Width(70).Locked(true);
+            columns.Bound(p => p.Part).Title(MessageColumnCaptions.PartID).Width(150);
+            columns.Bound(p => p.RecordID).Title(MessageColumnCaptions.RecordID).Width(150);
+            columns.Bound(p => p.Date).Title(MessageColumnCaptions.Date).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy') #").Width(150);
+            columns.Bound(p => p.HitCount).Title(MessageColumnCaptions.HitCount).Width(150);
+            columns.Bound(p => p.Description).Title(MessageColumnCaptions.Description).Width(400);
+
+
+        })
+        .ToolBar(tool =>
+        {
+
+            tool.Excel();
+        })
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("HitCount.xlsx")
+                .Filterable(true))
+
+)
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $RecordID = $("#txtFilterRecordID").val();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+        $PartText = $("#drpPart").data("kendoDropDownList").text();
+        $PartValue = $("#drpPart").val();
+        // $Part1 = $("#drpPart").data("kendoDropDownList").value();
+        //  alert($Part1)
+
+        if ($RecordID) {
+            $filter.push({ field: "RecordID", operator: "equals", value: String($RecordID) });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "Date", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "Date", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        if ($PartValue) {
+            $filter.push({ field: "Part", operator: "contains", value: $PartText });
+        }
+
+        var grid = $("#HitCount_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+    $(document).ready(function () {
+        // create DateTimePicker from input HTML element
+        //$("#datetimepicker").kendoDateTimePicker({
+        //    value: new Date()
+        //});
+
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPart").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "PartName",
+                    dataValueField: "PartID",
+                    // dataValueField: "Name",
+                    dataSource: data,
+                    optionLabel: "All..."
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#HitCount_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtFilterRecordID").val('')
+        //$("#datetimepickerEnd").val('');
+        //$("#datetimepickerStart").val('');
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+        var dropdownlistPart = $("#drpPart").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

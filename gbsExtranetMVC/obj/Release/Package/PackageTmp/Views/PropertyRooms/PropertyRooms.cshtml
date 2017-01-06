@@ -1,0 +1,113 @@
+﻿@using Resources
+@using PropertyRoomsColumnCaption
+@{
+    ViewBag.Title = "PropertyRooms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+
+<h1 style="color: black; text-align:center">@Resources.HotelRooms</h1>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.PropertyRoomsExt>()
+                            .Name("PropertyRooms_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+
+                
+                .Read(read => read.Action("_Read", "PropertyRooms"))
+                .Destroy(destroy => destroy.Action("_Destroy", "PropertyRooms"))
+
+        )
+
+        .Columns(columns =>
+        {
+            columns.Bound("").Title(Resources.Operation).Sortable(false).Width(150).ClientTemplate("<div style='text-align:center;'> <a href='/HotelRoom/HotelRoom?HotelRoomID=#=EncryptRoomID#'><img src='/Images/goto.png' style='width:30px;cursor:pointer;' alt='goto'></a> <a onclick='DeleteRoom(#=ID#)'><img src='/Images/delete.png' style='width:25px;margin-left:8px;cursor:pointer;'  alt='Delete'></a></div>").Locked(true); 
+          //  columns.Bound("").Width(150).ClientTemplate("<div style='text-align:center;'> <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#'><img src='/Images/goto.png' style='width:30px;cursor:pointer;' alt='goto'></a> </div>").Locked(true); 
+            columns.Bound(p => p.RoomTypeName).Title(PropertyRoomsColumnCaption.dgHotelRoomHotelRoomTypeName).Width(230);
+            columns.Bound(p => p.RoomCount).Title(PropertyRoomsColumnCaption.dgHotelRoomRoomCount).Width(80);
+            columns.Bound(p => p.RoomSize).Title(PropertyRoomsColumnCaption.dgHotelRoomRoomSize).Width(80);
+            columns.Bound(p => p.MaxPeopleCount).Title(PropertyRoomsColumnCaption.dgHotelRoomMaxPeopleCount).Width(250);
+            columns.Bound(p => p.ViewTypeName).Title(PropertyRoomsColumnCaption.dgHotelRoomViewTypeName).Width(100);
+            columns.Bound(p => p.SmokingTypeName).Title(PropertyRoomsColumnCaption.dgHotelRoomSmokingTypeName).Width(150);
+            columns.Bound(p => p.CreateDateTime).Title(PropertyRoomsColumnCaption.dgHotelRoomCreateDateTime).Width(120);
+            columns.Bound(p => p.OpDateTime).Title(PropertyRoomsColumnCaption.dgHotelRoomOpDateTime).Width(120);    
+            
+        })
+             .ToolBar(tool =>
+                    {
+                        tool.Custom().Name("cmdAddNewUser").Text(Resources.NewRecord).Action("HotelRoom", "HotelRoom");
+                        //tool.Excel();
+                    })
+               // .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))        
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()               
+)
+<br />
+<br />
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div align="center">
+        <a href="/HotelRoom/HotelRoom?HotelRoomID=" style='text-decoration:underline;'>
+            <input type="button" value="@Resources.NewRecord" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        </a>       
+    </div>
+</div>
+
+<script>
+    function DeleteRoom(ID) {
+     
+
+        var result = confirm('@Resources.DeleteConfirmWarning');
+      
+        if (result) {
+            var json = { HotelRoomID: ID }
+            $.ajax({
+                type: "GET",
+                url: "/PropertyRooms/DeleteHotelRoom",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+                    var grid = $("#PropertyRooms_Grid").data("kendoGrid");
+                    // alert(grid)
+                    grid.dataSource.read();
+                }
+            })
+        }
+        else {
+
+        }
+
+    }
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

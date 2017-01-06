@@ -1,0 +1,218 @@
+﻿
+@using Resources
+@using MessageColumnCaptions
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("Tb_HotelRateHistory")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style=" margin-top: 15px;margin-bottom: 5px;">
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-5 col-sm-5 col-xs-5" style="padding:5px;">
+                    <label>@MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelRateID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7" style="padding: 5px;">
+                    <input id="txtHotelRateID" type="text" class="form-control" style="width:100%" placeholder="@MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelRateID")" />                    
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-5 col-sm-5 col-xs-5" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelAccommodationtypeID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7" style="padding: 5px;">
+                    <input id="drpAccType" style="width: 100%;" />                   
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-3 col-sm-3 col-xs-3" style="padding:5px;">
+                    <label>@MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelRoomID")</label>
+                </div>
+                <div class="col-md-9 col-sm-9 col-xs-9" style="padding: 5px;">
+                    <input id="txtHotelRoomID" type="text" class="form-control" style="width:100%" placeholder="@MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelRoomID")" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style=" margin-bottom: 15px;">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="col-md-4  col-sm-5">
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.Tb_HotelRateHistoryCaption("LogDateTime") (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-5">
+
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.Tb_HotelRateHistoryCaption("LogDateTime") (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 5px;">
+                <button id="btnfilter" class="k-button" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.Tb_HotelRateHistoryExt>()
+                .Name("Tb_HotelRateHistoryGrid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                //.Create(update => update.Action("_Create", "BizTbl_Culture"))
+                    .Read(read => read.Action("_Read", "Tb_HotelRateHistory", new { TableID = (int)ViewBag.TableID }))
+                //.Update(update => update.Action("_Update", "BizTbl_Culture"))
+                //.Destroy(destroy => destroy.Action("_Destroy", "BizTbl_Culture"))
+
+        )
+
+                    .Columns(columns =>
+                    {                        
+                        columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.HotelRateID).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelRateID")).Width(100).Locked(true);
+                        columns.Bound(p => p.HotelRoomId).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelRoomId")).Width(150);
+                        columns.Bound(p => p.DateID).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("DateID")).Width(150);
+                        columns.Bound(p => p.PricePolicyTypeID).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("PricePolicyTypeID")).Width(150);
+                        columns.Bound(p => p.HotelAccommodationTypeID).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("HotelAccommodationTypeID")).Width(150);
+                        columns.Bound(p => p.SinglePrice).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("SinglePrice")).Width(150);
+                        columns.Bound(p => p.DoublePrice).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("DoublePrice")).Width(150);
+                        columns.Bound(p => p.RoomPrice).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("RoomPrice")).Width(150);
+                        columns.Bound(p => p.CurrencyID).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("CurrencyID")).Width(150);
+                        columns.Bound(p => p.LogDateTime).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+                        columns.Bound(p => p.LogUserID).Title(MessageColumnCaptions.Tb_HotelRateHistoryCaption("LogUserID")).Width(150);
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Tb_HotelRateHistoryRpt.xlsx")
+                .Filterable(true))
+
+)
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $RateID = $("#txtHotelRateID").val();
+        $RoomID = $("#txtHotelRoomID").val();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+        $AccType = $("#drpAccType").data("kendoDropDownList").text();
+        $AccTypeValue = $("#drpAccType").val();
+        //alert($StartDate)
+
+        if ($RateID) {
+            $filter.push({ field: "HotelRateID", operator: "equals", value: String($RateID) });
+        }
+        if ($RoomID) {
+            $filter.push({ field: "HotelRoomId", operator: "equals", value: String($RoomID) });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        if ($AccTypeValue != -1) {
+            $filter.push({ field: "HotelAccommodationTypeID", operator: "contains", value: $AccType });
+        }
+
+        var grid = $("#Tb_HotelRateHistoryGrid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+        // create DateTimePicker from input HTML element
+        //$("#datetimepicker").kendoDateTimePicker({
+        //    value: new Date()
+        //});
+
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotelTypeAccommodation",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpAccType").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#Tb_HotelRateHistoryGrid").data("kendoGrid").dataSource;        
+        datasource.filter([]);        
+        $("#txtHotelRateID").val('');
+        $("#txtHotelRoomID").val('');
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+
+</script>
+
+

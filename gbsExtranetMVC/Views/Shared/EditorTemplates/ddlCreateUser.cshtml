@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                        .Name("CreateUserID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                                .DataTextField("CreateUser")
+                                .DataValueField("CreateUserID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetCreateUser", "DropDownLists");
+        });
+    })
+)

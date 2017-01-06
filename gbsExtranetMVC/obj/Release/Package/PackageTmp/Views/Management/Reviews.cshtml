@@ -1,0 +1,367 @@
+﻿@using Resources
+@using ReviewsColumnCaptions
+@using MessageColumnCaptions
+
+@{
+    ViewBag.Title = "Reviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>*@
+<style>
+    @@media (min-width: 992px) {
+        .col-md-5 {
+            width: 31.666667%;
+        }
+    }
+
+    .lblright{
+        width:30px;
+    }
+    .lblLeft {
+        width: 100px;
+    }
+
+</style>
+
+<h1 style="color: black; text-align: center;">@MessageColumnCaptions.DynamicPageTitle("AdminReservationReviews.aspx")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12" style="padding:0px">
+
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-12 col-sm-12">
+                    <div class="col-md-5 col-sm-5" style="padding:0px">
+                        <label>@ReviewsColumnCaptions.dgReviewRezervasyonKodu</label>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <input id="txtReservationID" type="text" class="k-textbox" style="width:100%" placeholder="@ReviewsColumnCaptions.dgReviewRezervasyonKodu" />
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12" style="margin-top:50px">
+                    <div class="col-md-5 col-sm-5" style="padding:0px">
+                        <label>@ReviewsColumnCaptions.dgReviewPart</label>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <input id="drpSection" style="width: 100%;" />
+                    </div>
+                </div>
+
+            </div>     
+            
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-12 col-sm-12">
+                    <div class="col-md-5 col-sm-5">
+                        <label>@ReviewsColumnCaptions.dgReviewFirmName</label>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <input id="drpFirm" style="width: 100%;" />
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12" style="margin-top:50px">
+                    <div class="col-md-5 col-sm-5">
+                        <label>@ReviewsColumnCaptions.dgReviewReviewStatusName</label>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <input id="drpReviewStatus" style="width: 100%;" />
+                    </div>
+                </div>
+
+            </div>         
+
+            <div class="col-md-2 col-sm-2" style="padding:0px; margin-top: 21px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.FilterRemove</button>
+            </div>
+        </div>
+    </div>
+    
+
+
+</div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.ReviewsExt>()
+                            .Name("ReservationReviews_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)        
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+
+
+                .Read(read => read.Action("_Read", "Reviews"))
+                //.Destroy(destroy => destroy.Action("_Destroy", "Reviews"))
+                //.Update(update => update.Action("_Update", "Reviews"))
+
+        )
+
+        .Columns(columns =>
+        {
+            columns.Bound("").Title(Resources.Operation).Sortable(false).Width(100).ClientTemplate("<div style='text-align:center;'> #if(StatusID){# <img src='/Images/approve.png' onclick='Approve(#=ID#)' style='width:20px;cursor:pointer;' alt='checked'> # # <img src='/Images/cancel.png' onclick='Reject(#=ID#)' style='width:22px;margin-left:8px;cursor:pointer;' alt='checked'> #} else {# <img src='/Images/delete.png' style='cursor:pointer' onclick='Delete(#=ID#)' alt='redCross'> #}# </div>").Locked(true); 
+            columns.Bound(p => p.ID).Width(50).Locked(true);
+            columns.Bound(p => p.FirmName).Title(ReviewsColumnCaptions.dgReviewFirmName).Width(130);
+            columns.Bound(p => p.Part).Title(ReviewsColumnCaptions.dgReviewPart).Width(90);
+
+            columns.Bound(p => p.ReservationID).Title(ReviewsColumnCaptions.dgReviewRezervasyonKodu)
+            .ClientTemplate("<a style='text-decoration:underline;' href='/PropertyReservations/View/#=EncryptReservationID#' title='View Reservations'>#=ReservationID#</a>").Width(120);     
+            
+            columns.Bound(p => p.ReviewOwner).Title(ReviewsColumnCaptions.dgReviewYorumSahibi).Width(130);
+            columns.Bound(p => p.Review).Title(ReviewsColumnCaptions.dgReviewYorum).Width(320).Encoded(false);
+            columns.Bound(p => p.ReviewStatusName).Title(ReviewsColumnCaptions.dgReviewReviewStatusName).Width(90);
+            columns.Bound(p => p.Anonymous).Title(ReviewsColumnCaptions.dgReviewAnonim)
+            .ClientTemplate("<div style='text-align:center;'> #if(Anonymous){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+            .Width(120);
+            columns.Bound(p => p.CreateDateTime).Title(ReviewsColumnCaptions.dgReviewCreateDateTime).Width(100);
+            columns.Bound(p => p.OpDateTime).Title(ReviewsColumnCaptions.dgReviewOpDateTime).Width(100);
+            columns.Bound(p => p.IPAddress).Title(ReviewsColumnCaptions.dgReviewIPAddress).Width(120);
+
+
+
+
+            //columns.Command(
+
+            //             command =>
+            //             {
+            //                 // command.Edit();
+            //                 command.Destroy();
+            //             }).Width(170);
+        })
+            .ToolBar(tool =>
+            {
+                //tool.Custom().Name("cmdAddNewRecord")
+                //       .Text(Resources.NewRecord)
+                //       .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                tool.Excel();
+            })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                    .Excel(excel => excel
+                    .FileName("ReservationReviews.xlsx")
+                    .Filterable(true))
+
+)
+
+<script>
+
+    var AllText='@Resources.ListAllExpression'
+
+    function Approve(ID) {
+      
+        //var parentItem = grid.dataSource.get(ID);
+        //alert(parentItem)
+        //  alert(ID);
+
+       // alert(ID)
+        var json = { ID: ID }
+        $.ajax({
+            type: "GET",
+            url: "/Reviews/ReservationReviewStatusApprove",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                // alert(res)
+
+                var grid = $("#ReservationReviews_Grid").data("kendoGrid");
+               // alert(grid)
+                grid.dataSource.read();
+                //$('#ReservationReviews_Grid').data('kendoGrid').dataSource.read();
+                // $('#ReservationReviews_Grid').data("kendoGrid").refresh();
+                //alert('hi')
+            }
+        });
+    }
+
+    function Reject(ID) {
+      //  alert(ID);
+        var json = { ID: ID }
+
+        $.ajax({
+            type: "GET",
+            url: "/Reviews/ReservationReviewStatusReject",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                var grid = $("#ReservationReviews_Grid").data("kendoGrid");
+                // alert(grid)
+                grid.dataSource.read();
+            }
+        });
+    }
+
+    function Delete(ID) {
+        // alert(ID);
+        var json = { ID: ID }
+
+        $.ajax({
+            type: "GET",
+            url: "/Reviews/ReservationReviewStatusDelete",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                var grid = $("#ReservationReviews_Grid").data("kendoGrid");
+                // alert(grid)
+                grid.dataSource.read();
+            }
+        });
+    }
+   
+    $(document).ready(function () {
+        //  alert('hi');
+        var json = {}
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpSection").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "PartName",
+                    dataValueField: "PartID",
+                    optionLabel: AllText,
+                    dataSource: data
+                });
+            }
+        })
+        
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/Firm",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                
+                $("#drpFirm").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "FirmID",
+                    optionLabel: AllText,
+                    dataSource: data
+                });
+            }
+        })
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetTypeStatus",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpReviewStatus").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "StatusName",
+                    dataValueField: "StatusID",
+                    // dataValueField: "Name",
+                    dataSource: data,
+                    optionLabel: AllText
+                });
+            }
+        })
+
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnfilter").click(function () {
+
+        //  alert('hi')
+
+        $filter = new Array();
+     
+        $ReservationID = $("#txtReservationID").val();
+       // alert($ReservationID);
+
+      
+        $SectionText = $("#drpSection").data("kendoDropDownList").text();
+       // alert($SectionText)
+        $SectionValue = $("#drpSection").val();
+
+        $FirmText = $("#drpFirm").data("kendoDropDownList").text();
+        $FirmValue = $("#drpFirm").val();
+      //  alert($FirmValue)
+
+        
+        $ReviewStatusText = $("#drpReviewStatus").data("kendoDropDownList").text();
+        $ReviewStatusValue = $("#drpReviewStatus").val();
+       // alert($ReviewStatusValue)
+      
+
+        if ($ReservationID) {
+            $filter.push({ field: "ReservationID", operator: "equals", value: String($ReservationID) });
+        }    
+
+        if ($SectionValue) {
+            $filter.push({ field: "PartID", operator: "equals", value: $SectionValue });
+        }
+
+        if ($FirmValue) {
+            $filter.push({ field: "FirmName", operator: "equals", value: $FirmText });
+        }
+        
+        if ($ReviewStatusValue) {
+            $filter.push({ field: "StatusID", operator: "equals", value: $ReviewStatusValue });
+        }    
+
+        var grid = $("#ReservationReviews_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#ReservationReviews_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtReservationID").val('');
+
+        var drpSection = $("#drpSection").data("kendoDropDownList");
+        drpSection.select("");
+
+        var drpFirm = $("#drpFirm").data("kendoDropDownList");        
+        drpFirm.select("");
+       // drpFirm.select(-1)
+
+        var drpReviewStatus = $("#drpReviewStatus").data("kendoDropDownList");
+        drpReviewStatus.select("");
+       
+    });
+
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

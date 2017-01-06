@@ -1,0 +1,130 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TransferPeriod")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-2  col-sm-2">
+            <label> @MessageColumnCaptions.TB_TransferPeriodCaption("Active")</label> &nbsp;<input id="ChkFilterCommon" name="ChkFilterCommon" type="checkbox" />
+        </div>
+        <div class="col-md-4  col-sm-4">
+            <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+            <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $Active = "false";
+        if ($('#ChkFilterCommon').prop('checked')) {
+            $Active = "true";
+        }
+
+        if ($Active == "true") {
+            //alert($Commom)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        var grid = $("#TB_TransferPeriod_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_TransferPeriod_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        document.getElementById('ChkFilterCommon').checked = false
+    });
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TransferPeriodExt>()
+                .Name("TB_TransferPeriod_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                                .Create(update => update.Action("_Create", "TB_TransferPeriod"))
+                                .Read(read => read.Action("_Read", "TB_TransferPeriod", new { TableID = (int)ViewBag.TableID }))
+                                .Destroy(destroy => destroy.Action("_Destroy", "TB_TransferPeriod"))
+                                .Update(update => update.Action("_Update", "TB_TransferPeriod"))
+
+        )
+
+
+            .Columns(columns =>
+            {
+                columns.Command(
+                 command =>
+                 {
+                     command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                     command.Destroy().Text(Resources.Delete);
+                 }).Locked(true).Width(180);
+
+                columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+                columns.Bound(p => p.BusinessPartner).Title(MessageColumnCaptions.TB_TransferPeriodCaption("BusinessPartnerID")).EditorTemplateName("ddlBusinessPartner").Width(150);
+                columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_TransferPeriodCaption("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.EndDate).Title(MessageColumnCaptions.TB_TransferPeriodCaption("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.Period).Title(MessageColumnCaptions.TB_TransferPeriodCaption("Period")).Width(150);
+                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_TransferPeriodCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+                columns.Bound(p => p.OpDateTime).Title(MessageColumnCaptions.TB_TransferPeriodCaption("OpDateTime")).ClientTemplate("#= kendo.toString(OpDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.User).Title(MessageColumnCaptions.TB_TransferPeriodCaption("OpUserID")).EditorTemplateName("ddlUser").Width(150);
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_TransferPeriod.xlsx")
+                .Filterable(true))
+
+)
+
+
+<script id="AddNewRecord">
+
+
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_TransferPeriod_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+
+</script>

@@ -1,0 +1,171 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TourReservation")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-4 col-sm-4">
+            <div class="col-md-3 col-sm-3 col-xs-3" style="padding:5px;">
+                <label> @MessageColumnCaptions.TB_TourReservationCaption("ReservationID")</label>
+            </div>
+            <div class="col-md-9 col-sm-9 col-xs-9" style="padding: 5px;">
+                <input id="txtReservationID" type="text" class="form-control" style="width:100%" placeholder="@MessageColumnCaptions.TB_TourReservationCaption("ReservationID")" />
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-3">
+            <div class="col-md-3 col-sm-3 col-xs-3" style="padding:5px;">
+                <label>@MessageColumnCaptions.TB_TourReservationCaption("FirmID")</label>
+            </div>
+            <div class="col-md-9 col-sm-9 col-xs-9" style="padding: 5px;">
+                <input id="drpFirm" style="width: 100%;" />
+            </div>
+        </div>
+        <div class="col-md-2  col-sm-2">
+            <label> @MessageColumnCaptions.TB_TourReservationCaption("Active")</label> &nbsp;<input id="ChkFilterCommon" name="ChkFilterCommon" type="checkbox" />
+        </div>
+        <div class="col-md-3  col-sm-3">
+            <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+            <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.Filter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $ReservationID = $("#txtReservationID").val();
+        $Active = "false";
+        if ($('#ChkFilterCommon').prop('checked')) {
+            $Active = "true";
+        }
+        if ($Active == "true") {
+            //alert($Commom)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        if ($ReservationID) {
+            $filter.push({ field: "ReservationID", operator: "equals", value: String($ReservationID) });
+        }
+
+        var grid = $("#TB_TourReservation_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_TourReservation_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtReservationID").val('')
+        document.getElementById('ChkFilterCommon').checked = false
+
+
+        var dropdownlistPart = $("#drpFirm").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TourReservationExt>()
+                .Name("TB_TourReservation_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+        })
+
+        )
+
+
+            .Columns(columns =>
+            {
+
+                columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+                columns.Bound(p => p.Reservation).Title(MessageColumnCaptions.TB_TourReservationCaption("ReservationID")).Width(150);
+                columns.Bound(p => p.Firm).Title(MessageColumnCaptions.TB_TourReservationCaption("FirmID")).Width(150);
+                columns.Bound(p => p.TourID).Title(MessageColumnCaptions.TB_TourReservationCaption("TourID")).Width(150);
+                columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_TourReservationCaption("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.EndDate).Title(MessageColumnCaptions.TB_TourReservationCaption("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.GuestFullName).Title(MessageColumnCaptions.TB_TourReservationCaption("GuestFullName")).Width(150);
+                columns.Bound(p => p.PreferredTourDateTime).Title(MessageColumnCaptions.TB_TourReservationCaption("PreferredTourDateTime")).ClientTemplate("#= kendo.toString(PreferredTourDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.PeopleCount).Title(MessageColumnCaptions.TB_TourReservationCaption("PeopleCount")).Width(150);
+                columns.Bound(p => p.ChildCount).Title(MessageColumnCaptions.TB_TourReservationCaption("ChildCount")).Width(150);
+                columns.Bound(p => p.TurkeyAddress).Title(MessageColumnCaptions.TB_TourReservationCaption("TurkeyAddress")).Width(150);
+                columns.Bound(p => p.BusinessPartnerCancelPolicy).Title(MessageColumnCaptions.TB_TourReservationCaption("BusinessPartnerCancelPolicyID")).Width(150);
+                columns.Bound(p => p.NonRefundable).Title(MessageColumnCaptions.TB_TourReservationCaption("NonRefundable"))
+                .ClientTemplate("<div style='text-align:center;'> #if(NonRefundable){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+                columns.Bound(p => p.Amount).Title(MessageColumnCaptions.TB_TourReservationCaption("Amount")).Width(150);
+                columns.Bound(p => p.GeneralPromotionDiscountPercentage).Title(MessageColumnCaptions.TB_TourReservationCaption("GeneralPromotionDiscountPercentage")).Width(150);
+                columns.Bound(p => p.PromotionDiscountPercentage).Title(MessageColumnCaptions.TB_TourReservationCaption("PromotionDiscountPercentage")).Width(150);
+                columns.Bound(p => p.PayableAmount).Title(MessageColumnCaptions.TB_TourReservationCaption("PayableAmount")).Width(150);
+                columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_TourReservationCaption("CurrencyID")).Width(150);
+                columns.Bound(p => p.Cost).Title(MessageColumnCaptions.TB_TourReservationCaption("Cost")).Width(150);
+                columns.Bound(p => p.CostCurrency).Title(MessageColumnCaptions.TB_TourReservationCaption("CostCurrencyID")).Width(150);
+                columns.Bound(p => p.ComissionRate).Title(MessageColumnCaptions.TB_TourReservationCaption("ComissionRate")).Width(150);
+                columns.Bound(p => p.ComissionAmount).Title(MessageColumnCaptions.TB_TourReservationCaption("ComissionAmount")).Width(150);
+                columns.Bound(p => p.ComissionCurrency).Title(MessageColumnCaptions.TB_TourReservationCaption("ComissionCurrencyID")).Width(150);
+                columns.Bound(p => p.Deposit).Title(MessageColumnCaptions.TB_TourReservationCaption("Deposit")).Width(150);
+                columns.Bound(p => p.DepositType).Title(MessageColumnCaptions.TB_TourReservationCaption("DepositTypeID")).Width(150);
+                columns.Bound(p => p.DepositCurrency).Title(MessageColumnCaptions.TB_TourReservationCaption("DepositCurrencyID")).Width(150);
+                columns.Bound(p => p.DepositInTL).Title(MessageColumnCaptions.TB_TourReservationCaption("DepositInTL")).Width(150);
+                columns.Bound(p => p.Status).Title(MessageColumnCaptions.TB_TourReservationCaption("StatusID")).Width(150);
+                columns.Bound(p => p.ReservationOperation).Title(MessageColumnCaptions.TB_TourReservationCaption("ReservationOperationID")).Width(150);
+                columns.Bound(p => p.CancelDateTime).Title(MessageColumnCaptions.TB_TourReservationCaption("CancelDateTime")).ClientTemplate("#= kendo.toString(CancelDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_TourReservationCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_TourReservation.xlsx")
+                .Filterable(true))
+
+)
+
+
+<script>
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetFirmDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpFirm").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "FirmName",
+                    dataValueField: "FirmID",
+                    // dataValueField: "Name",
+                    dataSource: data,
+                    optionLabel: AllSelectText,
+                });
+
+            }
+        })
+    });
+
+
+</script>

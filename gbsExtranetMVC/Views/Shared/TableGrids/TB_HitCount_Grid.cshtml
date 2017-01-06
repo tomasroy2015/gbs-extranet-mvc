@@ -1,0 +1,201 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_HitCount")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.PartID</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtFilterID" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.RecordID</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtFilterCode" type="text" class="form-control" style="width:100%" placeholder="@Resources.Code" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3  col-sm-3" style="padding: 0px;">
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.Date (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-3 col-sm-3" style="padding: 0px;">
+
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.Date (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HitCountExt>()
+                            .Name("TB_HitCount_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+                     //   .Create(update => update.Action("_Create", "TB_HitCount"))
+                        .Read(read => read.Action("_Read", "TB_HitCount", new { TableID = (int)ViewBag.TableID }))
+                     //   .Update(update => update.Action("_Update", "TB_HitCount"))
+                     //   .Destroy(destroy => destroy.Action("_Destroy", "TB_HitCount"))
+        )
+
+        .Columns(columns =>
+        {
+            //columns.Command(
+            // command =>
+            // {
+            //  //   command.Edit();
+            //  //   command.Destroy();
+            // });
+
+            columns.Bound(p => p.ID).Width(100).Title(MessageColumnCaptions.TB_HitCountCaption("ID"));
+            columns.Bound(p => p.Part).Title(MessageColumnCaptions.TB_HitCountCaption("PartID")).Width(150);
+            columns.Bound(p => p.Record).Title(MessageColumnCaptions.TB_HitCountCaption("RecordID")).Width(150);
+            columns.Bound(p => p.Date).Title(MessageColumnCaptions.TB_HitCountCaption("Date")).Width(100);
+            columns.Bound(p => p.HitCount).Title(MessageColumnCaptions.TB_HitCountCaption("HitCount")).Width(100);
+            columns.Bound(p => p.Description).Title(MessageColumnCaptions.TB_HitCountCaption("Description")).Width(400);
+               
+                
+        })
+            .ToolBar(tool =>
+                            {
+                                tool.Excel().Text(Resources.ExporttoExcel);
+                            })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                    .Excel(excel => excel
+                    .FileName("TB_HitCount.xlsx")
+                    .Filterable(true))
+
+)
+
+<script>
+    $("#btnfilter").click(function () {
+        // alert("dfgd")
+        $filter = new Array();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+      //  alert($StartDate)
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+      //  alert($EndDate)
+        $PartText = $("#txtFilterID").data("kendoDropDownList").text();
+        $PartValue = $("#txtFilterID").val();
+     //   alert($PartValue)
+        $Code = $("#txtFilterCode").val();
+      //  alert($Code)
+        if ($PartValue != -1) {
+            $filter.push({ field: "Part", operator: "contains", value: $PartText });
+        }
+        if ($Code) {
+            $filter.push({ field: "Record", operator: "contains", value: $Code });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "Date", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "Date", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+
+        var grid = $("#TB_HitCount_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#txtFilterID").kendoDropDownList({
+                    filter: "contains",
+                    Name: "Part",
+                    optionLabel: AllSelectText,
+                    dataTextField: "PartName",
+                    dataValueField: "PartID",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        function clearFiter() {
+            $("form.k-filter-menu button[type='reset']").trigger("click");
+        }
+
+        $("#btnClearFilter").click(function (e) {
+            e.preventDefault();
+            var datasource = $("#TB_HitCount_Grid").data("kendoGrid").dataSource;
+            datasource.filter([]);
+
+            $("#datetimepickerStart").data("kendoDatePicker").value(null);
+            $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+
+            var dropdownlistPart = $("#txtFilterID").data("kendoDropDownList");
+            dropdownlistPart.select("");
+
+        });
+
+    });
+
+    
+</script>

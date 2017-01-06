@@ -1,0 +1,108 @@
+﻿@using Resources
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="text-align: center;">@Resources.Firm</h1>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.FirmExt>()
+        .Name("Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(50)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .Model(model =>
+        {
+            model.Id(p => p.FirmID);
+            model.Field(p => p.Name).Editable(false);
+
+        })
+                .Read(read => read.Action("_Read", "Firm"))
+            //.Update(update => update.Action("_Update", "Users"))
+            //.Create(create => create.Action("_Create", "Users"))
+                .Destroy(destroy => destroy.Action("_Destroy", "Users"))
+        .ServerOperation(true)
+        )
+
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Destroy().Text(Resources.Delete);
+
+            });
+            columns.Bound(p => p.FirmID).ClientTemplate("<a title='Click here to Edit Firm Details' style='text-decoration:underline;' href='/Firm/Edit/#=FirmID#'>#=FirmID#</a>").Width(100).Locked(true);
+            columns.Bound(p => p.Name).Title(Resources.Name).Width(100);
+            columns.Bound(p => p.Country).Title(Resources.Country).Width(100);
+            columns.Bound(p => p.CityName).Title(Resources.City).Width(100);
+            columns.Bound(p => p.Address).Title(Resources.Address).Width(150);
+            columns.Bound(p => p.Postcode).Title(Resources.Postcode).Width(100);
+            columns.Bound(p => p.Fax).Title(Resources.Fax).Width(100);
+            columns.Bound(p => p.TaxOffice).Title(Resources.TaxDepartment).Width(100);
+            columns.Bound(p => p.TaxID).Title(Resources.TaxNo).Width(100);
+            columns.Bound(p => p.ExecutiveTitle).Title(Resources.ContactPersonSalutation).Width(110);
+            columns.Bound(p => p.ExecutiveName).Title(Resources.ContactPersonName).Width(110);
+            columns.Bound(p => p.ExecutiveSurname).Title(Resources.ContactPersonSurname).Width(110);
+            columns.Bound(p => p.ExecutivePosition).Title(Resources.ContactPersonPosition).Width(110);
+            columns.Bound(p => p.ExecutivePhone).Title(Resources.ContactPersonPhone).Width(110);
+            columns.Bound(p => p.ExecutiveEmail).Title(Resources.ContactPersonEmail).Width(200);
+            columns.Bound(p => p.Status).Title(Resources.Status).Width(150);
+            columns.Bound(p => p.Active).Title(Resources.Active).Width(80);
+            columns.Bound(p => p.CreateDate).Title("Create Date").Width(150);
+            columns.Bound(p => p.UpdateDate).Title("Update Date").Width(150);
+
+
+         
+        })
+        .ToolBar(tool =>
+        {
+            tool.Custom().Name("cmdAddNewUser").Text(Resources.NewRecord).Action("Create", "Users");
+            tool.Excel();
+        })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Firms.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+            function AddUser()
+            {
+                location.href = "/Users/Create";
+            }
+
+            function clearFiter() {
+                $("form.k-filter-menu button[type='reset']").trigger("click");
+            }
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

@@ -1,0 +1,246 @@
+﻿@using Resources
+@using UserMessagesColumnCaption
+
+@{
+    ViewBag.Title = "UserMessages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    @@media (min-width: 992px) 
+    {
+    .col-md-5 {
+        width: 31.666667%;
+    }
+
+    }
+</style>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h2 style="color: black; text-align: center;">@Resources.UserMessages</h2>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5" style="padding: 0px;">
+                <div class="col-md-5 col-sm-5  " style="padding: 5px;">
+                    <label>@UserMessagesColumnCaption.Subject</label>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <input id="Subject" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5" style="padding: 0px;">
+                <div class="col-md-5 col-sm-5 " style="padding: 5px;">
+                    <label>@UserMessagesColumnCaption.Status</label>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <input id="Status" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 0px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.UserMessagesExt>()
+                                            .Name("UserMessages_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+                                        .Create(update => update.Action("_Create", "UserMessages"))
+                                        .Read(read => read.Action("_Read", "UserMessages"))
+                                        .Update(update => update.Action("_Update", "UserMessages"))
+                                        .Destroy(destroy => destroy.Action("_Destroy", "UserMessages"))
+        )
+
+        .Columns(columns =>
+        {
+            columns.Command(
+             command =>
+             {
+                // command.Edit();
+               //  command.Destroy();
+             });
+            columns.Bound("").Width(150).Title("Operation").ClientTemplate("<div style='text-align:center;'>   #if(displayButton){#   <a><img src='/Image/approve.png' onclick='Update(#=ID#)' style='width:20px;margin-left:8px;cursor:pointer;' title='Mark as Responded'  alt=''><img src='/Images/delete.png' onclick='Delete(#=ID#)' title='Mark as Deleted'  style='width:20px;margin-left:8px;cursor:pointer;'  alt=''></a> #}#   </div>").Locked(true);
+            columns.Bound(p => p.ID).Width(100).Title(UserMessagesColumnCaption.ID);
+            columns.Bound(p => p.Subject).Title(UserMessagesColumnCaption.Subject).Width(130);
+            columns.Bound(p => p.Title).Title(UserMessagesColumnCaption.Title).Width(80);
+            columns.Bound(p => p.Name).Title(UserMessagesColumnCaption.Name).Width(100);
+            columns.Bound(p => p.Surname).Title(UserMessagesColumnCaption.Surname).Width(100);
+            columns.Bound(p => p.EmailID).Title(UserMessagesColumnCaption.EmailID).Width(130);
+            columns.Bound(p => p.Phone).Title(UserMessagesColumnCaption.Phone).Width(120);
+            columns.Bound(p => p.Country).Title(UserMessagesColumnCaption.Country).Width(100);
+            columns.Bound(p => p.Message).Title(UserMessagesColumnCaption.Message).Width(200);
+            columns.Bound(p => p.Status).Title(UserMessagesColumnCaption.Status).Width(100);
+            columns.Bound(p => p.CreatedDate).Title(UserMessagesColumnCaption.CreatedDate).ClientTemplate("#= kendo.toString(CreatedDate,'dd.MM.yyyy HH:mm:ss') #").Width(130); ;
+            columns.Bound(p => p.UpdatedDate).Title(UserMessagesColumnCaption.UpdatedDate).ClientTemplate("#= kendo.toString(UpdatedDate,'dd.MM.yyyy HH:mm:ss') #").Width(130);      
+            columns.Bound(p => p.IPaddress).Title(UserMessagesColumnCaption.IPaddress).Width(100);        
+                
+        })
+       
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                                        .FileName("UserMessages.xlsx")
+                .Filterable(true))
+
+)
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+        $PartText = $("#Subject").data("kendoDropDownList").text();
+        $PartValue = $("#Subject").val();
+
+        $AttributeText = $("#Status").data("kendoDropDownList").text();
+        $AttributeValue = $("#Status").val();
+
+
+        if ($PartValue) {
+            $filter.push({ field: "Subject", operator: "contains", value: $PartText });
+        }
+
+        if ($AttributeValue) {
+            $filter.push({ field: "Status", operator: "contains", value: $AttributeText });
+        }
+        var grid = $("#UserMessages_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetMessageSubject",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Subject").kendoDropDownList({
+                    filter: "contains",
+                    Name: "MessageSubjectID",                   
+                    dataTextField: "MessageSubjectName",
+                    dataValueField: "MessageSubjectID",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+
+            }
+        })
+    });
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetMessageStatus",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Status").kendoDropDownList({
+                    filter: "contains",
+                    Name: "MessageStatusID",                   
+                    dataTextField: "MessageStatusName",
+                    dataValueField: "MessageStatusID ",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+
+            }
+        })
+    });
+
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#UserMessages_Grid").data("kendoGrid").dataSource;
+        datasource.filter([]);
+        var Subject = $("#Subject").data("kendoDropDownList");
+        Subject.select("");
+        var Status = $("#Status").data("kendoDropDownList");
+        Status.select("");
+    });
+
+</script>
+
+<script>
+    function Update(ID) {
+        //  alert(ID);
+        var json = { ID: ID }
+
+        $.ajax({
+            type: "GET",
+            url: "/UserMessages/Update",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                var grid = $("#UserMessages_Grid").data("kendoGrid");
+                grid.dataSource.read();
+            }
+        });
+    }
+
+    function Delete(ID) {
+        //  alert(ID);
+        var json = { ID: ID }
+
+        $.ajax({
+            type: "GET",
+            url: "/UserMessages/Delete",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                var grid = $("#UserMessages_Grid").data("kendoGrid");
+                grid.dataSource.read();
+            }
+        });
+    }
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

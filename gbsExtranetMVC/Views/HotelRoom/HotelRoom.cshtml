@@ -1,0 +1,700 @@
+﻿@model gbsExtranetMVC.Models.Repositories.HotelRoomExt
+@using MessageColumnCaptions
+@using Resources
+@{
+    ViewBag.Title = "HotelRoom";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<h1 style="color: black; text-align:center">Property Room</h1>*@
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageTitle("AdminHotelRoom.aspx")</h1>
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+    .Caption {
+        font-family: Tahoma;
+        font-size: 13px;
+        font-weight: bold;
+        color: #333333;
+    }
+</style>
+<div id="content" class="span10">
+    @using (Html.BeginForm("HotelRoom", "HotelRoom", FormMethod.Post))
+    {   
+    <div id="qms-detail-table-wrapper" class="center">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+    @Html.HiddenFor(m => m.ID, new { @id = "hiddenHotelRoomID" })
+  
+    <tr>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomType)
+        </th>
+        <td>
+            @(Html.Kendo().DropDownListFor(m => m.RoomTypeID)
+                                .Name("RoomType")
+                                .OptionLabel(Resources.Select)
+                                .BindTo((SelectList)ViewBag.GetRoomType)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpRoomType" })
+            )
+           
+                @Html.Label("*", new { @class = "requiredfield" })
+          
+            <div class="col-md-12">
+                <span id="lblRoomTypeID" style="display:none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+            </div>
+                 <div>
+                    @Html.ValidationMessageFor(m => m.RoomTypeID)
+                </div>
+</td>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomCount)
+        </th>
+        <td>
+            @Html.TextBoxFor(m => m.RoomCount, new { @onkeyup = "return RoomCounts(event);", @class = "k-textbox", @id = "txtRoomCount" })
+            @Html.Label("*", new { @class = "requiredfield" })
+            <div class="col-md-12">
+                <span id="lblRoomCount" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+            </div>
+            <div class="col-md-12">
+                <span id="lblRoomCountWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:1,@Resources.MaximumValue:1000 </span>
+            </div>
+            <div>
+                @Html.ValidationMessageFor(m => m.RoomCount)
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomSize)
+        </th>
+        <td>
+            @Html.TextBoxFor(m => m.RoomSize, new { @onkeyup = "return RoomSizes(event);", @class = "k-textbox", @id = "txtRoomSize" })
+            @Html.Label("*", new { @class = "requiredfield" }) 
+            <div class="col-md-12">
+                <span id="lblRoomSize" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+            </div>
+            <div class="col-md-12">
+                <span id="lblRoomSizeWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:1,@Resources.MaximumValue:500 </span>
+            </div>
+            <div>
+                @Html.ValidationMessageFor(m => m.RoomSize)
+            </div>
+        </td>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomMaxPeopleCount)
+        </th>
+        <td>
+            @Html.TextBoxFor(m => m.MaxPeopleCount, new { @onkeyup = "return RoomMaxPeopleCounts(event);", @class = "k-textbox", @id = "txtRoomMaxPeopleCount" })
+            @Html.Label("*", new { @class = "requiredfield" })
+            <div class="col-md-12">
+                <span id="lblRoomMaxPeopleCount" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+            </div>
+            <div class="col-md-12">
+                <span id="lblRoomMaxPeopleCountWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:1,@Resources.MaximumValue:15 </span>
+            </div>
+            <div>
+                @Html.ValidationMessageFor(m => m.MaxPeopleCount)
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomMaxChildrenCount)
+        </th>
+        <td>
+            @Html.TextBoxFor(m => m.MaxChildrenCount, new { @onkeyup = "return RoomMaxChildrenCounts(event);", @class = "k-textbox", @id = "txtRoomMaxChildrenCount" })
+            @Html.Label("*", new { @class = "requiredfield" })
+            <div class="col-md-12">
+                <span id="lblRoomMaxChildrenCountWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:0,@Resources.MaximumValue:15 </span>
+            </div>
+            <div>
+                @Html.ValidationMessageFor(m => m.MaxPeopleCount)
+            </div>
+        </td>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomBabyCotCount)
+        </th>
+        <td>
+            @Html.TextBoxFor(m => m.BabyCotCount, new { @onkeyup = "return RoomBabyCotCounts(event);", @class = "k-textbox", @id = "txtBabyCotCount" })
+            @Html.Label("*", new { @class = "requiredfield" })
+            <div class="col-md-12">
+                <span id="lblRoomBabyCotCountWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:0,@Resources.MaximumValue:10 </span>
+            </div>
+            <div>
+                @Html.ValidationMessageFor(m => m.BabyCotCount)
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomExtraBedCount)
+        </th>
+        <td>
+            @Html.TextBoxFor(m => m.ExtraBedCount, new { @onkeyup = "return RoomExtraBedCount(event);", @class = "k-textbox", @id = "txtExtraBedCount" })
+            @Html.Label("*", new { @class = "requiredfield" })
+            <div class="col-md-12">
+                <span id="lblRoomExtraBedCountWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:0,@Resources.MaximumValue:10 </span>
+            </div>
+            <div>
+                @Html.ValidationMessageFor(m => m.ExtraBedCount)
+            </div>
+        </td>
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.Smoking)
+        </th>
+        <td>
+            @(Html.Kendo().DropDownListFor(m => m.SmokingTypeID)
+                                .Name("SmokingStatus")
+                                .OptionLabel(Resources.Select)
+                                .BindTo((SelectList)ViewBag.GetSmokingStatus)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpSmokingStatus" })
+            )
+        </td>
+    </tr>
+    <tr>
+
+        <th>
+            @Html.LabelFor(m => m.ID, Resources.RoomBedInfo)
+        </th>
+        <td colspan="3">
+            <table>
+                <tr>
+                   
+
+                        @foreach (var OptionNo in ViewBag.OptionNo)
+{
+   
+        var OptionNoValue = OptionNo; var count = 0;
+ <td style=" border-color: Gray; border-width: 1px; border-style: Dotted; padding: 10px;">
+     <table>
+         <tr>
+             <td class="Caption">@Html.LabelFor(m => m.ID, Resources.Option, new { @class = "Caption" }) @OptionNo </td>
+         </tr>
+     </table>
+      
+        <table>
+            <tr>
+                <td></td>
+                <td class="Caption">@Html.LabelFor(m => m.ID, Resources.BedCount, new { @class = "Caption" })</td>
+            </tr>
+            @foreach (var BedTypes in ViewBag.RoomBedInfo)
+            {
+                var BedTypeOptionNo = Int32.Parse(BedTypes.OptionNo);
+                if (BedTypeOptionNo == OptionNoValue)
+                {
+                    
+                    count++;
+                    var values = OptionNoValue + "_txtBedCount_" + count;
+                    <tr>
+                        <td style="color:black">@Html.Label("BedTypeNo1", (string)@BedTypes.BedName, new { @style = "margin-left: 5px;", @value = BedTypes.BedId })</td>
+                        @*@Html.Hidden("BedType", (string)BedTypes.BedId, new { @id = "hdnBedTypeID(" + BedTypeOptionNo + ")" });*@
+                        <td>@Html.TextBox("BedCount1", (string)BedTypes.BedCount, new { @onkeyup = "return BedTypess(" + count + "," + OptionNoValue + ");", @style = "width: 100px;margin-left: 5px;", @class = "k-textbox", @id = "" + OptionNoValue + "_txtBedCount_" + count + "" }) 
+                            <span id="lblRoomMaxPeopleCountWarning_@OptionNoValue@count" style="display:none;  color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:0,@Resources.MaximumValue:5 </span>                                   
+                        </td>
+
+                        <td></td>
+                    </tr>
+                }
+            }
+        </table>
+    </td>
+}
+
+                    
+        </tr>
+    </table>
+    <div>
+        <label id="lblBedStatus" style="display:none;color:red">@Resources.BedOptionWarning</label>
+    </div>
+    </td>
+
+
+                </tr>
+                <tr class="grid12">
+                   
+                    <th>
+                        @Html.LabelFor(m => m.ID, Resources.Language)
+                    </th>
+                    <td>                       
+                        @(Html.Kendo().DropDownListFor(m => m.LanguageID)
+                                 .Name("CultureName")
+                                 //.OptionLabel("Select...")
+                                 .BindTo((SelectList)ViewBag.GetCulture)
+                                 .HtmlAttributes(new { @style = "width: 200px;", @id = "drpCulture",@onchange="getlanguage()" })
+                        )
+                    </td>     
+                    <th>
+                        @Html.LabelFor(m => m.ID, Resources.RoomView)
+                    </th>
+                    <td>
+                        @(Html.Kendo().DropDownListFor(m => m.ViewTypeID)
+                                 .Name("ViewTypeName")
+                                 .OptionLabel(Resources.Select)
+                                 .BindTo((SelectList)ViewBag.GetTypeView)
+                                 .HtmlAttributes(new { @style = "width: 200px;", @id = "drpViewType" })
+                        )
+                    </td>               
+                    
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.ID, Resources.Description)
+                    </th>
+                    <td colspan="3">
+                        @Html.TextBoxFor(m => m.Description, new { @style = "width:600px;", @class = "k-textbox", @id = "txtDescription" })
+                    </td>
+                  
+                </tr>
+                <tr>
+                    <th colspan="4" style="text-align:center;font-size:20px;" >
+                        @Html.LabelFor(m => m.ID, Resources.RoomFacilities)
+                    </th>
+                   
+                </tr>
+                <tr>   
+                    <td colspan="4" class="col-md-12">
+                        @foreach (var RoomFacilitiesHeader in ViewBag.AttributeHeaders)
+                        {
+                            var AttributeHeaderID = RoomFacilitiesHeader.AttributeHeaderId;  
+                                               
+                           <fieldset>
+                            <legend style="color:black;">@RoomFacilitiesHeader.AttributeName</legend>
+                                   
+                            @foreach (var items in ViewBag.Attributes)
+                            {
+                                var AttributesHeaderID = items.AttributeHeaderId;
+
+                                if (AttributeHeaderID == AttributesHeaderID)
+                                {                                   
+                                   <table class="col-md-3">
+                                    <tr>
+                                        <td>
+                                            <label style="color:black;">
+                                                @Html.CheckBox("value", (bool)items.hasAttribute, new { @class = "chkAttributes", @value = items.AttributeId })
+                                                @items.AttributeName
+                                            </label>
+                                            @*<div class="checkbox checkbox-small">
+                                                <label class="sdfsf">
+
+                                                    <input class="i-check" id="chkAggrement" type="checkbox" />
+                                                    @*I agree with <a href="#">Gbshotels.com terms and conditions</a>.
+
+                                                </label>
+                                                <span> <label id="lblUserInfoAgreementText">@items.AttributeName</label> </span>                                             
+                                            </div>*@
+                                        </td>
+                                    </tr>
+                                  </table> 
+                                }
+                            }
+                           </fieldset>
+                        }                        
+                    </td>
+                </tr>              
+            </table>
+        </div>
+    </div>
+    }
+
+    <div align="center" style="padding-top:5px;">       
+        @*<input type="button" value="Save" onclick="GettextBoxes()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />*@
+        <input type="submit" value="@Resources.Save" onclick="SaveHotelRoom()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        <input type="submit" value="@Resources.Back" onclick="BackPropertyRoom()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        <br />
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+        <label id="lblFailure" style="color:red;font-size:medium;display:none;">@Resources.FillFieldsWarningAbove</label>
+        
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        getlanguage();
+    })
+    
+    function getlanguage()
+    {
+         
+        var Culture = document.getElementById("drpCulture").value;
+       // alert(Culture)
+        var Roomid = document.getElementById('hiddenHotelRoomID').value;
+      
+        var json = { Culture: Culture, Roomid: Roomid }
+          
+        $.ajax({
+            type: "Get",
+            url: "/HotelRoom/GetdescriptionbyCulture",
+            data: json,
+            datatype: "JSON",
+            traditional: true,
+            success: function (res) {
+               //alert(res)
+               if (res != "empty")
+                {
+                    document.getElementById("txtDescription").value = res;
+                }
+                else {
+                    document.getElementById("txtDescription").value = "";
+                }
+                
+            }
+        })
+       
+    }
+
+    function BackPropertyRoom()
+    {
+        window.location.href = '/PropertyRooms/PropertyRooms';
+    }
+   
+
+    function SaveHotelRoom() {
+       // alert('hi')
+        var HotelRoomID = document.getElementById("hiddenHotelRoomID").value;
+        var RoomType = document.getElementById("drpRoomType").value; 
+        // alert(RoomType)
+        var RoomCount = document.getElementById("txtRoomCount").value;
+        //  alert(RoomCount)
+        var RoomSize = document.getElementById("txtRoomSize").value;
+        //  alert(RoomSize)
+        var RoomMaxPeopleCount = document.getElementById("txtRoomMaxPeopleCount").value;
+        // alert(RoomMaxPeopleCount)
+        var RoomMaxChildrenCount = document.getElementById("txtRoomMaxChildrenCount").value;
+        // alert(RoomMaxChildrenCount)
+        var BabyCotCount = document.getElementById("txtBabyCotCount").value;
+        //  alert(BabyCotCount)
+        var ExtraBedCount = document.getElementById("txtExtraBedCount").value;
+        //  alert(ExtraBedCount)
+        var SmokingStatus = document.getElementById("drpSmokingStatus").value;
+        // alert(SmokingStatus)
+        var ViewType = document.getElementById("drpViewType").value;
+
+        // alert(ViewType)
+        var Culture = document.getElementById("drpCulture").value;
+        // alert(Culture)
+        var Description = document.getElementById("txtDescription").value;
+        //  alert(Description)
+        var RoomCountCheck="Valid";
+        var BedTextCount = [];
+        var BedCountDetails = [];
+        for (var i = 1; i <= 3; i++) {
+            // alert(i)
+            for (var j = 1; j <= 6; j++) {
+                //  alert(j)
+                var BedText = document.getElementById('' + i + '_txtBedCount_' + j + '').value;
+                var BedTextValue = i + ';' + BedText + ';' + j;
+                // alert(BedTextValue);
+                BedTextCount.push(BedTextValue);
+                if (BedText != "") {
+                    BedCountDetails.push(BedText);
+                    if(BedText>5)
+                    {
+                        RoomCountCheck = "Invalid";
+                    }
+                }
+            }
+        }
+        var BedCountText = BedTextCount.join(',');
+
+        var chkHotelAttributes = [];
+        $(".chkAttributes:checked").each(function () {
+            chkHotelAttributes.push($(this).val());
+            // alert(chkHotelAttributes)           
+        });
+
+        var HotelAttributes = chkHotelAttributes.join(',');
+        // alert(HotelAttributes)
+
+        if (BedCountDetails == "") {            
+            document.getElementById("lblBedStatus").style.display = '';            
+        }
+        else {
+            document.getElementById("lblBedStatus").style.display = 'none';
+        } 
+        if (RoomType == "")
+        {
+            document.getElementById("lblRoomTypeID").style.display = '';
+        }
+        else
+        {
+            document.getElementById("lblRoomTypeID").style.display = 'none';
+        }
+        if (RoomCount == "")
+        {
+            document.getElementById("lblRoomCount").style.display = '';
+        }
+        else
+        {
+            document.getElementById("lblRoomCount").style.display = 'none';
+        }
+
+       
+
+        if (RoomSize == "") {
+            document.getElementById("lblRoomSize").style.display = '';
+        }
+        else {
+            document.getElementById("lblRoomSize").style.display = 'none';
+        }
+        if (RoomMaxPeopleCount == "") {
+            document.getElementById("lblRoomMaxPeopleCount").style.display = '';
+        }
+        else {
+            document.getElementById("lblRoomMaxPeopleCount").style.display = 'none';
+        }
+      //  alert(RoomMaxChildrenCount)
+        if (RoomMaxChildrenCount == "") {
+             document.getElementById("txtRoomMaxChildrenCount").value = 0;
+         //   RoomMaxChildrenCount = 0;
+        }
+        if (BabyCotCount == "") {
+            document.getElementById("txtBabyCotCount").value = 0;
+          //  BabyCotCount = 0;
+        }
+        if (ExtraBedCount == "") {
+            document.getElementById("txtExtraBedCount").value = 0;
+           // ExtraBedCount = 0;
+        }
+        
+     
+        //alert(RoomCountCheck)
+        if (RoomType != "" && RoomCountCheck=="Valid" && RoomCount != "" && RoomSize != "" && RoomMaxPeopleCount != "" && RoomMaxChildrenCount && BabyCotCount != "" && ExtraBedCount != "" && BedCountDetails != "")
+        {
+            //alert('check')
+
+            var json = {
+                HotelRoomID: HotelRoomID, RoomType: RoomType, RoomCount: RoomCount, RoomSize: RoomSize, RoomMaxPeopleCount: RoomMaxPeopleCount, RoomMaxChildrenCount: RoomMaxChildrenCount, BabyCotCount: BabyCotCount,
+                ExtraBedCount: ExtraBedCount, SmokingStatus: SmokingStatus, ViewType: ViewType, Culture: Culture, Description: Description, HotelAttributes: HotelAttributes, BedCountText: BedCountText
+            }
+
+            $.ajax({
+                type: "Get",
+                url: "/HotelRoom/SaveHotelRoom",
+                data: json,
+                datatype: "JSON",
+                traditional: true,
+                success: function (res) {
+                    if (res !="") {
+                        document.getElementById("lblSuccess").style.display = '';
+                        document.getElementById("lblFailure").style.display = 'none';
+
+                        window.location.href = "/HotelRoom/HotelRoom?HotelRoomID="+res;
+                    }
+
+                }
+            });
+
+
+        }
+        else
+        {
+            document.getElementById("lblFailure").style.display = '';
+            document.getElementById("lblSuccess").style.display = 'none';
+        }
+
+    }
+   // var RoomCountCheck = "Valid";
+
+    function RoomCounts(event) {
+    
+       
+        var value = 1001;
+        var RoomCount = document.getElementById("txtRoomCount").value;
+     
+        if (RoomCount >= value || RoomCount==0) {
+
+            document.getElementById("lblRoomCountWarning").style.display = '';
+           // RoomCountCheck = "Invalid";
+            //if (RoomCountCheck == "Valid")
+            //{
+            //    RoomCountCheck = "Invalid";
+            //}
+        }
+     
+        else if (RoomCount <= value && RoomCount != 0) {
+            document.getElementById("lblRoomCountWarning").style.display = 'none';
+            //RoomCountCheck == "Valid";
+        }
+    } 
+
+    function RoomSizes(event) {
+       // alert('Hi')
+        var value = 501;
+        var RoomSize = document.getElementById("txtRoomSize").value;
+   
+        if (RoomSize >= value || RoomSize == 0) {
+
+            document.getElementById("lblRoomSizeWarning").style.display = '';
+        }
+         
+        else if (RoomSize <= value && RoomSize != 0) {
+            document.getElementById("lblRoomSizeWarning").style.display = 'none';
+         
+        }
+    }
+
+    function RoomMaxPeopleCounts(event) {
+        // alert('Hi')
+        var value = 16;
+        var RoomMaxPeopleCount = document.getElementById("txtRoomMaxPeopleCount").value;
+
+        if (RoomMaxPeopleCount >= value || RoomMaxPeopleCount == 0) {
+
+            document.getElementById("lblRoomMaxPeopleCountWarning").style.display = '';
+        }
+
+        else if (RoomMaxPeopleCount <= value && RoomMaxPeopleCount != 0) {
+            document.getElementById("lblRoomMaxPeopleCountWarning").style.display = 'none';
+
+        }
+    } 
+
+    function RoomMaxChildrenCounts(event) {
+        // alert('Hi')
+        var value = 16;
+        var RoomMaxChildrenCount = document.getElementById("txtRoomMaxChildrenCount").value;
+
+        if (RoomMaxChildrenCount >= value) {
+
+            document.getElementById("lblRoomMaxChildrenCountWarning").style.display = '';
+        }
+
+        else if (RoomMaxChildrenCount <= value) {
+            document.getElementById("lblRoomMaxChildrenCountWarning").style.display = 'none';
+
+        }
+    }
+
+    function RoomBabyCotCounts(event) {
+        // alert('Hi')
+        var value = 11;
+        var BabyCotCount = document.getElementById("txtBabyCotCount").value;
+
+        if (BabyCotCount >= value) {
+
+            document.getElementById("lblRoomBabyCotCountWarning").style.display = '';
+        }
+
+        else if (BabyCotCount <= value) {
+            document.getElementById("lblRoomBabyCotCountWarning").style.display = 'none';
+
+        }
+    } 
+
+    function RoomExtraBedCount(event) {
+        // alert('Hi')
+        var value = 11;
+        var ExtraBedCount = document.getElementById("txtExtraBedCount").value;
+
+        if (ExtraBedCount >= value) {
+
+            document.getElementById("lblRoomExtraBedCountWarning").style.display = '';
+        }
+
+        else if (ExtraBedCount <= value) {
+            document.getElementById("lblRoomExtraBedCountWarning").style.display = 'none';
+
+        }
+    } 
+
+    function BedTypess(Countval, OptionNoValue) {
+
+        var value = 6;
+        var Count = document.getElementById(OptionNoValue+"_txtBedCount_"+ Countval).value;
+       
+        if (Count >= value) {
+       //     alert("lblRoomExtraBedCountWarning" + OptionNoValue + Countval)
+            document.getElementById("lblRoomMaxPeopleCountWarning_" + OptionNoValue + Countval).style.display = '';
+        }
+
+        else if (Count <= value) {
+            document.getElementById("lblRoomMaxPeopleCountWarning_" + OptionNoValue + Countval).style.display = 'none';
+
+        }
+    }
+    
+
+
+    //function GettextBoxes() {
+    //    alert('hi')
+    //    var BedTextCount = [];
+    //    for (var i = 1; i <= 3; i++) {
+    //        // alert(i)
+    //        for (var j = 1; j <= 6; j++) {
+    //            //  alert(j)
+    //            var BedText = document.getElementById('' + i + '_txtBedCount_' + j + '').value;
+    //            var BedTextValue = i + ';' + BedText + ';' + j;
+    //            // alert(BedTextValue);
+    //            BedTextCount.push(BedTextValue);
+    //        }
+    //    }
+    //    var BedCountText = BedTextCount.join(',');
+    //    // alert(BedCountText);
+
+    //    //  var BedTypeID = [];
+
+    //    //for (var i = 1; i <= 3; i++) {
+    //    //    var BedCountValue = document.getElementsByName('BedCount' + i);
+    //    //    var BedTypeIDValue = document.getElementsByName('BedTypeNo' + i);
+    //    //    alert(BedCountValue)
+    //    //    alert(BedTypeIDValue)
+
+    //    //    for (var i = 0; i < BedTypeIDValue.length; i++) {
+    //    //        alert(BedTypeIDValue[i].value)
+    //    //        //if (BedCountValue[i].value != "") {
+    //    //        BedTypeIDValue.push(BedTypeIDValue[i].value)
+    //    //        //}
+    //    //    }
+
+
+    //    //    for (var i = 0; i < BedCountValue.length; i++) {
+    //    //        alert(BedCountValue[i].value)
+    //    //        //if (BedCountValue[i].value != "") {
+    //    //        BedCount.push(BedCountValue[i].value)
+    //    //        //}
+    //    //    }            
+    //    //}
+    //    //alert(BedCount)
+
+    //    //  alert(WeekDay);
+    //    //for (var i = 1; i <= 6; i++) {
+    //    //    alert(i)
+    //    //    //var test = $("input[id='txtBedCount" + i + "']").val();
+    //    //    //alert(test);
+    //    //    var BedCount = document.getElementById("txtBedCount" + i).value;
+    //    //    alert(BedCount);
+    //    //}
+    //    //for (var i = 1; i <= 3; i++) {
+    //    //    alert(i)
+    //    //    $("#txtBedCount(" + i + ") :text").each(function () {
+    //    //        Contain += $(this).val() + "$";
+    //    //    });
+    //    //}
+    //}
+
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

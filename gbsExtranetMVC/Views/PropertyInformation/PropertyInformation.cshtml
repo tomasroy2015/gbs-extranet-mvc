@@ -1,0 +1,314 @@
+﻿@model gbsExtranetMVC.Models.Repositories.HotelExt
+@using Resources
+@{
+    ViewBag.Title = "PropertyInformation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1 style="color: black; text-align:center">@Resources.GeneralInfo</h1>
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+        .resize-header{
+            width:290px;
+        }
+</style>
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("PropertyInformation", "PropertyInformation", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.ID)
+         <div id="qms-detail-table-wrapper" class="center">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th class="resize-header">
+                        @Html.LabelFor(m => m.ID, Resources.HotelID)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.ID)
+                        @Html.HiddenFor(m => m.ID, new { @id = "hiddenHotelID" })
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.Name, Resources.HotelName)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.Name)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.CountryName, Resources.Country)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.CountryName)
+                        
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.CityName, Resources.City)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.CityName)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.Address, Resources.HotelAddress)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.Address)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.PostCode, Resources.HotelPostCode)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.PostCode)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.Phone, Resources.HotelPhone)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.Phone)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.Fax, Resources.HotelFax)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.Fax)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.FirmName, Resources.Firm)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.FirmName)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.HotelTypeName, Resources.HotelType)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.HotelTypeName)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.HotelClassName, Resources.HotelClass)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.HotelClassName)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.HotelChainName, Resources.HotelChain)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.HotelChainName)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.HotelAccommodationTypeName, Resources.AccommodationType)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.HotelAccommodationTypeName)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.RoomCount, Resources.RoomCount)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.RoomCount)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.FloorCount, Resources.FloorCount)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.FloorCount)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.BuiltYear, Resources.BuiltYear)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.BuiltYear)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.RenovationYear, Resources.RenovationYear)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.RenovationYear)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.WebAddress, Resources.HotelWebAddress)
+
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.WebAddress)
+                    </td>
+                </tr>
+                <tr>
+                   
+                    <th>
+                        @Html.LabelFor(m => m.Description, Resources.HotelDescription)
+
+                    </th>
+                    <td colspan="3">
+                        @Html.DisplayFor(m => m.Description)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.Email, Resources.HotelEmail)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => m.Email)
+
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.CheckinStart, Resources.Checkin)
+                    </th>
+                    <td>
+                        @(Html.Kendo().DropDownListFor(m => m.CheckinStart)
+                                .Name("CheckinStartDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckinFrom)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckinStart" })
+                        )
+                        @Html.LabelFor(m => m.CheckinStart, "-")
+
+                        @(Html.Kendo().DropDownListFor(m => m.CheckinEnd)
+                                .Name("CheckinEndDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckinTo)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckinEnd" })
+                        )
+                    </td>
+                  
+                </tr>
+                <tr>
+               
+                    <th>
+                        @Html.LabelFor(m => m.Sort, Resources.HotelCreditCard)
+
+                    </th>
+                    <td>
+                        @(Html.Kendo().MultiSelect()
+                                .Name("CreditCardSelect")
+                                .Placeholder(@Resources.Select)
+                                .AutoClose(false)
+                                //.BindTo(new SelectList(ViewBag.GetAllCreditCardList, "Value", "Text"))
+                                .BindTo((SelectList)ViewBag.GetAllCreditCardList)
+                                .Value(ViewBag.GetHotelCreditCardList)
+                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpCreditcardmultiple" })
+                        )
+                        <div>
+                            @Html.ValidationMessageFor(m => m.Email)
+                        </div>
+                    </td>
+                    <th>
+                        @Html.LabelFor(m => m.CheckoutStart, Resources.Checkout)
+                    </th>
+                    <td>
+                        @(Html.Kendo().DropDownListFor(m => m.CheckoutStart)
+                                .Name("CheckoutStartDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckOutFrom)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckoutStart" })
+                        )
+                        @Html.LabelFor(m => m.CheckoutStart, "-")
+
+                        @(Html.Kendo().DropDownListFor(m => m.CheckoutEnd)
+                                .Name("CheckoutendDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckOutTo)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckoutEnd" })
+                        )
+                    </td>
+                </tr>
+            </table>
+      </div>
+    </div>
+    }
+
+    <div align="center" style="padding-top:5px;">
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+        <br />
+
+        <input type="submit" value="@Resources.Save" onclick="SaveHotelGeneralInfo()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+    </div>
+
+    <script>
+        function SaveHotelGeneralInfo() {
+            var HotelID = document.getElementById("hiddenHotelID").value;
+            var CheckinStart = document.getElementById("drpCheckinStart").value;
+            var CheckinEnd = document.getElementById("drpCheckinEnd").value;
+            var CheckoutStart = document.getElementById("drpCheckoutStart").value;
+            var CheckoutEnd = document.getElementById("drpCheckoutEnd").value;
+            var Creditcardmultiple = $("#drpCreditcardmultiple").data("kendoMultiSelect");
+            var SelectedCards = Creditcardmultiple.value($("#Value").val());
+
+            var json = {HotelID:HotelID,CheckinStart: CheckinStart, CheckinEnd: CheckinEnd, CheckoutStart: CheckoutStart, CheckoutEnd: CheckoutEnd,
+                SelectedCards: [SelectedCards]
+            }
+            $.ajax({
+                type: "Get",
+                url: "/PropertyInformation/UpdateHotelGeneralInfo",
+                data: json,
+                datatype: "JSON",
+                traditional: true,
+                success: function (res) {
+                    if (res != 0) {
+                        document.getElementById("lblSuccess").style.display = "";
+                        setTimeout("Hidelabel()", 5000);
+                    }
+                }
+            })
+        }
+        function Hidelabel() {
+            document.getElementById("lblSuccess").style.display = "none";
+        }
+    </script>
+</div>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

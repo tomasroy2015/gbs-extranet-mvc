@@ -1,0 +1,449 @@
+﻿@using Resources
+@using FirmOperationsColumnCaption
+
+@{
+    ViewBag.Title = "FirmOperations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="color: black; text-align: center;">@Resources.FirmOperations</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+  
+    <div class="row" style="margin-bottom: 12px;">
+        <div class="col-md-12">
+            <div class="col-lg-5">
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px;">@Resources.FirmName</label>
+                    <input id="Firm" type="text" class="k-textbox" style="width: 220px; " />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px; ">@Resources.Country</label>
+                    <input onchange="ChangeRegion();" id="Country" style="width:220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px; ">@Resources.ContactPersonName</label>
+                    <input id="ExecutiveName" type="text" class="k-textbox" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 150px; padding-top: 7px; ">@Resources.Status</label>
+                    <input id="Status" style="width: 220px" />
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.TaxNo</label>
+                    <input id="TaxID" type="text" class="k-textbox" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.Region</label>
+                    <input id="Region" style="width: 220px" />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.ContactPersonSurname</label>
+                    <input id="ExecutiveSurname" type="text" class="k-textbox" style="width: 220px"  />
+                </div>
+                <div class="row" style="padding-top: 15px; display: flex;">
+                    <label style="width: 180px; padding-top: 7px;">@Resources.ActiveStatus</label>
+                    <select id="Active" style="width: 220px">
+                        <option value="true">@Resources.Active</option>
+                        <option value="false">@Resources.Passive</option>
+                    </select>
+                </div>
+              
+            </div>
+
+            <div class="col-lg-2">
+                <div class="row" style="margin-top: 85px;">
+                    <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                    <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.FilterRemove</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.FirmOperationsExt>()
+                .Name("FirmOperations_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        //.Resizable(resizable => resizable.Content(true).Toolbar(true))
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            //model.Field(p => p.Date).Editable(false);
+
+
+        })
+                    .Create(update => update.Action("_Create", "FirmOperations"))
+                    .Read(read => read.Action("_Read", "FirmOperations"))
+                    .Update(update => update.Action("_Update", "FirmOperations"))
+                    .Destroy(destroy => destroy.Action("_Destroy", "FirmOperations"))
+
+        )
+
+                            .Columns(columns =>
+                            {
+
+
+                                columns.Command(
+
+                                    command =>
+                                    {
+                                       // command.Edit();                                 
+                                      //  command.Destroy();
+
+                                    });
+                                columns.Bound("").Title(Resources.Operation).Sortable(false).Width(100).ClientTemplate("<div style='text-align:center;'><a title='Update' href='/FirmOperations/Edit/#=ID#'><img src='/Image/update.png' style='width:30px;cursor:pointer;' alt='update'> <img title='Delete' src='/Images/delete.png' style='width:30px;cursor:pointer' onclick='Delete(#=ID#)' alt='redCross'> </div>").Locked(true); 
+                                columns.Bound(p => p.ID).Title(FirmOperationsColumnCaption.ID).ClientTemplate("<a title='Click here to Edit Property Details' style='text-decoration:underline;' href='/FirmOperations/Edit/#=ID#'>#=ID#</a>").Width(60); ;
+                                columns.Bound(p => p.Firm).Title(FirmOperationsColumnCaption.Firm).Width(100);
+                                columns.Bound(p => p.Country).Title(FirmOperationsColumnCaption.Country).Width(90);
+                                columns.Bound(p => p.Region).Title(FirmOperationsColumnCaption.Region).Width(80);
+                                columns.Bound(p => p.City).Title(FirmOperationsColumnCaption.City).Width(70);
+                                columns.Bound(p => p.Address).Title(FirmOperationsColumnCaption.Address).Width(100);
+                                columns.Bound(p => p.Postal_code).Title(FirmOperationsColumnCaption.PostalCode).Width(80);
+                                columns.Bound(p => p.Phone).Title(FirmOperationsColumnCaption.Phone).Width(100);
+                                columns.Bound(p => p.Fax).Title(FirmOperationsColumnCaption.Fax).Width(70);
+                                columns.Bound(p => p.Tax_Office).Title(FirmOperationsColumnCaption.TaxOffice).Width(80);
+                                columns.Bound(p => p.Tax_ID).Title(FirmOperationsColumnCaption.TaxID).Width(70);
+                                columns.Bound(p => p.Executive_Title).Title(FirmOperationsColumnCaption.ExacutiveTitle).Width(100);
+                                columns.Bound(p => p.Executive_Name).Title(FirmOperationsColumnCaption.ExecutiveName).Width(100);
+                                columns.Bound(p => p.Executive_Surname).Title(FirmOperationsColumnCaption.ExecutiveSurname).Width(100);
+                                columns.Bound(p => p.Executive_Position).Title(FirmOperationsColumnCaption.ExecutivePosition).Width(100);
+                                columns.Bound(p => p.Executive_Phone).Title(FirmOperationsColumnCaption.ExecutivePhone).Width(100);
+                                columns.Bound(p => p.Executive_Email).Title(FirmOperationsColumnCaption.ExecutiveEmail).Width(150);
+                                columns.Bound(p => p.Status).Title(FirmOperationsColumnCaption.Status).Width(80);
+                                columns.Bound(p => p.Active).Title(FirmOperationsColumnCaption.Active)
+                                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                .Width(80);
+                                columns.Bound(p => p.Created_Date).Title(FirmOperationsColumnCaption.Createddate).ClientTemplate("#= kendo.toString(Created_Date,'dd.MM.yyyy HH:mm:ss') #").Width(90);
+                                columns.Bound(p => p.Updated_Date).Title(FirmOperationsColumnCaption.Updateddate).ClientTemplate("#= kendo.toString(Updated_Date,'dd.MM.yyyy HH:mm:ss') #").Width(90);                             
+
+
+                                
+
+
+
+                            })
+
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel();
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+               // .Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                        .FileName("FirmOperations.xlsx")
+                .Filterable(true))
+
+)
+
+<br /><br />
+<div align="center">
+    <a title='Click here to Edit Property Details' style='text-decoration:underline;' href='/FirmOperations/Create'>
+        <input type="button" value="@Resources.NewRecord" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+    </a>
+    <br />
+
+</div>
+<script>
+
+    $("#btnfilter").click(function () {
+     //   alert('HI')
+        $filter = new Array();
+      //  alert($filter)
+        $FirmValue = $("#Firm").val();
+      // alert($FirmValue)
+        $TaxIDValue = $("#TaxID").val();
+      //  alert($TaxIDValue)
+        $ExecutiveNameValue = $("#ExecutiveName").val();
+     //   alert($ExecutiveNameValue)
+        $ExecutiveSurnameValue = $("#ExecutiveSurname").val();
+      //  alert($ExecutiveSurnameValue)
+
+
+        $CountryText = $("#Country").data("kendoDropDownList").text();
+        $CountryValue = $("#Country").val();
+      //  alert($CountryValue)
+
+        $RegionText = $("#Region").data("kendoDropDownList").text();
+        $RegionValue = $("#Region").val();
+      //  alert($RegionValue)
+
+        $StatusText = $("#Status").data("kendoDropDownList").text();
+        $StatusValue = $("#Status").val();
+      //  alert($StatusValue)
+
+
+      
+        $ActiveText = $("#Active").data("kendoDropDownList").text();
+        $ActiveValue = $("#Active").val();
+
+      //  alert($ActiveText)
+      //  alert($ActiveValue)
+  
+
+
+
+   
+        if ($CountryValue) {
+            $filter.push({ field: "CountryID", operator: "equals", value: $CountryValue });
+        }
+        if ($RegionValue) {
+            $filter.push({ field: "RegionID", operator: "equals", value: $RegionValue });
+        }
+        if ($StatusValue) {
+            $filter.push({ field: "StatusID", operator: "equals", value: $StatusValue });
+        }
+        if ($ActiveValue && $ActiveValue == "true") {
+            $filter.push({ field: "Active", operator: "equals", value: $ActiveValue });
+        }
+        else if ($ActiveValue && $ActiveValue == "false")
+        {
+            $filter.push({ field: "Active", operator: "equals", value: $ActiveValue });
+        }
+
+        if ($FirmValue) {
+            $filter.push({ field: "Firm", operator: "contains", value: String($FirmValue) });
+        }
+        if ($TaxIDValue) {
+            $filter.push({ field: "Tax_ID", operator: "equals", value: String($TaxIDValue) });
+        }
+        if ($ExecutiveNameValue) {
+            $filter.push({ field: "Executive_Name", operator: "contains", value: String($ExecutiveNameValue) });
+        }
+        if ($ExecutiveSurnameValue) {
+            $filter.push({ field: "Executive_Surname", operator: "contains", value: String($ExecutiveSurnameValue) });
+        }
+       
+        var grid = $("#FirmOperations_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+
+        $("#Active").kendoDropDownList({ optionLabel: "@Resources.All" });
+    });
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Country").kendoDropDownList({
+                    filter: "contains",
+                    Name: "CountryID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Country",
+                    dataValueField: "CountryID",
+                    dataSource: data,
+                    value:69
+                });
+
+            }
+        })
+    });
+
+    $(document).ready(function () {
+
+        var JsonCounrty = { CountryID: 69 }
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegionsByCountry",
+            data: JsonCounrty,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Region").kendoDropDownList({
+                    filter: "contains",
+                    Name: "RegionID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        })
+
+
+        //var json = {}
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/DropDownLists/GetRegion",
+        //    data: json,
+        //    datatype: "json",
+        //    success: function (data) {
+
+        //        $("#Region").kendoDropDownList({
+        //            filter: "contains",
+        //            Name: "RegionID",
+                    
+        //            dataTextField: "Region",
+        //            dataValueField: "RegionID ",
+        //            dataSource: data,
+        //            optionLabel: "All..."
+        //        });
+
+        //    }
+        //})
+    });
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/ReadFirmRequestStatus",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Status").kendoDropDownList({
+                    filter: "contains",
+                    Name: "FirmRequestStatusID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "FirmRequestStatus",
+                    dataValueField: "FirmRequestStatusID",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#FirmOperations_Grid").data("kendoGrid").dataSource;
+        datasource.filter([]);
+
+        $FirmValue = $("#Firm").val('');
+        $TaxIDValue = $("#TaxID").val('');
+        $ExecutiveNameValue = $("#ExecutiveName").val('');
+        $ExecutiveSurnameValue = $("#ExecutiveSurname").val('');
+
+        var Countrydrp = $("#Country").data("kendoDropDownList");
+        Countrydrp.select();
+        var Region = $("#Region").data("kendoDropDownList");
+        Region.select("");
+        var Status = $("#Status").data("kendoDropDownList");
+        Status.select("");
+        var Active = $("#Active").data("kendoDropDownList");
+        Active.select("");
+        
+        var JsonCounrty = { CountryID: 69 }
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegionsByCountry",
+            data: JsonCounrty,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Region").kendoDropDownList({
+                    filter: "contains",
+                    Name: "RegionID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+
+    function ChangeRegion()
+    {
+        $Country = $("#Country").val();
+        // alert();
+        var JsonCounrty = { CountryID: $Country }
+       
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegionsByCountry",
+            data: JsonCounrty,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Region").kendoDropDownList({
+                    filter: "contains",
+                    Name: "RegionID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data
+                });
+
+            }
+        })
+    }
+
+</script>
+<script>
+    function Delete(ID) {
+        //  alert(ID);
+        var json = { ID: ID }
+
+        $.ajax({
+            type: "GET",
+            url: "/FirmOperations/FirmOperationsStatusReject",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+
+            }
+        });
+    }
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

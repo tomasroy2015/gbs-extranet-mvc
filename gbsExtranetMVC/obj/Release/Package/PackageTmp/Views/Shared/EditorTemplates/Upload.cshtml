@@ -1,0 +1,12 @@
+﻿@(Html.Kendo().Upload()
+               .Name("files")
+               .Multiple(false)
+               .Async(a => a
+               //.Save("Save", "'@Url.Action('Save', 'Models')'")
+               .SaveUrl("/Views/")
+                   .Remove("Remove", "Models")
+               .AutoUpload(true)
+               .Batch(true)
+                
+            )
+)

@@ -1,0 +1,660 @@
+
+@media print {
+   .k-scheduler,
+   .k-scheduler-content,
+   .k-scheduler-times
+   {
+      height: auto !important;
+   }
+	.k-event
+	{
+		font-size:8pt !important;
+	}
+	.k-scheduler-header th
+	{
+		font-size:8pt !important;
+	}
+	.k-link
+	{
+		font-size:8pt !important;
+	}
+	#header_container
+	{
+		display:none;
+	}
+	#header{display:none;}
+	#printPage
+	{
+		display:none;
+	}
+
+   .k-scheduler-content
+   {
+      overflow-y: hidden;
+   }
+   .k-button{
+       display:none;
+   }
+
+
+
+   /*.k-scheduler .k-scheduler-monthview .k-scheduler-content .k-scheduler-table
+{
+  height: 1000px;
+}*/
+}
+
+body
+{
+    /*background-color: white;
+    font-size: 75%;
+    font-family: Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
+    margin: 0;
+    padding: 0;
+    color: #696969;*/
+
+     padding-top: 50px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.428571429;
+    /*color: #fff;
+    background-color: #ffffff;*/
+       color:black;
+    background-color: #ffffff;
+}
+
+.main-body {
+    padding: 40px 15px;
+    /*text-align: center;*/
+}
+
+/*layout page*/
+.navbar-inverse {
+    background-color: skyblue;
+    /*padding: 0 10px;*/
+}
+
+
+
+ .navbar-inverse .navbar-brand, .navbar-inverse .navbar-nav li a {
+        color: #fff;
+    }
+
+ /*grid header*/
+    .k-grid-toolbar {
+    text-align: left;
+}
+
+    .k-grouping-header {
+    color: #2e2e2e;
+     text-align: left;
+}
+
+    /*.k-grid-header .center-header {
+  text-align: center;
+}
+.k-grid-header .wrap-header {
+  height: auto;
+  overflow: visible;
+  white-space: normal;
+}*/
+
+    /*grid command buttons*/
+
+    /*span.k-delete {
+    background: url(../Images/delete.png) center center;
+}
+/* centres the image 
+.k-grid .k-button-icontext .k-icon {
+    margin: 0;
+    vertical-align: middle;
+}
+/* changes default width of the button 
+.k-grid tbody .k-button {
+    min-width: 22px;
+    width: 22px;
+}*/
+    .center {
+    margin: auto;
+    width: 35%;
+    /*border:3px solid #8AC007;*/
+    padding: 10px;
+}
+    .requiredfiled{
+        color:red;
+        
+    }
+
+header
+,nav
+,section
+,article
+,aside
+,footer
+,hgroup 
+{ 
+display: block;
+}
+
+/* HEADINGS   
+----------------------------------------------------------*/
+h1, h2, h3, h4, h5, h6
+{
+    font-size: 1.5em;
+    color: #000;
+}
+
+h1
+{
+    font-size: 2em;
+    padding-bottom: 0;
+    margin-bottom: 15px;
+}
+h2
+{
+    padding: 0 0 10px 0;
+}
+h3
+{
+    font-size: 1.2em;
+}
+h4
+{
+    font-size: 1.1em;
+}
+h5, h6
+{
+    font-size: 1em;
+}
+
+a
+{
+    color: #696969;
+}
+
+li
+{
+    line-height: 1.6;
+}
+
+/* this rule styles <h2> tags that are the 
+first child of the left and right table columns */
+.rightColumn > h1, .rightColumn > h2, .leftColumn > h1, .leftColumn > h2
+{
+    margin-top: 0;
+}
+
+/* PRIMARY LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+
+/* you can specify a greater or lesser percentage for the 
+page width. Or, you can specify an exact pixel width. */
+.page
+{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header, #header
+{
+    position: relative;
+    margin-bottom: 0;
+    color: black;
+    padding: 0;
+}
+
+header h1, #header h1
+{
+    font-weight: bold;
+    padding: 5px 0;
+    margin: 0;
+    color: black;
+    border: none;
+    line-height: 2em;
+    font-size: 32px !important;
+}
+
+#main
+{
+    background: #fff;
+    padding: 0 5px 15px 5px; /*Top Right Bottom Left*/
+    margin-bottom: 30px;
+    _height: 1px; /* only IE6 applies CSS properties starting with an underscore */
+}
+
+footer, #footer
+{
+    color: #999;
+    padding: 10px 0;
+    /*text-align: center;*/
+    line-height: normal;
+    margin-left: 10px;
+    font-size: .9em;
+}
+
+/* MENU   
+----------------------------------------------------------*/
+#menu
+{
+    position: relative;
+    margin: 0;
+    text-align: right;
+}
+
+#menu .t-item
+{
+    border-width: 0 0 0 1px;
+}
+
+#menu .t-link
+{
+    padding: 5px 20px;
+    font-weight: bold;
+    text-decoration: none;
+    line-height: 1.8em;
+}
+
+/* FORM LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+
+fieldset 
+{
+    border:1px solid #ddd;
+    padding:0 1.4em 1.4em 1.4em;
+    margin:25px 0 1.5em 0;
+}
+
+legend 
+{
+    font-size:1.2em;
+    font-weight: bold;
+}
+
+textarea 
+{
+    min-height: 75px;
+}
+
+input[type="text"] 
+{
+    width: 200px;
+    border: 1px solid #CCC;
+    border-radius:4px;
+    height:2.13em;
+    text-indent:0.16em;
+    background-color:#fff;
+    vertical-align:middle;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing:border-box;
+}
+
+input[type="password"] 
+{
+    width: 200px;
+    border: 1px solid #CCC;
+}
+
+/* TABLE
+----------------------------------------------------------*/
+
+table 
+{
+  border: solid 1px #e8eef4;
+  border-collapse: collapse;
+}
+
+table td 
+{
+  /*padding: 5px;*/   
+  border: solid 1px #e8eef4;
+}
+
+table th
+{
+  padding: 6px 5px;
+  text-align: left;
+  /*background-color: #e8eef4; 
+  border: solid 1px #e8eef4;  */ 
+}
+
+/* MISC  
+----------------------------------------------------------*/
+.clear
+{
+    clear: both;
+}
+
+.error
+{
+    color:Red;
+}
+
+div#title
+{
+    display:block;
+    text-align:left;
+}
+
+#logindisplay
+{
+    font-size:1.1em;
+    display:block;
+    text-align:right;
+    vertical-align:baseline;
+    color:black;
+}
+
+#logindisplay a:link
+{
+    color: black;
+    text-decoration: underline;
+}
+
+#logindisplay a:visited
+{
+    color: black;
+    text-decoration: underline;
+}
+
+#logindisplay a:hover
+{
+    color: black;
+    text-decoration: none;
+}
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+
+/* Styles for editor and display helpers
+----------------------------------------------------------*/
+.display-label,
+.editor-label
+{
+    margin: 1em 0 0 0;
+}
+
+.display-field,
+.editor-field
+{
+    margin:0.5em 0 0 0;
+}
+
+
+
+.text-box.multi-line
+{
+    height: 6.5em;
+}
+
+.tri-state
+{
+    width: 6em;
+}
+
+.NoBorderTables
+{
+	border-style:hidden !important;
+	}
+	
+	.NoBorderTables td
+{
+	border-style:hidden !important;
+	}
+	
+	
+	
+	.WhiteBorder
+{
+	border-top:0 solid white;
+	border-bottom:0 solid white;
+border-right:0 solid white; 
+border-left:0 solid white; 
+	}
+	
+	.WhiteBorder td
+{
+	border-top:0 solid white;
+	border-bottom:0 solid white;
+border-right:0 solid white; 
+border-left:0 solid white; 
+	}
+
+/* Site.Master Styles
+----------------------------*/
+
+table.Header {
+	border-width: 0;
+	border-spacing: 0;
+	border-style: none;
+	border-color: gray;
+	border-collapse: collapse;
+	background-color: White;
+	height:55px;
+	
+}
+table.Header th {
+	border-width: 0;
+	padding: 1px;
+	border-style: inset;
+	border-color: gray;
+	
+	
+}
+table.Header td {
+	border-width: 0;
+	padding: 1px;
+	border-style: inset;
+	
+	
+
+}
+
+
+input.intext {
+font: 50% ;
+}
+
+table.HomeMenu
+{
+	border-style:hidden;
+	border-collapse: collapse;
+	background-color: White;
+	width:100%;
+	
+	
+	
+	}
+	
+table.HomeMenu td {
+	border-style:hidden;
+	background-color:White;
+	
+
+}
+
+table.Home
+{
+	border-width: 0;
+	border-spacing: 0;
+	border-style: none;
+	border-color: gray;
+	border-collapse: collapse;
+	width:100%;
+	
+	}
+	
+table.Home td {
+	
+	height:10px;
+	background-image:url(/Images/headerbg.png);
+	
+
+}
+
+table.BreadCrum
+{
+	border:1px;
+border-style:hidden;
+	
+}
+	
+table.BreadCrum td
+{
+		margin: 0;
+		padding: 0;
+		border-style:hidden;
+}	
+
+/*------------------
+TextArea Styling
+--------------------*/
+
+.textArea
+{
+	  font-family: Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
+	  color: black;
+	 font-size: 1.1em;
+      
+       -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing:border-box;
+    
+	}
+	
+.CurrencyBox
+{
+	 font-family: Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
+text-align: right;
+left: 0;
+right: 0;
+}
+
+
+/*------------------
+Fixing Header and Menu
+--------------------*/
+/* Make Header Sticky */
+#header_container { background:#fff; color: #fff;
+ height:28px; left:0; position:fixed; width:100%; top:0; z-index:9999999; }
+#header{ margin:0 auto; width:100%; text-align:left; }
+
+/* CSS for the content of page. I am giving top and bottom padding of 80px to make sure the header and footer do not overlap the content.*/
+#container { 
+	margin:10px auto; 
+	overflow:auto; 
+	padding-top:100px; 
+
+	 width:99%;  
+	 z-index:1;  
+	 color: #696969;
+	
+}
+#content{ padding-top:1.5%; z-index:1;}
+
+
+/*------------------
+Job Number HyperLink
+--------------------*/
+
+.JobNumberLink
+{
+    color:#000;
+}
+
+.PlannedJobNumberLink
+{
+    color:#1E395B;
+	text-decoration:underline !important;
+}
+
+.HyperlinkDecoration
+{
+	text-decoration:underline !important;
+}
+
+
+   .t-state-selected a {
+    color: #FFFFFF;
+}
+   .t-state-selected a.t-button {
+    color: #1E395B;
+}
+.t-state-hover:hover a
+{
+	color: #1E395B;
+}
+
+.t-widget, .t-dropdown, .t-header, .t-state-disabled
+{
+	color: #384e73 !important;
+}
+
+/*input[type="email"] {
+  k-textbox;
+}*/
+
+
+
+/*--- Popup Messages Styling */
+
+.PopupDiv{
+    text-align:center;
+    color:black;
+}
+
+.PopupBtn{
+    margin-top:5%;
+}
+
+/* Drop Downlists increase the Length of Dropdown according to text Length*/
+
+ .k-list-container{
+    min-width:200px !important;
+    width: auto !important;
+}
+.k-list
+{
+    width:auto !important;
+}
+
+.k-grid td{
+    white-space: normal;
+    border-style:solid !important;
+}
+
+    /*.k-grid td {
+        white-space: normal;
+    }*/
+
+    .k-grid-header th.k-header {
+        white-space: normal;
+    }

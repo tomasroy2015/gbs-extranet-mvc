@@ -1,0 +1,117 @@
+﻿@using Resources
+@using CountryColumnCaptions
+@using MessageColumnCaptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+@*<style type="text/css">
+    .k-alt, .k-separator, .k-resource.k-alt, .k-pivot-layout>tbody>tr:first-child>td:first-child{
+        background-color: #ffd9b3;
+    }
+</style>*@
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_Country")</h1>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.CountryExt>()
+            .Name("Country_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            //model.Field(p => p.Date).Editable(false);
+
+        })
+            .Create(update => update.Action("_Create", "Countries"))
+            .Read(read => read.Action("_Read", "Countries"))
+            .Update(update => update.Action("_Update", "Countries"))
+            .Destroy(destroy => destroy.Action("_Destroy", "Countries"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+                     command =>
+                     {
+                         command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                         command.Destroy().Text(Resources.Delete);
+                     }).Locked(true).Width(180);
+                    
+                    columns.Bound(p => p.ID).Width(80).Locked(true);
+                    columns.Bound(p => p.Name).Title(CountryColumnCaptions.Name).Width(250);
+                    columns.Bound(p => p.Code).Title(CountryColumnCaptions.Code).Width(80);
+                    columns.Bound(p => p.CultureCode).Title(CountryColumnCaptions.CultureCode).Width(90);
+                    columns.Bound(p => p.Currency).Title(CountryColumnCaptions.Currency).EditorTemplateName("ddlCurrencies").Width(150).Locked(true);
+                    columns.Bound(p => p.VAT).Title(CountryColumnCaptions.VAT).Width(150);
+                    columns.Bound(p => p.CityTax).Title(CountryColumnCaptions.CityTax).ClientTemplate("<div style='text-align:center;'> #if(CityTax ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+                    columns.Bound(p => p.HitCount).Title(CountryColumnCaptions.HitCount).Width(150);
+                    columns.Bound(p => p.Sort).Title(CountryColumnCaptions.Sort).Width(150);
+                    columns.Bound(p => p.Active).Title(CountryColumnCaptions.Active).ClientTemplate("<div style='text-align:center;'> #if(Active ==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+                    columns.Bound(p => p.TemparoryCode).Title(CountryColumnCaptions.TemparoryCode).Width(150);
+
+ 
+
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel();
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Countries.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#Country_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+</script>
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

@@ -1,0 +1,111 @@
+﻿@using Resources
+@using ParameterColumnCaptions
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="text-align: center;">@Resources.Parameters</h1>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.ParameterExt>()
+            .Name("Parameter_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            model.Field(p => p.Date).Editable(false);
+
+        })
+            .Create(update => update.Action("_Create", "Parameters"))
+            .Read(read => read.Action("_Read", "Parameters"))
+            .Update(update => update.Action("_Update", "Parameters"))
+            .Destroy(destroy => destroy.Action("_Destroy", "Parameters"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+                   command =>
+                   {
+                       command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                       command.Destroy().Text(Resources.Delete);
+                   }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Title(ParameterColumnCaptions.dgParameterId).Width(50);
+                    columns.Bound(p => p.Code).Title(ParameterColumnCaptions.dgParameterCode).HtmlAttributes(new { @title = "#=Code#" }).Width(250);
+                    columns.Bound(p => p.Value).Title(ParameterColumnCaptions.dgParameterDeger).Width(200);
+                    columns.Bound(p => p.Description).Title(ParameterColumnCaptions.dgParameterTanim)
+                        .EditorTemplateName("TextArea").HtmlAttributes(new { @title = "#=Description#" }).Width(320);
+                    columns.Bound(p => p.IsCommon).Title(ParameterColumnCaptions.dgParameterOrtak)
+                        .ClientTemplate("<div style='text-align:center;'> #if(IsCommon==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                    columns.Bound(p => p.Date).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy HH:mm:ss') #").Title(ParameterColumnCaptions.dgParameterOpDateTime).Width(150);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel();
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Parameters.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#Parameter_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

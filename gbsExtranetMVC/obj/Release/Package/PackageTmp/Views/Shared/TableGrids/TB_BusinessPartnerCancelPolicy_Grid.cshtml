@@ -1,0 +1,217 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_BusinessPartnerCancelPolicy")</h1>
+
+@*<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-3" style="display: inline-flex;">
+                <label>@Resources.BusinessPartner</label>&nbsp;&nbsp;
+                &nbsp;<input type="text" id="drbBusiness" style="width: 100%;" />
+            </div>
+            <div class="col-md-4 col-sm-3" style="display: inline-flex;">
+                <label>@Resources.Region</label>&nbsp;&nbsp;
+                &nbsp;<input id="drbregion" style="width: 100%;" />
+            </div>
+
+            <div class="col-md-3  col-sm-3" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">Clear Filter</button>
+            </div>
+        </div>
+    </div>
+
+</div>*@
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_BusinessPartnerCancelPolicyExt>()
+                                    .Name("TB_BusinessPartnerCancelPolicyExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+              .Create(update => update.Action("_Create", "TB_BusinessPartnerCancelPolicy"))
+             .Read(read => read.Action("_Read", "TB_BusinessPartnerCancelPolicy", new { TableID = (int)ViewBag.TableID }))
+             .Update(update => update.Action("_Update", "TB_BusinessPartnerCancelPolicy"))
+            .Destroy(destroy => destroy.Action("_Destroy", "TB_BusinessPartnerCancelPolicy"))
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Width(170).Locked(true);
+
+                        columns.Bound(p => p.ID).Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.BusinessPartner).EditorTemplateName("ddlBusinessPartner").Title(MessageColumnCaptions.TB_BusinessPartnerCancelPolicyCaption("BusinessPartnerID")).Width(200).Locked(true);
+                        columns.Bound(p => p.Part).EditorTemplateName("ddlPart").Title(MessageColumnCaptions.TB_BusinessPartnerCancelPolicyCaption("PartID")).Width(200);
+                        columns.Bound(p => p.CancelType).EditorTemplateName("ddlCancelType").Title(MessageColumnCaptions.TB_BusinessPartnerCancelPolicyCaption("CancelTypeID")).Width(200);
+                        columns.Bound(p => p.RefundableDayCount).Title(MessageColumnCaptions.TB_BusinessPartnerCancelPolicyCaption("RefundableDayCount")).Width(200);
+                        columns.Bound(p => p.PenaultyRate).EditorTemplateName("ddlPenaltyRate").Title(MessageColumnCaptions.TB_BusinessPartnerCancelPolicyCaption("PenaltyRateTypeID")).Width(200);
+                        columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_BusinessPartnerCancelPolicyCaption("Active"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                .Text(Resources.NewRecord)
+                .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_BusinessPartnerCancelPolicyExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_BusinessPartnerCancelPolicyExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+@*<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $BusinessText = $("#drbBusiness").data("kendoDropDownList").text();
+        $BusinessValue = $("#drbBusiness").val();
+
+        $RegionText = $("#drbregion").data("kendoDropDownList").text();
+        $RegionValue = $("#drbregion").val();
+
+        if ($BusinessValue != -1) {
+            $filter.push({ field: "BusinessPartner", operator: "contains", value: $BusinessText });
+        }
+        if ($RegionValue != -1) {
+            $filter.push({ field: "Region", operator: "contains", value: $RegionText });
+        }
+
+
+        var grid = $("#TB_BusinessPartnerCancelPolicyExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+
+
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/BizTbl_UserBusinessPartner/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbBusiness").kendoDropDownList({
+                    filter: "contains",
+                    Name: "TableID",
+                    // OptionLabel: "All...",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    // dataValueField: "Name",
+                    dataSource: data
+                });
+
+            }
+        })
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegion",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbregion").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "Region",
+                    dataValueField: "RegionID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_BusinessPartnerCancelPolicyExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        //$("#txtBusinessPartnerRegionID").val('')
+        ////$("#txtPromotionCode").val('');
+        ////$("#txtGuestName").val('');
+        //$("#datetimepickerStart").val('');
+        //$("#datetimepickerEnd").val('');
+        //document.getElementById('chkStatus').checked = false
+
+        $("#drbBusiness").val = -1;
+        $("#drbregion").val = -1;
+    });
+
+</script>*@
+
+
+
+
+
+
+
+
+
+
+
+

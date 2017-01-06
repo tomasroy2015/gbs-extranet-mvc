@@ -1,0 +1,334 @@
+﻿
+
+@using Resources
+@using mailColumnCaptions
+@using MessageColumnCaptions
+@model gbsExtranetMVC.Models.Repositories.TB_LatestNewsExt
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*@{
+        string EMailBody = Html.Raw(Server.HtmlDecode(Model.Content)).ToString();
+    }*@
+<h1 style="color: black; text-align:center">Update LatestNews</h1>
+@*@using (Html.BeginForm("Create", "LatestNews", FormMethod., new { @id = "frmLatestNews" }))*@
+
+<div>
+    <input type="button" class="k-button " value="Update" onclick="UpdateLatestNews()" />
+    <a href="/Maintenance/Tables"><input type="button" class="k-button" value="Back to Tables" /></a>
+</div>
+<br />
+<br />
+<div class="container">
+    <div class="col-md-12">
+        <div class="col-md-1">Post ID</div>
+        <div class="col-md-3">@Model.ID
+            @Html.HiddenFor(m => m.ID, new { @id = "hdnID" })
+        </div>
+        <div class="col-md-1">UserID</div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.UserID, new { @class = "k-textbox", @id = "txtUserID" })
+
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="col-md-12">
+
+
+        <div class="col-md-1">Title_tr</div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Title_tr, new { @class = "k-textbox", @id = "txtTitle_tr" })
+
+        </div>
+        <div class="col-md-1">Title_en</div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Title_en, new { @class = "k-textbox", @id = "txtTitle_en" })
+        </div>
+        <div class="col-md-1">Title_de</div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Title_de, new { @class = "k-textbox", @id = "txtTitle_de" })
+
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="col-md-12">
+
+
+        <div class="col-md-1">Title_fr</div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Title_fr, new { @class = "k-textbox", @id = "txtTitle_fr" })
+
+        </div>
+        <div class="col-md-1">Title_ru</div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Title_ru, new { @class = "k-textbox", @id = "txtTitle_ru" })
+        </div>
+        <div class="col-md-1">Title_ar</div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.Title_ar, new { @class = "k-textbox", @id = "txtTitle_ar" })
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="col-md-12">
+
+
+        <div class="col-md-1">Description_tr</div>
+        <div class="col-md-3">
+            @Html.TextAreaFor(m => m.Description_tr, new { @class = "textArea", @id = "txtDescription_tr", style = "width:220px" })
+
+        </div>
+        <div class="col-md-1">Description_en</div>
+        <div class="col-md-3">
+            @Html.TextAreaFor(m => m.Description_en, new { @class = "textArea", @id = "txtDescription_en", style = "width:220px" })
+        </div>
+        <div class="col-md-1">Description_de</div>
+        <div class="col-md-3">
+            @Html.TextAreaFor(m => m.Description_de, new { @class = "textArea", @id = "txtDescription_de", style = "width:220px" })
+
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="col-md-12">
+
+
+        <div class="col-md-1">Description_fr</div>
+        <div class="col-md-3">
+            @Html.TextAreaFor(m => m.Description_fr, new { @class = "textArea", @id = "txtDescription_fr", style = "width:220px" })
+
+        </div>
+        <div class="col-md-1">Description_ru</div>
+        <div class="col-md-3">
+            @Html.TextAreaFor(m => m.Description_ru, new { @class = "textArea", @id = "txtDescription_ru", style = "width:220px" })
+        </div>
+        <div class="col-md-1">Description_ar</div>
+        <div class="col-md-3">
+            @Html.TextAreaFor(m => m.Description_ar, new { @class = "textArea", @id = "txtDescription_ar", style = "width:220px" })
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="col-md-12">
+
+
+        <div class="col-md-1">PostImage</div>
+        <div class="col-md-3">
+
+            @Html.TextBoxFor(m => m.PostImage, new { type = "file", @id = "txtPostImage" })
+            @Html.ValidationMessageFor(m => m.PostImage)
+
+        </div>
+        <div class="col-md-1">Active</div>
+        <div class="col-md-3">
+            @Html.Kendo().CheckBoxFor(m => m.Active)
+            @Html.HiddenFor(m => m.Active, new { @id = "hdnActive" })
+        </div>
+        @*<div class="col-md-1">CreatedDate</div>
+            <div class="col-md-3">
+                @Html.Kendo().DateTimePickerFor(m => m.CreatedDate).HtmlAttributes(new { @style = "width:200px; height:25px;", @id = "txtCreatedDate" })
+            </div>*@
+    </div>
+
+</div>
+<br />
+<br />
+<div align="center">
+    <label id="lblSuccess" style="color:green;text-align:center;font-size:small;display:none;">Updated Successfully</label>
+</div>
+
+<script>
+    function UpdateLatestNews() {
+        var ID = document.getElementById('hdnID').value;
+        var UserID = document.getElementById("txtUserID").value;
+        var Title_tr = document.getElementById("txtTitle_tr").value;
+        var Title_en = document.getElementById("txtTitle_en").value;
+        var Title_de = document.getElementById("txtTitle_de").value;
+        var Title_fr = document.getElementById("txtTitle_fr").value;
+        var Title_ru = document.getElementById("txtTitle_ru").value;
+        var Title_ar = document.getElementById("txtTitle_ar").value;
+        var Description_tr = document.getElementById("txtDescription_tr").value;
+        var Description_en = document.getElementById("txtDescription_en").value;
+        var Description_de = document.getElementById("txtDescription_de").value;
+        var Description_fr = document.getElementById("txtDescription_fr").value;
+        var Description_ru = document.getElementById("txtDescription_ru").value;
+        var Description_ar = document.getElementById("txtDescription_ar").value;
+        //var PostImage = document.getElementById("").value;
+        var Active = document.getElementById("hdnActive").checked;
+        //alert(Active)
+        //var CreatedDate = document.getElementById("txtCreatedDate").value;
+
+        if (UserID == "") {
+            document.getElementById("txtUserID").style.borderColor = "red";
+        }
+        else {
+            document.getElementById("txtUserID").style.borderColor = "";
+        }
+
+        //if (Title_tr == "") {
+        //    document.getElementById("txtTitle_tr").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtTitle_tr").style.borderColor = "";
+        //}
+        //if (Title_en == "") {
+        //    document.getElementById("txtTitle_en").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtTitle_en").style.borderColor = "";
+        //}
+        //if (Title_de == "") {
+        //    document.getElementById("txtTitle_de").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtTitle_de").style.borderColor = "";
+        //}
+        //if (Title_fr == "") {
+        //    document.getElementById("txtTitle_fr").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtTitle_fr").style.borderColor = "";
+        //}
+        //if (Title_ru == "") {
+        //    document.getElementById("txtTitle_ru").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtTitle_ru").style.borderColor = "";
+        //}
+        //if (Title_ar == "") {
+        //    document.getElementById("txtTitle_ar").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtTitle_ar").style.borderColor = "";
+        //}
+
+        //if (Description_tr == "") {
+        //    document.getElementById("txtDescription_tr").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtDescription_tr").style.borderColor = "";
+        //}
+        //if (Description_en == "") {
+        //    document.getElementById("txtDescription_en").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtDescription_en").style.borderColor = "";
+        //}
+        //if (Description_de == "") {
+        //    document.getElementById("txtDescription_de").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtDescription_de").style.borderColor = "";
+        //}
+        //if (Description_fr == "") {
+        //    document.getElementById("txtDescription_fr").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtDescription_fr").style.borderColor = "";
+        //}
+        //if (Description_ru == "") {
+        //    document.getElementById("txtDescription_ru").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtDescription_ru").style.borderColor = "";
+        //}
+        //if (Description_ar == "") {
+        //    document.getElementById("txtDescription_ar").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtDescription_ar").style.borderColor = "";
+        //}
+        //if (CreatedDate == "") {
+        //    document.getElementById("txtCreatedDate").style.borderColor = "red";
+        //}
+        //else {
+        //    document.getElementById("txtCreatedDate").style.borderColor = "";
+        //}
+
+
+        var uploadfile = ""
+        var fup = document.getElementById('txtPostImage');
+        var fileName = fup.value;
+        var ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+        var filenamed = document.getElementById('txtPostImage').value;
+        //alert(filenamed)
+
+
+        if (UserID != "") {
+
+            //alert("if");
+            var xhr = new XMLHttpRequest();
+            var fd = new FormData();
+            fd.append("txtPostImage", document.getElementById('txtPostImage').files[0]);
+            fd.append("ID", document.getElementById('hdnID').value);
+            fd.append("UserID", document.getElementById('txtUserID').value);
+            fd.append("Title_tr", document.getElementById('txtTitle_tr').value);
+            fd.append("Title_en", document.getElementById('txtTitle_en').value);
+            fd.append("Title_de", document.getElementById('txtTitle_de').value);
+            fd.append("Title_fr", document.getElementById('txtTitle_fr').value);
+
+            fd.append("Title_ru", document.getElementById('txtTitle_ru').value);
+            fd.append("Title_ar", document.getElementById('txtTitle_ar').value);
+            fd.append("Description_tr", document.getElementById('txtDescription_tr').value);
+            fd.append("Description_en", document.getElementById('txtDescription_en').value);
+            fd.append("Description_de", document.getElementById('txtDescription_de').value);
+            fd.append("Description_fr", document.getElementById('txtDescription_fr').value);
+            fd.append("Description_ru", document.getElementById('txtDescription_ru').value);
+            fd.append("Description_ar", document.getElementById('txtDescription_ar').value);
+
+            fd.append("Active", document.getElementById('Active').value);
+            //alert("Post")
+            xhr.open("POST", "/LatestNews/UpdateLatestNews", true);
+            xhr.send(fd);
+            xhr.addEventListener("load", function (event) {
+                //alert(event)
+                document.getElementById('txtPostImage').value = '';
+                document.getElementById('txtUserID').value = '';
+                document.getElementById('txtTitle_tr').value = '';
+                document.getElementById('txtTitle_en').value = '';
+                document.getElementById('txtTitle_de').value = '';
+                document.getElementById('txtTitle_fr').value = '';
+                document.getElementById('txtTitle_ru').value = '';
+                document.getElementById('txtTitle_ar').value = '';
+                document.getElementById('txtDescription_tr').value = '';
+                document.getElementById('txtDescription_en').value = '';
+                document.getElementById('txtDescription_de').value = '';
+                document.getElementById('txtDescription_fr').value = '';
+                document.getElementById('txtDescription_ru').value = '';
+                document.getElementById('txtDescription_ar').value = '';
+                document.getElementById("lblSuccess").style.display = "";
+            }, false);
+
+        }
+    }
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+

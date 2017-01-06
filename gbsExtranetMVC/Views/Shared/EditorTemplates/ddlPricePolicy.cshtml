@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                        .Name("PricePolicyTypeID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                                .DataTextField("PricePolicy")
+                    .DataValueField("PricePolicyTypeID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetPricePlicyEditorTemplate", "DropDownLists");
+        });
+    })
+)

@@ -1,0 +1,91 @@
+﻿
+@using Resources
+@using BankColumnCaption
+
+
+<h1 style="text-align:center;">BizTbl_PageControl</h1>
+
+
+<script>
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_PageControlExt>()
+                .Name("BizTbl_PageControlExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                    //.Create(update => update.Action("_Create", "BizTbl_PageControl"))
+                    .Read(read => read.Action("_Read", "BizTbl_PageControl", new { TableID = (int)ViewBag.TableID }))
+                    .Update(update => update.Action("_Update", "BizTbl_PageControl"))
+                    .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_PageControl"))
+                    .Create(update => update.Action("_Create", "BizTbl_PageControl"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.PageName).EditorTemplateName("ddlPage").Width(300);
+                    columns.Bound(p => p.Code).Width(250);
+                    columns.Bound(p => p.Text).Width(200);
+                    columns.Bound(p => p.Description).Width(200);
+                  
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+               .Editable(editable => editable.Mode(GridEditMode.InLine))
+                        .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                    .Pageable(p => p.Refresh(true))
+                    .Sortable()
+                    .Navigatable()
+                    .Groupable()
+                    .Scrollable(scr => scr.Height(370))
+                    .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_PageControlExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#BizTbl_PageControlExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

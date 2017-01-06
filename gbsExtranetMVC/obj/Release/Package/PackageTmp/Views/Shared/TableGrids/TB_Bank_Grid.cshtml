@@ -1,0 +1,179 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_Bank")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6 col-sm-6">
+                <div class="col-md-2 col-sm-2 " style="padding: 8px;">
+                    <label>@BankColumnCaption.Country</label>
+                </div>
+                <div class="col-md-8 col-sm-8 " style="padding: 8px;">
+                    <input id="drpPart" style="width: 100%;" />
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@BankColumnCaption.BankName</label>
+                </div>
+                <div class="col-md-8 col-sm-8 " style="padding: 8px;">
+                    <input id="txtBankName" type="text" class="form-control" style="width:100%" placeholder="@BankColumnCaption.BankName" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.FilterRemove</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BankExt>()
+            .Name("TB_BankExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+            .Create(update => update.Action("_Create", "Bank"))
+            .Read(read => read.Action("_Read", "Bank"))
+            .Update(update => update.Action("_Update", "Bank"))
+            .Destroy(destroy => destroy.Action("_Destroy", "Bank"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Locked(true).Width(180);
+
+                        columns.Bound(p => p.ID).Width(50).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.Country).EditorTemplateName("ddlCountries").Title(BankColumnCaption.Country).Width(250).Locked(true);
+                        columns.Bound(p => p.Currency).Title(BankColumnCaption.Currency).EditorTemplateName("ddlCurrencies").Width(150);
+                        columns.Bound(p => p.Bank).Title(BankColumnCaption.BankName).Width(150);
+                        columns.Bound(p => p.BankBranch).Title(BankColumnCaption.BankBranchName).Width(150);
+                        columns.Bound(p => p.BankAccountNumber).Title(BankColumnCaption.BankAccountNumber).Width(150);
+                        columns.Bound(p => p.IBAN).Title(BankColumnCaption.IBAN).Width(150);
+                        columns.Bound(p => p.SWIFT).Title(BankColumnCaption.SWIFT).Width(150);
+                        columns.Bound(p => p.OtherInfo).Title(BankColumnCaption.OtherInfo).Width(150);
+
+
+
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+            //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_BankExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+        $("#cmdAddNewRecord").click(function (e) {
+
+            var table = $("#TB_BankExt_Grid").data("kendoGrid");
+            var sorting = table.dataSource.sort();
+
+            if (sorting) {
+                table.dataSource.sort(null);
+            }
+            table.addRow();
+            e.preventDefault();
+            //put custom logic here
+        });
+</script>
+
+<script>
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $Subject = $("#txtBankName").val();
+
+        $PartText = $("#drpPart").data("kendoDropDownList").text();
+        $PartValue = $("#drpPart").val();
+
+        if ($Subject) {
+            $filter.push({ field: "Bank", operator: "contains", value: String($Subject) });
+        }
+
+        if ($PartValue) {
+            $filter.push({ field: "Country", operator: "contains", value: $PartText });
+        }
+
+        var grid = $("#TB_BankExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPart").kendoDropDownList({
+                    filter: "contains",
+                    Name: "CountryID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Country",
+                    dataValueField: "CountryID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        function clearFiter() {
+            $("form.k-filter-menu button[type='reset']").trigger("click");
+        }
+
+        $("#btnClearFilter").click(function (e) {
+            e.preventDefault();
+            var datasource = $("#TB_BankExt_Grid").data("kendoGrid").dataSource;
+            datasource.filter([]);
+            $("#txtBankName").val('');
+        });
+    });
+</script>
+

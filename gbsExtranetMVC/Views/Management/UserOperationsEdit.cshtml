@@ -1,0 +1,334 @@
+﻿
+@model gbsExtranetMVC.Models.Repositories.UsersOperationsExt
+@using Resources
+@{
+    ViewBag.Title = "UserOperationsEdit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="color: black; text-align: center;">UserInformations</h2>
+
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("UserOperationsEdit", "Management", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.ID)
+        <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.ID, Resources.UserID)
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.ID, new { @class = "k-textbox", @readonly = "readonly", @id = "txtUserCode", @name = "txtUserCode" })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Title, Resources.Salutation)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.SalutionTypeID)
+                                .Name("Title")
+                                .OptionLabel("Select Title...")
+                                .BindTo((SelectList)ViewBag.SalutionType)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbSalution", @name = "drbSalution" })
+                            )
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Title)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Name)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "k-textbox", @id = "txtName", @name = "txtName" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Name)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Surname)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.SurName, new { @class = "k-textbox", @id = "txtSurName", @name = "txtSurName" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.SurName)
+                            </div>
+                        </td>
+                    </tr>
+                   
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Country, Resources.Country)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CountryID)
+                                .Name("Country")
+                                .OptionLabel("Select Country...")
+                                .BindTo((SelectList)ViewBag.Countries)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbCountry", @name = "drbCountry" })
+                            )
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Country)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Region)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Region, new { @class = "k-textbox", @id = "txtRegion", @name = "txtRegion" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Region)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Address)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextAreaFor(m => m.Address, new { @class = "k-textbox", @id = "txtAddress", @name = "txtAddress" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Address)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Postcode)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.PostalCode, new { @class = "k-textbox", @id = "txtPostalCode", @name = "txtPostalCode" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.PostalCode)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Email)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "k-textbox", @id = "txtEmail", @name = "txtEmail" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Phone)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Phone, new { @class = "k-textbox", @id = "txtPhone", @name = "txtPhone" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Phone)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Firm)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.FirmID)
+                                .Name("Firm")
+                                .OptionLabel("Select Firm...")
+                                .BindTo((SelectList)ViewBag.Firm)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbFirm", @name = "drbFirm" })
+                            )
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Country)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.UserName)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox", @id = "txtUserName", @name = "txtUserName" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.UserName)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Password, Resources.Password)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Password, new { @class = "k-textbox", @id = "txtPassword" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Name)
+                            </div>
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Status, Resources.Status)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.StatusID)
+                                .Name("Status")
+                                .OptionLabel("Select Status...")
+                .BindTo((SelectList)ViewBag.status)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbStatus", @name = "drbStatus" })
+                            )
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Status)
+                            </div>
+                        </td>
+                    </tr>
+                    @*<tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Locked)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "k-textbox" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Name)
+                            </div>
+                        </td>
+                    </tr>*@
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Active)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.Active, new { @checked = "checked" , @id = "chkActive", @name = "chkActive" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Active)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.IPAddress)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.IPAddress, new { @class = "k-textbox", @id = "txtIPAddress", @name = "txtIPAddress" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.IPAddress)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                    </tr>
+
+                </table>
+                
+            </div>
+        </div>
+    }
+    <div align="center">
+        <input type="button" class="k-button" value="Update" onclick="UpdateUserOperations();"/>
+        <a title='Click here to Edit Firm Details' style='text-decoration:underline;' href='/Management/UserOperations'><input type="button" class="k-button" value="Cancel" /></a><br />
+        <br/>
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+    </div>
+</div>
+
+<script>
+    function UpdateUserOperations() {
+        //alert("hi")
+        var UserCode = document.getElementById('txtUserCode').value;
+        //alert(UserCode);
+        //var Salutiontxt = $("#drbSalution:selected").text();
+        //alert(Salutiontxt)
+        var SalutionId = document.getElementById('drbSalution').value;
+        //alert(SalutionId)
+        var Name = document.getElementById('txtName').value;
+        //alert(Name);
+        var SurName = document.getElementById('txtSurName').value;
+        //alert(SurName);
+        var Country = document.getElementById('drbCountry').value;
+        //alert(Country);
+        var Region = document.getElementById('txtRegion').value;
+        //alert(Region);
+        var Address = document.getElementById('txtAddress').value;
+        //alert(Address);
+        var PostalCode = document.getElementById('txtPostalCode').value;
+        //alert(PostalCode);
+        var Email = document.getElementById('txtEmail').value;
+        //alert(Email);
+        var Phone = document.getElementById('txtPhone').value;
+        ///alert(Phone);
+        var Firm = document.getElementById('drbFirm').value;
+        //alert(Firm);
+        var UserName = document.getElementById('txtUserName').value;
+        //alert(UserName);
+        var Status = document.getElementById('drbStatus').value;
+        // alert(Status);
+        var Active = document.getElementById('chkActive').checked;
+        // alert(Active);
+        var IPAddress = document.getElementById('txtIPAddress').value;
+        var Password = document.getElementById('txtPassword').value;
+        //alert(IPAddress);
+        
+       
+        var json = {
+            UserCode: UserCode, SalutionId: SalutionId, Name: Name, SurName: SurName, Country: Country, Region: Region, Address: Address, PostalCode: PostalCode,
+            Email: Email, Phone: Phone, Firm: Firm, UserName: UserName, Status: Status, Active: Active, IPAddress: IPAddress, Password: Password
+        }
+        $.ajax({
+            type: "Get",
+            url: "/UserOperations/UpdateUserOperations",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                if (res != 0) {
+                    document.getElementById("lblSuccess").style.display = "";
+                    //alert(res);
+                }
+            }
+        })
+
+    }
+
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

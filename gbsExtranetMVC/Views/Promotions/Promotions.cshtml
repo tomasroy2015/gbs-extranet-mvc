@@ -1,0 +1,97 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using PromotionColumnCaption
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageTitle("AdminHotelPromotions.aspx")</h1>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.PromotionExt>()
+        .Name("Promotion_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+        })
+
+                                    .Read(read => read.Action("_Read", "Promotions"))
+                                    .Destroy(destroy => destroy.Action("_Destroy", "Promotions"))
+                                    //.Update(update => update.Action("_Update", "Promotions"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           //command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Title("Operation").Width(170);
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.PromotionName).Title(PromotionColumnCaption.dgHotelPromotionPromotionName).Width(100);
+                    columns.Bound(p => p.AccommodationStartDate).Title(PromotionColumnCaption.dgHotelPromotionAccommodationStartDate).ClientTemplate("#= kendo.toString(AccommodationStartDate,'MM/dd/yyyy HH:mm:ss') #").Width(150);
+                    columns.Bound(p => p.AccommodationEndDate).Title(PromotionColumnCaption.dgHotelPromotionAccommodationEndDate).ClientTemplate("#= kendo.toString(AccommodationEndDate,'MM/dd/yyyy HH:mm:ss') #").Width(150);
+                    columns.Bound(p => p.DayName).Title(PromotionColumnCaption.dgHotelPromotionDayName).Width(300);
+                    columns.Bound(p => p.PricePolicyName).Width(250).Title(PromotionColumnCaption.dgHotelPromotionPricePolicyName).Width(150);
+                    columns.Bound(p => p.ValidForAllRoomTypes).ClientTemplate("<div style='text-align:center;'> #if(ValidForAllRoomTypes){# <label>#=Alltypes#</label> #} else {# <label>#=RoomNames#</label> #}# </div>").Width(200).Title(PromotionColumnCaption.dgHotelPromotionKampanyaDahilindekiOdaTipi);
+                    columns.Bound(p => p.DiscountPercentage).Title(PromotionColumnCaption.dgHotelPromotionAciklama).Width(150);
+                    columns.Bound(p => p.SecretDeal).ClientTemplate("<div style='text-align:center;'> #if(SecretDeal){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100).Title(PromotionColumnCaption.dgHotelPromotionGizliFirsat);
+                    columns.Bound(p => p.Active).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(90).Title(PromotionColumnCaption.dgHotelPromotionAktif);
+                    columns.Bound(p => p.CreateDate).Title(PromotionColumnCaption.dgHotelPromotionCreateDateTime).ClientTemplate("#= kendo.toString(CreateDate,'MM/dd/yyyy HH:mm:ss') #").Width(150);
+  
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewUser").Text(Resources.NewPromotion).Action("NewPromotion", "Promotions");
+                    tool.Excel();
+                })
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("HotelPromotions.xlsx")
+                .Filterable(true))
+
+)
+
+<br /><br />
+<div align="center">
+    <a title='Click here to Add new Promotion for this Property' style='text-decoration:underline;' href='/Promotions/NewPromotion'>
+        <input type="button" value="@Resources.NewPromotion" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+    </a>
+    <br />
+
+</div>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

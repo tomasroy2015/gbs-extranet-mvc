@@ -1,0 +1,534 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_Reservation")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12" style="padding:0px">
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>ID</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="txtFilterID" type="text" class="k-textbox" style="width:100%" placeholder="ID" />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-4 col-sm-4">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("UserSessionID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtFilterUserSessionID" type="text" class=" k-textbox" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationCaption("UserSessionID")' />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("PinCode")</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="txtFilterPinCode" type="text" class=" k-textbox" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationCaption("PinCode")' />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("PartID")</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="drpPart" class="k-textbox" style="width: 100%;" />
+                </div>
+            </div>
+
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("FirmID")</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="drpFirm" class="k-textbox" style="width: 100%;" />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("Email")</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="txtFilterEmail" type="text" class=" k-textbox" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationCaption("Email")' />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+
+        <div class="col-md-12" style="padding:0px">
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("Name")</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="txtFilterName" type="text" class=" k-textbox" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationCaption("Name")' />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-4 col-sm-4">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("Surname")</label>
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <input id="txtFilterSurname" type="text" class=" k-textbox" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationCaption("Surname")' />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("CountryID")</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="drpCountry" class="k-textbox" style="width: 100%;" />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-3 col-sm-3">
+                    <label>@MessageColumnCaptions.TB_ReservationCaption("StatusID")</label>
+                </div>
+                <div class="col-md-9 col-sm-9">
+                    <input id="drpStatus" class="k-textbox" style="width: 100%;" />
+                </div>
+            </div>
+
+
+            <div class="col-md-2 col-sm-2" style="padding:0px">
+                <div class="col-md-8 col-sm-8">
+                    <label> @MessageColumnCaptions.TB_ReservationCaption("Active")</label>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <input id="ChkFilterActive" name="ChkFilterActive" type="checkbox" />
+                </div>
+            </div>
+
+            <div class="col-md-2 col-sm-2">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+@*</div>*@
+
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_ReservationExt>()
+                    .Name("TB_Reservation_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+        //.Create(update => update.Action("_Create", "Message"))
+        .Read(read => read.Action("_Read", "TB_Reservation", new { TableID = (int)ViewBag.TableID }))
+        //.Update(update => update.Action("_Update", "Message"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "Message"))
+        )
+
+        .Columns(columns =>
+        {
+            //columns.Command(
+            // command =>
+            // {
+            //     command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+            //     command.Destroy();
+            // }).Locked(true).Width(180);
+
+            columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true);
+            //columns.Bound(p => p.Code).Title(Resources.Code).Width(150).Locked(true);
+            columns.Bound(p => p.PINCode).Title(MessageColumnCaptions.TB_ReservationCaption("PinCode")).Width(200);
+            columns.Bound(p => p.Part).Title(MessageColumnCaptions.TB_ReservationCaption("PartID")).Width(200);
+            columns.Bound(p => p.Firm).Title(MessageColumnCaptions.TB_ReservationCaption("FirmID")).Width(200);
+            columns.Bound(p => p.User).Title(MessageColumnCaptions.TB_ReservationCaption("UserID")).Width(200);
+            columns.Bound(p => p.ReservationDate).Title(MessageColumnCaptions.TB_ReservationCaption("ReservationDate")).Width(200);
+            columns.Bound(p => p.Status).Title(MessageColumnCaptions.TB_ReservationCaption("StatusID")).Width(200);
+            columns.Bound(p => p.Country).Title(MessageColumnCaptions.TB_ReservationCaption("CountryID")).Width(200);
+            columns.Bound(p => p.City).Title(MessageColumnCaptions.TB_ReservationCaption("City")).Width(200);
+            columns.Bound(p => p.Salutation).Title(MessageColumnCaptions.TB_ReservationCaption("SalutationTypeID")).Width(200);
+            columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_ReservationCaption("Name")).Width(200);
+            columns.Bound(p => p.Surname).Title(MessageColumnCaptions.TB_ReservationCaption("Surname")).Width(200);
+
+            columns.Bound(p => p.Email).Title(MessageColumnCaptions.TB_ReservationCaption("Email")).Width(200);
+            columns.Bound(p => p.PostCode).Title(MessageColumnCaptions.TB_ReservationCaption("PostCode")).Width(200);
+            columns.Bound(p => p.Address).Title(MessageColumnCaptions.TB_ReservationCaption("Address")).Width(200);
+            columns.Bound(p => p.Phone).Title(MessageColumnCaptions.TB_ReservationCaption("Phone")).Width(200);
+            columns.Bound(p => p.Amount).Title(MessageColumnCaptions.TB_ReservationCaption("Amount")).Width(200);
+            columns.Bound(p => p.GeneralPromotionDiscountPercentage).Title(MessageColumnCaptions.TB_ReservationCaption("GeneralPromotionDiscountPercentage")).Width(200);
+            columns.Bound(p => p.PromotionDiscountPercentage).Title(MessageColumnCaptions.TB_ReservationCaption("PromotionDiscountPercentage")).Width(200);
+            columns.Bound(p => p.PayableAmount).Title(MessageColumnCaptions.TB_ReservationCaption("PayableAmount")).Width(200);
+           // columns.Bound(p => p.ActualAmount).Title(MessageColumnCaptions.TB_ReservationCaption("ActualAmount")).Width(200);
+            columns.Bound(p => p.ActualAmount).ClientTemplate("<div style='text-align:center;'> #if(ActualAmount==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150); 
+            
+            columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_ReservationCaption("CurrencyID")).Width(200);
+            columns.Bound(p => p.ComissionRate).Title(MessageColumnCaptions.TB_ReservationCaption("ComissionRate")).Width(200);
+
+            columns.Bound(p => p.ComissionAmount).Title(MessageColumnCaptions.TB_ReservationCaption("ComissionAmount")).Width(200);
+            columns.Bound(p => p.ComissionCurrency).Title(MessageColumnCaptions.TB_ReservationCaption("ComissionCurrencyID")).Width(200);
+            columns.Bound(p => p.Deposit).Title(MessageColumnCaptions.TB_ReservationCaption("Deposit")).Width(200);
+            columns.Bound(p => p.DepositCurrency).Title(MessageColumnCaptions.TB_ReservationCaption("DepositCurrencyID")).Width(200);
+            columns.Bound(p => p.DepositTL).Title(MessageColumnCaptions.TB_ReservationCaption("DepositInTL")).Width(200);
+            columns.Bound(p => p.Note).Title(MessageColumnCaptions.TB_ReservationCaption("Note")).Width(200);
+            
+           // columns.Bound(p => p.CreditCardUsed).Title(MessageColumnCaptions.TB_ReservationCaption("CreditCardUsed")).Width(200);
+            columns.Bound(p => p.CreditCardUsed).ClientTemplate("<div style='text-align:center;'> #if(CreditCardUsed==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150); 
+            columns.Bound(p => p.CreditCardType).Title(MessageColumnCaptions.TB_ReservationCaption("CCTypeID")).Width(200);
+            columns.Bound(p => p.NameontheCard).Title(MessageColumnCaptions.TB_ReservationCaption("CCFullName")).Width(200);
+            columns.Bound(p => p.CreditCardNumber).Title(MessageColumnCaptions.TB_ReservationCaption("CCNo")).Width(200);
+            columns.Bound(p => p.ExpirationDate).Title(MessageColumnCaptions.TB_ReservationCaption("CCExpiration")).Width(200);
+
+            columns.Bound(p => p.CVC).Title(MessageColumnCaptions.TB_ReservationCaption("CCCVC")).Width(200);
+            columns.Bound(p => p.ReservationOperation).Title(MessageColumnCaptions.TB_ReservationCaption("ReservationOperationID")).Width(200);
+            columns.Bound(p => p.ChargedAmount).Title(MessageColumnCaptions.TB_ReservationCaption("ChargedAmount")).Width(200);
+            columns.Bound(p => p.ChargedAmountCurrency).Title(MessageColumnCaptions.TB_ReservationCaption("ChargedAmountCurrencyID")).Width(200);
+            columns.Bound(p => p.ChargeDate).Title(MessageColumnCaptions.TB_ReservationCaption("ChargeDate")).Width(200);
+            
+            //columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_ReservationCaption("Active")).Width(200);
+            columns.Bound(p => p.Active).ClientTemplate("<div style='text-align:center;'> #if(Active==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+            
+            columns.Bound(p => p.Culture).Title(MessageColumnCaptions.TB_ReservationCaption("CultureID")).Width(200);
+            columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.TB_ReservationCaption("IPAddress")).Width(200);
+            columns.Bound(p => p.CancelDate).Title(MessageColumnCaptions.TB_ReservationCaption("CancelDateTime")).Width(200);
+            columns.Bound(p => p.EncryptedReservationID).Title(MessageColumnCaptions.TB_ReservationCaption("EncReservationID")).Width(200);
+            columns.Bound(p => p.EncryptedPINCode).Title(MessageColumnCaptions.TB_ReservationCaption("EncPinCode")).Width(200);
+            columns.Bound(p => p.UserSessionID).Title(MessageColumnCaptions.TB_ReservationCaption("UserSessionID")).Width(200);
+        })
+            .ToolBar(tool =>
+            {
+                tool.Excel().Text(Resources.ExporttoExcel);
+                            })
+            //.Editable(editable => editable.Mode(GridEditMode.InLine))
+            .Scrollable(scrollable => scrollable.Height(430))
+            //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+            .Pageable(p => p.Refresh(true))
+            .Sortable()
+            .Navigatable()
+            .Groupable()
+            .Scrollable(scr => scr.Height(370))
+            .Filterable()
+            .Excel(excel => excel
+                    .FileName("TB_Reservation.xlsx")
+            .Filterable(true))
+)
+
+<script>
+
+   
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+      //  alert('hi');
+        var json = {}
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetReservationDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpStatus").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "ReservationName",
+                    dataValueField: "ReservationID",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+            }
+        })
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpCountry").kendoDropDownList({
+                    filter: "contains",
+                    Name: "CountryID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Country",
+                    dataValueField: "CountryID ",
+                    dataSource: data
+                });
+
+            }
+        })
+       
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetFirmDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpFirm").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "FirmName",
+                    dataValueField: "FirmID",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+       
+        $.ajax({
+            type: "GET",
+            url: "/DailyStatistics/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPart").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+
+
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+
+    $("#btnfilter").click(function () {
+
+        //  alert('hi')
+
+        $filter = new Array();
+
+        $ID = $("#txtFilterID").val();
+        //  alert($ID)
+
+        $UserSessionID = $("#txtFilterUserSessionID").val();
+        // alert($UserSessionID);
+
+        $PinCode = $("#txtFilterPinCode").val();
+        // alert($PinCode)
+
+        $PartText = $("#drpPart").data("kendoDropDownList").text();
+        //  alert($PartText)
+        $PartValue = $("#drpPart").val();
+
+        $FirmText = $("#drpFirm").data("kendoDropDownList").text();
+        $FirmValue = $("#drpFirm").val();
+        //  alert($FirmText)
+
+        $Email = $("#txtFilterEmail").val();
+        //  alert($Email)
+        $Name = $("#txtFilterName").val();
+        //   alert($Name)
+        $Surname = $("#txtFilterSurname").val();
+        //   alert($Surname)
+
+        //  $Email = $("#txtFilterEmail").val();
+
+        $CountryText = $("#drpCountry").data("kendoDropDownList").text();
+        $CountryValue = $("#drpCountry").val();
+        // alert($CountryText)
+
+        $StatusText = $("#drpStatus").data("kendoDropDownList").text();
+        $StatusValue = $("#drpStatus").val();
+        // alert($StatusText)
+
+        $Active = "false";
+        if ($('#ChkFilterActive').prop('checked')) {
+            $Active = "true";
+        }
+        //  alert($Active)
+
+        if ($ID) {
+            $filter.push({ field: "ID", operator: "equals", value: String($ID) });
+        }
+
+        if ($UserSessionID) {
+            $filter.push({ field: "UserSessionID", operator: "contains", value: $UserSessionID });
+        }
+
+        if ($PinCode) {
+            $filter.push({ field: "PINCode", operator: "contains", value: $PinCode });
+        }
+
+        if ($PartValue) {
+            $filter.push({ field: "Part", operator: "contains", value: $PartText });
+        }
+
+
+        if ($FirmValue) {
+            $filter.push({ field: "Firm", operator: "contains", value: $FirmText });
+        }
+        if ($Email) {
+            $filter.push({ field: "Email", operator: "contains", value: String($Email) });
+        }
+        if ($Name) {
+            $filter.push({ field: "Name", operator: "contains", value: $Name });
+        }
+        if ($Surname) {
+            $filter.push({ field: "Surname", operator: "contains", value: $Surname });
+        }
+        if ($CountryValue) {
+            $filter.push({ field: "Country", operator: "contains", value: $CountryText });
+        }
+
+        if ($StatusValue) {
+            $filter.push({ field: "Status", operator: "contains", value: $StatusText });
+        }
+
+        if ($Active == "true") {
+            //alert($Commom)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+
+        var grid = $("#TB_Reservation_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+
+    //$("#btnfilter").click(function () {
+
+    //  //  alert('hi')
+
+    //    $filter = new Array();
+
+    //    $ID = $("#txtFilterID").val();
+    //  //  alert($ID)
+
+    //    $UserSessionID = $("#txtFilterUserSessionID").val();
+    //   // alert($UserSessionID);
+
+    //    $PinCode = $("#txtFilterPinCode").val();
+    //   // alert($PinCode)
+
+    //    $PartText = $("#drpPart").data("kendoDropDownList").text();
+    //  //  alert($PartText)
+    //    $PartValue = $("#drpPart").val();
+
+    //    $FirmText = $("#drpFirm").data("kendoDropDownList").text();
+    //    $FirmValue = $("#drpFirm").val();
+    //  //  alert($FirmText)
+
+    //    $Email = $("#txtFilterEmail").val();
+    //  //  alert($Email)
+    //    $Name = $("#txtFilterName").val();
+    // //   alert($Name)
+    //    $Surname = $("#txtFilterSurname").val();
+    // //   alert($Surname)
+
+    //  //  $Email = $("#txtFilterEmail").val();
+
+    //    $CountryText = $("#drpCountry").data("kendoDropDownList").text();
+    //    $CountryValue = $("#drpCountry").val();
+    //   // alert($CountryText)
+
+    //    $StatusText = $("#drpStatus").data("kendoDropDownList").text();
+    //    $StatusValue = $("#drpStatus").val();
+    //  // alert($StatusText)
+
+    //    $Active = "false";
+    //    if ($('#ChkFilterActive').prop('checked')) {
+    //        $Active = "true";
+    //    }
+    //  //  alert($Active)
+       
+    //    if ($ID) {
+    //        $filter.push({ field: "ID", operator: "equals", value: String($ID) });
+    //    }
+       
+    //    if ($UserSessionID) {
+    //        $filter.push({ field: "UserSessionID", operator: "contains", value: $UserSessionID });
+    //    }
+       
+    //    if ($PinCode) {
+    //        $filter.push({ field: "PINCode", operator: "contains", value: $PinCode });
+    //    }
+        
+    //    if ($PartValue) {
+    //        $filter.push({ field: "Part", operator: "contains", value: $PartText });
+    //    }
+       
+
+    //    if ($FirmValue) {
+    //        $filter.push({ field: "Firm", operator: "contains", value: $FirmText });
+    //    }
+    //    if ($Email) {
+    //        $filter.push({ field: "Email", operator: "contains", value: String($Email) });
+    //    }
+    //    if ($Name) {
+    //        $filter.push({ field: "Name", operator: "contains", value: $Name });
+    //    }
+    //    if ($Surname) {
+    //        $filter.push({ field: "Surname", operator: "contains", value: $Surname });
+    //    }
+    //    if ($CountryValue) {
+    //        $filter.push({ field: "Country", operator: "contains", value: $CountryText });
+    //    }
+
+    //    if ($Active == "true") {
+    //        //alert($Commom)
+    //        $filter.push({ field: "Active", operator: "eq", value: $Active });
+    //    }
+        
+    //    var grid = $("#TB_Reservation_Grid").data("kendoGrid");
+    //    grid.dataSource.filter($filter);
+
+    //});
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_Reservation_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtFilterID").val('')
+        $("#txtFilterPinCode").val('');
+        $("#txtFilterEmail").val('');
+        $("#txtFilterName").val('');
+        $("#txtFilterSurname").val('');
+
+
+        document.getElementById('ChkFilterActive').checked = false
+
+
+        var dropdownlistPart = $("#drpPart").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+        var dropdownlistPart1 = $("#drpFirm").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+
+        var dropdownlistPart2 = $("#drpCountry").data("kendoDropDownList");
+        dropdownlistPart2.select("");
+
+        var dropdownlistPart3 = $("#drpStatus").data("kendoDropDownList");
+        dropdownlistPart3.select("");
+    });
+
+
+</script>

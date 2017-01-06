@@ -1,0 +1,1210 @@
+﻿@model gbsExtranetMVC.Models.Repositories.PropertyConditionsExt
+@using Resources
+@using MessageColumnCaptions
+@{
+    ViewBag.Title = "PropertyCondition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageTitle("AdminHotelCondition.aspx")</h1>
+@Html.HiddenFor(u => u.HotelID)
+<table class="col-md-12">
+    <tr>
+        <td colspan="2" class="col-md-12" id="displaypropertyconditions">
+
+        </td>
+</tr>
+</table>
+<div style="text-align: center;margin-top:20px;">
+    <button id="btnfilter" class="btn btn-info" onclick="btnSave_Click()">@Resources.Save</button>
+</div>
+<div align="center" style="padding-top:5px;">
+    <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+</div>
+<div align="center">
+    <img id="imgloader" style="display:none;width:40px;" src="~/Image/wait.gif" />
+</div>
+<style>
+    .Caption {
+        font-family: Tahoma;
+        font-size: 13px;
+        font-weight: bold;
+        color: #333333;
+    }
+    .navyBoldText {
+        color: #253c71;
+        font-size: 13px;
+        font-weight: bold;
+        font-family: Tahoma;
+    }
+</style>
+
+<script>
+
+    $(document).ready(function () {
+
+        displaypropertyconditions();
+    });
+
+    function drpappend() {
+
+        var HotelcurrencyID = '@ViewBag.HotelcurrencyID';
+
+        //document.getElementById('drpBabyCotcurrency').value = HotelcurrencyID;
+        //document.getElementById('drpExtraBedcurrency').value = HotelcurrencyID;
+        //document.getElementById('drpInternetcurrency').value = HotelcurrencyID;
+        //document.getElementById('drpParkingcurrency').value = HotelcurrencyID;
+        //document.getElementById('drpBreakfastcurrency').value = HotelcurrencyID;
+        //document.getElementById('drpCityTaxcurrency').value = HotelcurrencyID;
+        //document.getElementById('drpChildrencurrency').value = HotelcurrencyID;
+
+
+        //document.getElementById('drpBabyCotcurrency').disabled = "disabled";
+        //document.getElementById('drpExtraBedcurrency').disabled = "disabled";
+        //document.getElementById('drpInternetcurrency').disabled = "disabled";
+        //document.getElementById('drpParkingcurrency').disabled = "disabled";
+        //document.getElementById('drpBreakfastcurrency').disabled = "disabled";
+        //document.getElementById('drpCityTaxcurrency').disabled = "disabled";
+        //document.getElementById('drpChildrencurrency').disabled = "disabled";
+
+        $.each(propertyConditions, function (key, val) {
+            document.getElementById('drp' + val.AttributeId + 'currency').value = HotelcurrencyID;
+            document.getElementById('drp' + val.AttributeId + 'currency').disabled = "disabled";
+        });
+
+    }
+
+    function unitappend() {
+        $.each(propertyConditions, function (key, val) {
+            //document.getElementById('drp' + val.AttributeHeaderCode + 'currency').value = HotelcurrencyID;
+            //document.getElementById('drp' + val.AttributeHeaderCode + 'currency').disabled = "disabled";
+
+            var charge = $('.' + val.AttributeId + ':checked').val();
+            if (charge) {
+                var taxUnit = document.getElementById('txt' + val.AttributeId + 'unit').value;
+
+                // alert(CityTaxunit)
+                if (taxUnit != 'null' && taxUnit != '') {
+                    document.getElementById('txt' + val.AttributeId + 'unit').value = taxUnit;
+                }
+            }
+        });
+
+        //var babycoatcharge = $('.BabyCot:checked').val();
+        //var ExtraBedcharge = $('.ExtraBed:checked').val();
+        //var Childrencharge = $('.Children:checked').val();
+
+        //var Internetcharge = $('.Internet:checked').val();
+        //var Parkingcharge = $('.Parking:checked').val();
+        //var Breakfasttcharge = $('.Breakfast:checked').val();
+        //var CityTaxcharge = $('.CityTax:checked').val();
+
+        //if (CityTaxcharge) {
+        //   // alert('inside')
+        //    var CityTaxunit = document.getElementById('txtCityTaxunit').value;
+
+        //   // alert(CityTaxunit)
+        //    if (CityTaxunit != 'null' && CityTaxunit != '') {
+        //        document.getElementById('drpCityTaxunit').value = CityTaxunit;
+
+
+        //    }
+        //}
+        //if (Breakfasttcharge) {
+
+        //    var Breakfastunit = document.getElementById('txtBreakfastunit').value;
+        //    if (Breakfastunit != 'null' && Breakfastunit != '') {
+
+        //        document.getElementById('drpBreakfastunit').value = Breakfastunit;
+
+        //    }
+        //}
+        //if (Parkingcharge) {
+
+        //    var Parkingunit = document.getElementById('txtParkingunit').value;
+        //    if (Parkingunit != 'null' && Parkingunit != '') {
+
+        //        document.getElementById('drpParkingunit').value = Parkingunit;
+
+        //    }
+        //}
+        //if (Childrencharge) {
+        //    document.getElementById('tblChargeable1Children').style.display = ''
+        //    var unitvalue = document.getElementById('txtChildrenunitvalue').value;
+
+        //    if (unitvalue != 'null' && unitvalue != '') {
+
+        //        document.getElementById('drpChildrenunit1').value = unitvalue;
+
+        //    }
+        //}
+
+        //if (babycoatcharge) {
+        //    var babycotunit = document.getElementById('txtBabyCotunit').value;
+        //    if (babycotunit != 'null' && babycotunit != '') {
+
+        //        document.getElementById('drpBabyCotunit').value = babycotunit;
+
+        //    }
+
+        //}
+        //if (ExtraBedcharge) {
+        //    var ExtraBedunit = document.getElementById('txtExtraBedunit').value;
+        //    if (ExtraBedunit != 'null' && ExtraBedunit != '') {
+
+        //        document.getElementById('drpExtraBedunit').value = ExtraBedunit;
+
+        //    }
+        //}
+
+        //if (Childrencharge)
+        //    {
+
+        //    var unitvalue = document.getElementById('txtchargeChildrenunitvalue').value;
+
+        //    document.getElementById('drpChildrenunit').value = unitvalue;
+        //    var unit = document.getElementById('txtChildrenunit').value;
+        //    document.getElementById('drpchildrn').value = unit;
+
+        //}
+        //if (Internetcharge) {
+
+        //    var Internetunit = document.getElementById('txtInternetunit').value;
+        //    if (Internetunit != 'null' && Internetunit != '') {
+
+        //        document.getElementById('drpInternetunit').value = Internetunit;
+
+        //    }
+        //}
+
+
+
+    }
+
+    function getunite() {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetUnit",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                if (data != "") {
+                    $.each(propertyConditions, function (key, val) {
+                        if (val.Chargeable) {
+                            var code = val.AttributeId;
+                            var unit = val.HotelUnitID;
+                            $("#drp" + code + "unit").append('<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>');
+
+                            $.each(data, function (key, val) {
+                                if (val.UnitID == unit) {
+                                    $("#drp" + code + "unit").append('<option value="' + val.UnitID + '" style="color: black;font-size: 15px;" selected>' + val.Unit + '</option>');
+                                } else {
+                                    $("#drp" + code + "unit").append('<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>');
+                                }
+
+                            });
+                        }
+                    });
+
+                    @*$("#drpBabyCotunit").append(
+                          '<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>'
+                          )
+                    $("#drpExtraBedunit").append(
+                 '<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>'
+
+                  )
+                    $("#drpInternetunit").append(
+                  '<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>'
+
+                  )
+                    $("#drpParkingunit").append(
+                    '<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>'
+
+                    )
+                    $("#drpBreakfastunit").append(
+                       '<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>'
+
+                        )
+                    $("#drpCityTaxunit").append(
+                       '<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>'
+
+                      )
+                    $("#drpchildrn").append(
+                      '<option value="0" style="color: black;font-size: 15px;">@Resources.Select</option>'
+
+                     )
+                    $.each(data, function (key, val) {
+
+                        $("#drpchildrn").append(
+                        '<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>'
+
+                        )
+                        $("#drpBabyCotunit").append(
+                           '<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>'
+
+                           )
+                        $("#drpExtraBedunit").append(
+                      '<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>'
+
+                      )
+                        $("#drpInternetunit").append(
+                      '<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>'
+
+                      )
+                        $("#drpParkingunit").append(
+                        '<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>'
+
+                        )
+                        $("#drpBreakfastunit").append(
+                            '<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>'
+
+                            )
+                        $("#drpCityTaxunit").append(
+                          '<option value="' + val.UnitID + '" style="color: black;font-size: 15px;">' + val.Unit + '</option>'
+
+                          )
+
+                    })*@
+                }
+            }
+        });
+
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCurrencies",
+            data: json,
+            datatype: "json",
+            success: function(data) {
+
+                if (data != "") {
+                    $.each(propertyConditions, function(key, val) {
+                        var code = val.AttributeId;
+                        var currency = '@ViewBag.HotelcurrencyID';
+                        if (val.Chargeable) {
+                            $.each(data, function (key, val) {
+                                if (val.CurrencyID == currency) {
+                                    $("#drp" + code + "currency").append('<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;" selected>' + val.Currency + '</option>');
+                                } else {
+                                    $("#drp" + code + "currency").append('<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>');
+                                }
+                               });
+                        }
+                    });
+
+                    //$.each(data, function (key, val) {
+                    //    $("#drpBabyCotcurrency").append(
+
+                    //       '<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>'
+
+                    //       )
+
+                    //    $("#drpExtraBedcurrency").append(
+                    //       '<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>'
+
+                    //       )
+                    //    $("#drpInternetcurrency").append(
+                    //      '<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>'
+
+                    //      )
+                    //    $("#drpParkingcurrency").append(
+                    //        '<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>'
+
+                    //        )
+                    //    $("#drpBreakfastcurrency").append(
+                    //       '<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>'
+
+                    //       )
+                    //    $("#drpCityTaxcurrency").append(
+                    //      '<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>'
+
+                    //      )
+                    //    $("#drpChildrencurrency").append(
+                    //    '<option value="' + val.CurrencyID + '" style="color: black;font-size: 15px;">' + val.Currency + '</option>'
+
+                    //    )
+                    //})
+
+                    setTimeout("drpappend()", 1000);
+                    setTimeout("unitappend()", 1000);
+                    setTimeout("displaychargable()", 1500);
+                }
+
+            }
+
+        });
+    }
+
+    function displaychargable() {
+        $.each(propertyConditions, function (key, val) {
+            var charge = $("#checkbox" + val.AttributeId.toString() + ':checked').length > 0;
+            if (charge && val.Chargeable) {
+                document.getElementById('tblChargeable' + val.AttributeId).style.display = '';
+            }
+        });
+        //var babycoatcharge = $('.BabyCot:checked').val();
+        //var ExtraBedcharge = $('.ExtraBed:checked').val();
+        //var Childrencharge = $('.Children:checked').val();
+
+        //var Internetcharge = $('.Internet:checked').val();
+        //var Parkingcharge = $('.Parking:checked').val();
+        //var Breakfasttcharge = $('.Breakfast:checked').val();
+        //var CityTaxcharge = $('.CityTax:checked').val();
+
+
+        //if (babycoatcharge == 5) {
+        //    document.getElementById('tblChargeableBabyCot').style.display = '';
+        //}
+        //if (ExtraBedcharge == 8) {
+        //    document.getElementById('tblChargeableExtraBed').style.display = '';
+        //}
+        //if (Childrencharge == 29) {
+        //    document.getElementById('tblChargeableChildren').style.display = '';
+        //    document.getElementById('tblChargeable1Children').style.display = 'none';
+        //}
+
+        //else if (Childrencharge == 28)
+        //{
+        //    document.getElementById('tblChargeableChildren').style.display = 'none';
+        //    document.getElementById('tblChargeable1Children').style.display = '';
+        //}
+        //if (Internetcharge == 11) {
+
+        //    document.getElementById('tblChargeableInternet').style.display = '';
+        //}
+        //if (Parkingcharge == 14) {
+
+        //    document.getElementById('tblChargeableParking').style.display = '';
+        //}
+        //if (Breakfasttcharge == 191) {
+
+        //    document.getElementById('tblChargeableBreakfast').style.display = '';
+        //}
+        //if (CityTaxcharge == 193) {
+        //    document.getElementById('tblChargeableCityTax').style.display = '';
+        //}
+    }
+
+    function radiobtn(id,value,chargeable) {
+
+        $("#radio" + id).prop("checked", false);
+        $("#radio" + id).prop("checked", true);
+        var isCharged = chargeable == 'true' ? true : false;
+        Getchargediv(id, value, isCharged);
+
+    }
+    var selectedID;
+
+    function Getchargediv(id, selectvalue, chargeable) {
+        var babycoatcharge = $("#checkbox" + id + ':checked').length > 0;
+        if (babycoatcharge && chargeable) {
+            selectedID = $("#checkbox" + id + ':checked').val();
+            //if (value == 5) {
+            document.getElementById('tblChargeable' + id).style.display = '';
+            // }
+        } else {
+           // var value = $("#checkbox:" + id + 'not(:checked)').val();
+            //if (id == selectedID) {
+                document.getElementById('tblChargeable' + id).style.display = 'none';
+           // }
+        }
+    }
+    //function Getchargediv(id, selectvalue,chargeable) {
+
+    //    if (selectvalue == "BabyCot") {
+    //        //alert("if")
+    //        //var babycoatcharge = $('.BabyCot:checked').val();
+    //        //if (typeof babycoatcharge == 'undefined')
+    //        //    return;
+    //        //if (babycoatcharge == 5) {
+    //        //    document.getElementById('tblChargeableBabyCot').style.display = '';
+    //        //}
+    //        //else if (babycoatcharge == 4 || babycoatcharge == 6) {
+
+    //        //    document.getElementById('tblChargeableBabyCot').style.display = 'none';
+    //        //}
+
+    //        var babycoatcharge = $("#checkbox" + id + ':checked').length > 0;
+    //        if (babycoatcharge && chargeable) {
+    //            selectedID = $("#checkbox" + id + ':checked').val();
+    //            //if (value == 5) {
+    //                document.getElementById('tblChargeableBabyCot').style.display = '';
+    //           // }
+    //        } else {
+    //            var value = $("#checkbox:" + id + 'not(:checked)').val();
+    //            if (id == selectedID) {
+    //                document.getElementById('tblChargeableBabyCot').style.display = 'none';
+    //            }
+    //        }
+    //    }
+    //    else if (selectvalue == "ExtraBed") {
+    //        var ExtraBedcharge = $("#checkbox" + id + ':checked').length > 0;
+    //        //if (typeof ExtraBedcharge == 'undefined')
+    //        //    return;
+    //        //if (ExtraBedcharge == 8) {
+    //        //    document.getElementById('tblChargeableExtraBed').style.display = '';
+    //        //}
+    //        //else {
+    //        //    document.getElementById('tblChargeableExtraBed').style.display = 'none';
+    //        //}
+
+    //        if (ExtraBedcharge && chargeable) {
+    //            selectedID = $("#checkbox" + id + ':checked').val();
+    //            //if (value == 5) {
+    //            document.getElementById('tblChargeableExtraBed').style.display = '';
+    //            // }
+    //        } else {
+    //            var value = $("#checkbox:" + id + 'not(:checked)').val();
+    //            if (id == selectedID) {
+    //                document.getElementById('tblChargeableExtraBed').style.display = 'none';
+    //            }
+    //        }
+    //    }
+    //    else if (selectvalue == "Children") {
+
+    //        //var Childrencharge = $('.Children:checked').val();
+    //        //if (typeof Childrencharge == 'undefined')
+    //        //    return;
+    //        //if (Childrencharge == 29) {
+    //        //    document.getElementById('tblChargeable1Children').style.display = 'none';
+    //        //    document.getElementById('tblChargeableChildren').style.display = '';
+    //        //}
+    //        //else if (Childrencharge == 28)
+    //        //{
+    //        //    document.getElementById('tblChargeable1Children').style.display = '';
+    //        //    document.getElementById('tblChargeableChildren').style.display = 'none';
+    //        //}
+    //        //else {
+    //        //    document.getElementById('tblChargeable1Children').style.display = 'none';
+    //        //    document.getElementById('tblChargeableChildren').style.display = 'none';
+    //        //}
+
+    //        var Childrencharge = $("#checkbox" + id + ':checked').length > 0;
+    //        if (Childrencharge) {
+    //            selectedID = $("#checkbox" + id + ':checked').val();
+    //            if (chargeable) {
+    //                document.getElementById('tblChargeableChildren').style.display = '';
+    //            }
+    //            else{
+    //                document.getElementById('tblChargeable1Children').style.display = '';
+    //            }
+    //        } else {
+    //            var value = $("#checkbox:" + id + 'not(:checked)').val();
+    //            if (id == selectedID && chargeable) {
+    //                document.getElementById('tblChargeableChildren').style.display = 'none';
+    //            }
+    //            else if (id == selectedID && !chargeable) {
+    //                document.getElementById('tblChargeable1Children').style.display = 'none';
+    //            }
+    //        }
+    //    }
+    //    else if (selectvalue == "Internet") {
+    //        //var Internetcharge = $('.Internet:checked').val();
+    //        //if (typeof Internetcharge == 'undefined')
+    //        //    return;
+    //        //if (Internetcharge == 11) {
+    //        //    document.getElementById('tblChargeableInternet').style.display = '';
+    //        //}
+    //        //else {
+    //        //    document.getElementById('tblChargeableInternet').style.display = 'none';
+    //        //}
+
+    //        var Internetcharge = $("#checkbox" + id + ':checked').length > 0;
+    //        if (Internetcharge && chargeable) {
+    //            selectedID = $("#checkbox" + id + ':checked').val();
+    //           // if (value == 11) {
+    //                document.getElementById('tblChargeableInternet').style.display = '';
+    //          //  }
+    //        } else {
+    //            var value = $("#checkbox:" + id + 'not(:checked)').val();
+    //            if (id == selectedID) {
+    //                document.getElementById('tblChargeableInternet').style.display = 'none';
+    //            }
+    //        }
+    //    }
+
+    //    else if (selectvalue == "Parking") {
+    //        var Parkingcharge = $("#checkbox" + id + ':checked').length > 0;
+    //        if (Parkingcharge && chargeable) {
+    //            selectedID = $("#checkbox" + id + ':checked').val();
+    //           // if (value == 14) {
+    //                document.getElementById('tblChargeableParking').style.display = '';
+    //            //}
+    //        } else {
+    //            var value = $("#checkbox:" + id + 'not(:checked)').val();
+    //            if (id == selectedID) {
+    //                document.getElementById('tblChargeableParking').style.display = 'none';
+    //            }
+    //        }
+    //        //if (typeof Parkingcharge == 'undefined')
+    //        //    return;
+
+    //        //else {
+    //        //    document.getElementById('tblChargeableParking').style.display = 'none';
+    //        //}
+    //    }
+    //    else if (selectvalue == "Breakfast") {
+    //        //var Breakfastcharge = $('.Breakfast:checked').val();
+    //        //if (typeof Breakfastcharge == 'undefined')
+    //        //    return;
+    //        //if (Breakfastcharge == 191) {
+    //        //    document.getElementById('tblChargeableBreakfast').style.display = '';
+    //        //}
+    //        //else {
+    //        //    document.getElementById('tblChargeableBreakfast').style.display = 'none';
+    //        //}
+
+    //        var Breakfastcharge = $("#checkbox" + id + ':checked').length > 0;
+    //        if (Breakfastcharge && chargeable) {
+    //            selectedID = $("#checkbox" + id + ':checked').val();
+    //           // if (value == 191) {
+    //                document.getElementById('tblChargeableBreakfast').style.display = '';
+    //          //  }
+    //        } else {
+    //            var value = $("#checkbox:" + id + 'not(:checked)').val();
+    //            if (id == selectedID) {
+    //                document.getElementById('tblChargeableBreakfast').style.display = 'none';
+    //            }
+    //        }
+    //    }
+
+    //    else if (selectvalue == "CityTax") {
+    //        //var CityTaxcharge = $('.CityTax:checked').val();
+    //        //if (typeof CityTaxcharge == 'undefined')
+    //        //    return;
+
+    //        //if (CityTaxcharge == 193) {
+    //        //    document.getElementById('tblChargeableCityTax').style.display = '';
+    //        //}
+    //        //else {
+    //        //    document.getElementById('tblChargeableCityTax').style.display = 'none';
+    //        //}
+
+    //        var CityTaxcharge = $("#checkbox" + id + ':checked').length > 0;
+    //        if (CityTaxcharge && chargeable) {
+    //            selectedID = $("#checkbox" + id + ':checked').val();
+    //           // if (value == 193) {
+    //                document.getElementById('tblChargeableCityTax').style.display = '';
+    //           // }
+    //        } else {
+    //            var value = $("#checkbox:" + id + 'not(:checked)').val();
+    //            if (id == selectedID) {
+    //                document.getElementById('tblChargeableCityTax').style.display = 'none';
+    //            }
+    //        }
+    //    }
+    //}
+    var propertyConditions = [];
+    function displaypropertyconditions() {
+
+        var AttributeHeaderName = [];
+        var currencyid = [];
+
+        $.ajax({
+            type: "GET",
+            url: "/PropertyCondition/DisplayPropertyconditions",
+            data: {},
+            datatype: "json",
+            success: function(data) {
+                // alert(data)
+                var count = 1;
+                if (data != "") {
+                    propertyConditions = data;
+                    $.each(data, function(key, val) {
+                        if (val.Chargedvalue == null) {
+                            val.Chargedvalue = "";
+                        } else {
+                            val.Chargedvalue = val.Chargedvalue;
+                        }
+                        //(currencyid.indexOf(val.AttributeHeaderName) == -1 ?
+                        //    '<input type="hidden" id="currencyid" value="' + val.CurrencyID + '" />'
+
+                        var onclick = "'" + "Getchargediv(" + '"' + val.AttributeHeaderCode + '"' + ")'";
+                        var onclick1 = "'" + "radiobtn(" + '"' + val.AttributeId + '"' + "," + '"' + val.AttributeHeaderCode + '"' + "," + '"' + val.Chargeable.toString() + '"' + ")'";
+                        $("#displaypropertyconditions").append(
+                            (AttributeTypeID = 2 ?
+                                '</br>' +
+                                '<fieldset>' +
+                                (AttributeHeaderName.indexOf(val.AttributeHeaderName) == -1 ? '<legend class="navyBoldText">' + val.AttributeHeaderName + '</legend>' :
+                                    '') +
+                                '<table class="col-md-12">' +
+                                '<tr>' +
+                                (val.AttributeHeaderCode == "Children" ?
+                                    '<td style="width:42%" > ' +
+                                    '<input type="checkbox" id="checkbox' + val.AttributeId + '" ' + val.checkedradio + ' value="' + val.AttributeId + '" class="' + val.AttributeHeaderCode + '" name="' + val.AttributeHeaderCode + '" onchange=' + onclick1 + '>' +
+                                    '&nbsp' +
+                                    '<label style="color:black;font-size: 13px;" onclick=' + onclick1 + '>' + val.AttributeName + '</label>' +
+                                    '</td>' + '<td>' + '<table id="tblChargeable1' + val.AttributeId + '"  style="display:none;margin-left: 14%;">' +
+                                    '<tr>' +
+                                    '<td style="text-align: center;">' +
+                                    '<label class="Caption" style="text-align: center;">@Resources.UpperAgelimit</label>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    ' <tr>' +
+                                    '<td>' +
+                                    '<select id="drp' + val.AttributeId + 'unit1" style="width: 100%;color: black;border-color: black;font-weight: 600;" class="form-control" >' +
+                                    '<option value="0">@Resources.Select</option>' +
+                                    '<option value="1">1</option>' +
+                                    '<option value="2">2</option>' +
+                                    '<option value="3">3</option>' +
+                                    '<option value="4">4</option>' +
+                                    '<option value="5">5</option>' +
+                                    '<option value="6">6</option>' +
+                                    '<option value="7">7</option>' +
+                                    '<option value="8">8</option>' +
+                                    '<option value="9">9</option>' +
+                                    '<option value="10">10</option>' +
+                                    '<option value="11">11</option>' +
+                                    '<option value="12">12</option>' +
+                                    '<option value="13">13</option>' +
+                                    '<option value="14">14</option>' +
+                                    '<option value="15">15</option>' +
+                                    '<option value="16">16</option>' +
+                                    '<option value="17">17</option>' +
+                                    '</select>' +
+                                    '</td>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                    '<td >' +
+                                    '<span id="lblunit1' + val.AttributeId + '"  style=" color: red; font-size: 12px; font-weight: 600;display:none"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    '</table>' + '</td>' : '<td style="width:50%">' +
+                                    '<input type="checkbox" id="checkbox' + val.AttributeId + '" ' + val.checkedradio + ' value="' + val.AttributeId + '" class="' + val.AttributeHeaderCode + '" name="' + val.AttributeHeaderName + '"onchange=' + onclick1 + '>' +
+                                    '&nbsp' +
+                                    '<label style="color:black;font-size: 13px;" onclick=' + onclick1 + '>' + val.AttributeName + '</label>' +
+                                    '</td>') +
+                                (val.Chargeable ? '<td style="width:70%">' +
+                                    '<table id="tblChargeable' + val.AttributeId + '" style="display:none;">' +
+                                    '<tr>' +
+                                    //'<input type="hidden" id="txt' + val.AttributeHeaderCode + 'unit"  value="' + val.HotelUnitID + '" />'+
+                                    (val.charge == true ? '<input type="hidden" id="txt' + val.AttributeId + 'unit"  value="' + val.HotelUnitID + '" />' : '') +
+                                    //'<input type="hidden" id="' + val.AttributeHeaderCode + 'Unitchildrn"  value="' + val.UnitID + '" />'+
+                                    '<td style="text-align: center;">' +
+                                    '<label class="Caption" style="text-align: center;">@Resources.Unit</label>' +
+                                    '</td>' +
+                                    '<td>&nbsp;</td>' +
+                                    '<td style="text-align: center;">' +
+                                    '<label  class="Caption" style="text-align: center;">@Resources.Charge</label>' +
+                                    '</td>' +
+                                    '<td style="text-align: center;">' +
+                                    '<label  class="Caption" style="text-align: center;">@Resources.Currency</label>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    ' <tr>' +
+                                    '<td>' +
+                                    '<select class="form-control" id="drp' + val.AttributeId + 'unit" style="color: black;border-color: black; font-weight: 600;" >' +
+                                    //'<option value="' + val.HotelUnitID + '" selected>' + val.HotelName + '</option>' +
+                                    '</select>' +
+                                    '<td>&nbsp;</td>' +
+                                    '<td >' +
+                                    //(val.charge == true ? '<input type="text" id="txt' + val.AttributeHeaderCode + '" value="' + val.Chargedvalue + '" style="height: 143%;"/>' : '<input type="text" id="txt' + val.AttributeHeaderCode + '"  style="height: 143%;"/>') +
+                                    '<input type="text" class="form-control" id="txt' + val.AttributeId + '" value="' + val.Chargedvalue + '" style="color: black;border: 1px solid black;font-weight: 600;"/>' +
+                                    '</td>' +
+                                    '<td style="padding-left: 3px">' +
+                                    '<select class="form-control" id="drp' + val.AttributeId + 'currency" style="color: black;border-color: black;font-weight: 600;" disabled>' +
+                                    //'<option value="' + CurrencyID + '" selected>' + val.Currency + '</option>' +
+                                    '</select>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                    '<td >' +
+                                    '<span id="lblunit' + val.AttributeId + '"  style=" color: red; font-size: 12px; font-weight: 600;display:none"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>' +
+                                    '</td>' +
+                                    '<td></td>' +
+                                    '<td >' +
+                                    '<span id="lblprice' + val.AttributeId + '" style=" color: red; font-size: 12px; font-weight: 600;display:none"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    '</td>' +
+                                    '</table>' +
+                                    '</td>' : '') +
+                                (!val.Chargeable ? ' <input type="hidden" id="txt' + val.AttributeId + 'unitvalue"  value="' + val.UnitValue + '" />' : '') +
+                                (val.Chargeable ? '<td style="width:52%;" >' +
+                                    (val.charge == true ? '<input type="hidden" id="txt' + val.AttributeId + 'unit"  value="' + val.HotelUnitID + '" />' + '<input type="hidden" id="txtcharge' + val.AttributeHeaderCode + 'unitvalue"  value="' + val.UnitValue + '" />' : '') +
+                                    '<table id="tblChargeable' + val.AttributeId + '" style="display:none;">' +
+                                    '<tr>' +
+                                    //'<input type="hidden" id="txt' + val.AttributeHeaderCode + 'unit"  value="' + val.HotelUnitID + '" />'+
+                                    (val.charge == true ? '<input type="hidden" id="txt' + val.AttributeId + 'unit"  value="' + val.HotelUnitID + '" />' : '') +
+                                    '<input type="hidden" id="' + val.AttributeId + 'Unitchildrn"  value="' + val.UnitID + '" />' +
+                                    '<td style="text-align: center;">' +
+                                    '<label class="Caption" style="text-align: center;">@Resources.UpperAgelimit</label>' +
+                                    '</td>' +
+                                    '<td>&nbsp;</td>' +
+                                    '<td style="text-align: center;">' +
+                                    '<label class="Caption" style="text-align: center;">@Resources.Unit</label>' +
+                                    '</td>' +
+                                    '<td>&nbsp;</td>' +
+                                    '<td style="text-align: center;">' +
+                                    '<label class="Caption" style="text-align: center;">@Resources.Charge</label>' +
+                                    '</td>' +
+                                    '<td style="text-align: center;">' +
+                                    '<label class="Caption" style="text-align: center;">@Resources.Currency</label>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    ' <tr>' +
+                                    '<td>' +
+                                    '<select class="form-control" id="drp' + val.AttributeId + 'unit" style="width: 100%;color: black;border-color: black;font-weight: 600;" >' +
+                                    '<option value="0">@Resources.Select</option>' +
+                                    '<option value="1">1</option>' +
+                                    '<option value="2">2</option>' +
+                                    '<option value="3">3</option>' +
+                                    '<option value="4">4</option>' +
+                                    '<option value="5">5</option>' +
+                                    '<option value="6">6</option>' +
+                                    '<option value="7">7</option>' +
+                                    '<option value="8">8</option>' +
+                                    '<option value="9">9</option>' +
+                                    '<option value="10">10</option>' +
+                                    '<option value="11">11</option>' +
+                                    '<option value="12">12</option>' +
+                                    '<option value="13">13</option>' +
+                                    '<option value="14">14</option>' +
+                                    '<option value="15">15</option>' +
+                                    '<option value="16">16</option>' +
+                                    '<option value="17">17</option>' +
+                                    '</select>' +
+                                    '</td>' +
+                                    '<td>&nbsp;</td>' +
+                                    '<td>' +
+                                    '<select class="form-control" id="drpchildrn" style="color: black;border-color: black;font-weight: 600;" >' +
+                                    '</select>' +
+                                    '<td>&nbsp;</td>' +
+                                    '<td >' +
+                                    //(val.charge == true ? '<input type="text" id="txt' + val.AttributeHeaderCode + '" value="' + val.Chargedvalue + '" style="height: 143%;"/>' : '<input type="text" id="txt' + val.AttributeHeaderCode + '"  style="height: 143%;"/>') +
+                                    '<input type="text" class="form-control" id="txt' + val.AttributeId + '" value="' + val.Chargedvalue + '" style="color: black;border: 1px solid black;font-weight: 600;"/>' +
+                                    '</td>' +
+                                    '<td style="padding-left: 3px">' +
+                                    '<select class="form-control" id="drp' + val.AttributeId + 'currency" style="color: black;border-color: black;font-weight: 600;" disabled>' +
+                                    //'<option value="' + CurrencyID + '" selected>' + val.Currency + '</option>' +
+                                    '</select>' +
+                                    '</td>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                    '<td >' +
+                                    '<span id="lblchild' + val.AttributeId + '" style=" color: red; font-size: 12px; font-weight: 600;display:none"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>' +
+                                    '</td>' +
+                                    '<td></td>' +
+                                    '<td >' +
+                                    '<span id="lblunit' + val.AttributeId + '"  style=" color: red; font-size: 12px; font-weight: 600;display:none"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>' +
+                                    '</td>' +
+                                    '<td></td>' +
+                                    '<td >' +
+                                    '<span id="lblprice' + val.AttributeId + '" style=" color: red; font-size: 12px; font-weight: 600;display:none"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>' +
+                                    '</td>' +
+                                    '</tr>' +
+                                    '</td>' +
+                                    '</table>' +
+                                    '</td>' : '') +
+                                '</table>' +
+                                '</fieldset>'
+                                : '')
+                        );
+                        count = count + 1;
+                        AttributeHeaderName.push(val.AttributeHeaderName);
+                    });
+                    setTimeout("getunite()", 1000);
+                }
+            }
+        });
+
+    }
+
+
+
+    var value = new Array(null, null, null, null, null, null, null, null);
+    var Charged = new Array(0, 0, 0, 0, 0, 0, 0, 0);
+
+    var UnitID = new Array(null, null, null, null, null, null, null, null);
+    var Price = new Array(null, null, null, null, null, null, null, null);
+    var CurrencyID = new Array(null, null, null, null, null, null, null, null);
+    var Unitvalue = new Array(null, null, null, null, null, null, null, null);
+
+    function btnSave_Click() {
+        var conditions = [];
+
+        $.each(propertyConditions, function (key, val) {
+            var condition = {};
+            var isChecked = $("#checkbox" + val.AttributeId.toString() + ':checked').length > 0;
+            if (isChecked) {
+                condition.AttributeID = $("#checkbox" + val.AttributeId.toString() + ':checked').val();
+                //var test = document.getElementById('drp' + val.AttributeHeaderCode + 'unit');
+                //if ($(this).find('drp' + val.AttributeHeaderCode + 'unit') !== 'undefined') {
+                //    UnitID.push(document.getElementById('drp' + val.AttributeHeaderCode + 'unit').value == null ? -1 : document.getElementById('drp' + val.AttributeHeaderCode + 'unit').value);
+                //}
+                //if ($(this).find('txt' + val.AttributeHeaderCode) !== 'undefined') {
+                //    Price.push(document.getElementById('txt' + val.AttributeHeaderCode).value == null ? 0 : document.getElementById('txt' + val.AttributeHeaderCode).value);
+                //}
+                //if ($(this).find('drp' + val.AttributeHeaderCode + 'currency') !== 'undefined') {
+                //    CurrencyID.push(document.getElementById('drp' + val.AttributeHeaderCode + 'currency').value == null ? -1 : document.getElementById('drp' + val.AttributeHeaderCode + 'currency').value);
+                //}
+
+                if (val.Chargeable) {
+                    var untId = document.getElementById('drp' + val.AttributeId + 'unit').value;
+                    condition.UnitID = untId;
+                    var currId = document.getElementById('drp' + val.AttributeId + 'currency').value;
+                    condition.CurrencyID = currId;
+                    condition.Price = document.getElementById('txt' + val.AttributeId).value;
+                    condition.Charged = 1;
+                    //condition.Unitvalue = document.getElementById('drp' + val.AttributeHeaderCode + 'currency');
+                } else {
+                    condition.UnitID = 0;
+                    condition.CurrencyID = '@ViewBag.HotelcurrencyID';
+                    condition.Price = 0.00;
+                    condition.Charged = 0;
+                    // condition.Unitvalue = "0.00";
+                }
+                conditions.push(condition);
+            }
+        });
+
+        $("#imgloader").show();
+        $.ajax({
+            url: "/PropertyCondition/SavePropertyConditions",
+            type: "POST",
+            data: JSON.stringify({ Conditions: conditions }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (res) {
+                if (res != 0) {
+                    $("#imgloader").hide();
+
+                    document.getElementById("lblSuccess").style.display = "";
+                    setTimeout("Hidelabel()", 10000);
+                }
+            }
+        });
+    }
+
+
+    @*function btnSave_Click() {
+
+        var CurrencyIDValue = '@ViewBag.HotelcurrencyID';
+
+        CurrencyID = new Array(CurrencyIDValue, CurrencyIDValue, CurrencyIDValue, CurrencyIDValue, CurrencyIDValue, CurrencyIDValue, CurrencyIDValue, CurrencyIDValue);
+       // alert(CurrencyID)
+        var babycoatcharge = $('.BabyCot:checked').val();
+        value[0] = babycoatcharge;
+        var ExtraBedcharge = $('.ExtraBed:checked').val();
+        value[1] = ExtraBedcharge;
+        var Childrencharge = $('.Children:checked').val();
+        value[2] = Childrencharge;
+
+        var Internetcharge = $('.Internet:checked').val();
+        value[3] = Internetcharge;
+        var Parkingcharge = $('.Parking:checked').val();
+        value[4] = Parkingcharge;
+        var DomesticAnimalcharge = $('.DomesticAnimal:checked').val();
+        value[5] = DomesticAnimalcharge;
+        var Breakfasttcharge = $('.Breakfast:checked').val();
+        value[6] = Breakfasttcharge;
+        var CityTaxcharge = $('.CityTax:checked').val();
+        value[7] = CityTaxcharge;
+
+        //alert(Childrencharge)
+
+        if (babycoatcharge == 5) {
+            UnitID[0] = document.getElementById('drpBabyCotunit').value;
+
+            Price[0] = document.getElementById('txtBabyCot').value;
+            CurrencyID[0] = document.getElementById('drpBabyCotcurrency').value;
+            Charged[0] = 1;
+            Unitvalue[0] = null;
+        }
+        if (ExtraBedcharge == 8) {
+            UnitID[1] = document.getElementById('drpExtraBedunit').value;
+            Price[1] = document.getElementById('txtExtraBed').value;
+            CurrencyID[1] = document.getElementById('drpExtraBedcurrency').value;
+            Charged[1] = 1;
+            Unitvalue[1] = null;
+        }
+        if (Childrencharge == 29) {
+             UnitID[2] = document.getElementById('drpchildrn').value;
+            Price[2] = document.getElementById('txtChildren').value;
+            CurrencyID[2] = document.getElementById('drpChildrencurrency').value;
+            Charged[2] = 1;
+            var valuechild = document.getElementById('drpChildrenunit').value;
+
+            //if (valuechild == 0)
+            //{
+            //    valuechild=  document.getElementById('drpChildrenunit1').value;
+            //}
+
+            Unitvalue[2] = valuechild;
+        }
+        if (Childrencharge == 28) {
+            UnitID[2] = document.getElementById('drpchildrn').value;
+            Price[2] = document.getElementById('txtChildren').value;
+            CurrencyID[2] = document.getElementById('drpChildrencurrency').value;
+            Charged[2] = 1;
+            var valuechild = document.getElementById('drpChildrenunit1').value;
+            //  var valuechild = document.getElementById('drpChildrenunit').value;
+            Unitvalue[2] = valuechild;
+        }
+
+        if (Internetcharge == 11) {
+            UnitID[3] = document.getElementById('drpInternetunit').value;
+            Price[3] = document.getElementById('txtInternet').value;
+            CurrencyID[3] = document.getElementById('drpInternetcurrency').value;
+            Charged[3] = 1;
+            Unitvalue[3] = null;
+        }
+        if (Parkingcharge == 14) {
+            UnitID[4] = document.getElementById('drpParkingunit').value;
+            Price[4] = document.getElementById('txtParking').value;
+            CurrencyID[4] = document.getElementById('drpParkingcurrency').value;
+            Charged[4] = 1;
+            Unitvalue[4] = null;
+        }
+
+        UnitID[5] = null;
+        Price[5] = null;
+      //  CurrencyID[5] = null;
+        Charged[5] = 0;
+        Unitvalue[5] = null;
+        if (Breakfasttcharge == 191) {
+            UnitID[6] = document.getElementById('drpBreakfastunit').value;
+            Price[6] = document.getElementById('txtBreakfast').value;
+            CurrencyID[6] = document.getElementById('drpBreakfastcurrency').value;
+            Charged[6] = 1;
+            Unitvalue[6] = null;
+        }
+        if (CityTaxcharge == 193) {
+            UnitID[7] = document.getElementById('drpCityTaxunit').value;
+            Price[7] = document.getElementById('txtCityTax').value;
+            CurrencyID[7] = document.getElementById('drpCityTaxcurrency').value;
+            Charged[7] = 1;
+            Unitvalue[7] = null;
+        }
+
+        //var Childrencharge = $('.Children:checked').val();
+
+        //var babycoatcharge = $('.BabyCot:checked').val();
+
+        //var ExtraBedcharge = $('.ExtraBed:checked').val();
+
+        //var Internetcharge = $('.Internet:checked').val();
+        //var Parkingcharge = $('.Parking:checked').val();
+        //var Breakfasttcharge = $('.Breakfast:checked').val();
+        //var CityTaxcharge = $('.CityTax:checked').val();
+
+
+        if (babycoatcharge == 5)
+        {
+            var BabyCotunit = document.getElementById('drpBabyCotunit').value;
+
+            var BabyCotprice = document.getElementById('txtBabyCot').value;
+            if (BabyCotunit == "" || BabyCotunit=="0")
+            {
+                document.getElementById('lblunitBabyCot').style.display = '';
+            }
+            else {
+                document.getElementById('lblunitBabyCot').style.display = 'none';
+            }
+            if (BabyCotprice == "" || BabyCotprice=="0.00")
+            {
+                document.getElementById('lblpriceBabyCot').style.display = '';
+            }
+            else {
+                document.getElementById('lblpriceBabyCot').style.display = 'none';
+            }
+        }
+
+        if (ExtraBedcharge == 8) {
+            var ExtraBedunit = document.getElementById('drpExtraBedunit').value;
+
+            var ExtraBedprice = document.getElementById('txtExtraBed').value;
+            if (ExtraBedunit == "" || ExtraBedunit == "0") {
+                document.getElementById('lblunitExtraBed').style.display = '';
+            }
+            else {
+                document.getElementById('lblunitExtraBed').style.display = 'none';
+            }
+            if (ExtraBedprice == "" || ExtraBedprice == "0.00") {
+                document.getElementById('lblpriceExtraBed').style.display = '';
+            }
+            else {
+                document.getElementById('lblpriceExtraBed').style.display = 'none';
+            }
+        }
+
+        if (Childrencharge == 28) {
+
+            var childrencounts = document.getElementById('drpChildrenunit1').value;
+
+
+            if (childrencounts == "" || childrencounts == "0") {
+                document.getElementById('lblunit1Children').style.display = '';
+            }
+            else {
+                document.getElementById('lblunit1Children').style.display = 'none';
+            }
+        }
+            if (Childrencharge == 29) {
+
+                var childrencount = document.getElementById('drpChildrenunit').value;
+                var childrnunit = document.getElementById('drpchildrn').value;
+                var childrnprice = document.getElementById('txtChildren').value;
+
+                if (childrencount == "" || childrencount == "0") {
+                    document.getElementById('lblchildChildren').style.display = '';
+                }
+                else {
+                    document.getElementById('lblchildChildren').style.display = 'none';
+                }
+
+                if (childrnunit == "" || childrnunit == "0") {
+                    document.getElementById('lblunitChildren').style.display = '';
+                }
+                else {
+                    document.getElementById('lblunitChildren').style.display = 'none';
+                }
+
+            if(childrnprice == "" || childrnprice == "0.00")
+            {
+                document.getElementById('lblpriceChildren').style.display = '';
+            }
+            else {
+                document.getElementById('lblpriceChildren').style.display = 'none';
+            }
+        }
+
+        if (Internetcharge == 11) {
+            var Internetunit = document.getElementById('drpInternetunit').value;
+
+            var Internetprice = document.getElementById('txtInternet').value;
+            if (Internetunit == "" || Internetunit == "0") {
+                document.getElementById('lblunitInternet').style.display = '';
+            }
+            else {
+                document.getElementById('lblunitInternet').style.display = 'none';
+            }
+            if (Internetprice == "" || Internetprice == "0.00") {
+                document.getElementById('lblpriceInternet').style.display = '';
+            }
+            else {
+                document.getElementById('lblpriceInternet').style.display = 'none';
+            }
+        }
+
+        if (Parkingcharge == 14) {
+
+            var Parkingunit = document.getElementById('drpParkingunit').value;
+
+            var Parkingprice = document.getElementById('txtParking').value;
+            if (Parkingunit == "" || Parkingunit == "0") {
+                document.getElementById('lblunitParking').style.display = '';
+            }
+            else {
+                document.getElementById('lblunitParking').style.display = 'none';
+            }
+            if (Parkingprice == "" || Parkingprice == "0.00") {
+                document.getElementById('lblpriceParking').style.display = '';
+            }
+            else {
+                document.getElementById('lblpriceParking').style.display = 'none';
+            }
+        }
+        if (Breakfasttcharge == 191) {
+
+            var Breakfastunit = document.getElementById('drpBreakfastunit').value;
+
+            var Breakfastprice = document.getElementById('txtBreakfast').value;
+            if (Breakfastunit == "" || Breakfastunit == "0") {
+                document.getElementById('lblunitBreakfast').style.display = '';
+            }
+            else {
+                document.getElementById('lblunitBreakfast').style.display = 'none';
+            }
+            if (Breakfastprice == "" || Breakfastprice == "0.00") {
+                document.getElementById('lblpriceBreakfast').style.display = '';
+            }
+            else {
+                document.getElementById('lblpriceBreakfast').style.display = 'none';
+            }
+        }
+
+        if (CityTaxcharge == 193) {
+
+            var CityTaxunit = document.getElementById('drpCityTaxunit').value;
+
+            var CityTaxprice = document.getElementById('txtCityTax').value;
+            if (CityTaxunit == "" || CityTaxunit == "0") {
+                document.getElementById('lblunitCityTax').style.display = '';
+            }
+            else {
+                document.getElementById('lblunitCityTax').style.display = 'none';
+            }
+            if (CityTaxprice == "" || CityTaxprice == "0.00") {
+                document.getElementById('lblpriceCityTax').style.display = '';
+            }
+            else {
+                document.getElementById('lblpriceCityTax').style.display = 'none';
+            }
+        }
+        //alert(Unitvalue)
+        //alert(UnitID)
+     //  alert(CurrencyID);
+
+        if ((babycoatcharge != 5 || (babycoatcharge == 5 && (BabyCotunit != "" && BabyCotunit != "0") && (BabyCotprice != "" && BabyCotprice != "0.00"))) && (ExtraBedcharge != 8 || (ExtraBedcharge == 8 && (ExtraBedunit != "" && ExtraBedunit != "0") && (ExtraBedprice != "" && ExtraBedprice != "0.00")))
+            && (Childrencharge != 29 || (Childrencharge == 29 && (childrencount != "" && childrencount != "0") && (childrnunit != "" && childrnunit != "0") && (childrnprice != "" && childrnprice != "0.00")))
+            && (Internetcharge != 11 || (Internetcharge == 11 && (Internetunit != "" && Internetunit != "0") && (Internetprice != "" && Internetprice != "0.00")))
+            && (Parkingcharge != 14 || (Parkingcharge == 14 && (Parkingunit != "" && Parkingunit != "0") && (Parkingprice != "" && Parkingprice != "0.00")))
+            && (Breakfasttcharge != 191 || (Breakfasttcharge == 191 && (Breakfastunit != "" && Breakfastunit != "0") && (Breakfastprice != "" && Breakfastprice != "0.00")))
+            && (CityTaxcharge != 193 || (CityTaxcharge == 193 && (CityTaxunit != "" && CityTaxunit != "0") && (CityTaxprice != "" && CityTaxprice != "0.00")))
+            && (Childrencharge != 28 || (Childrencharge == 28 && (childrencounts != "" && childrencounts != "0")))
+            )
+
+        {
+
+            $("#imgloader").show();
+            var json = { AttributeIDs: [value], UnitIDs: [UnitID], CurrencyIDs: [CurrencyID], Price: [Price], Charged: [Charged], Unitvalue: [Unitvalue] }
+            $.ajax({
+                type: "get",
+                url: "/PropertyCondition/InsertPropertyConditions",
+                traditional: true,
+                data: json,
+                dataType: "Json",
+                success: function (res) {
+                    if (res != 0) {
+                        $("#imgloader").hide();
+
+
+                        value = new Array(null, null, null, null, null, null, null, null);
+                        Charged = new Array(0, 0, 0, 0, 0, 0, 0, 0);
+                        UnitID = new Array(null, null, null, null, null, null, null, null);
+                        Price = new Array(null, null, null, null, null, null, null, null);
+                        CurrencyID = new Array(null, null, null, null, null, null, null, null);
+                        Unitvalue = new Array(null, null, null, null, null, null, null, null);
+
+
+                        document.getElementById("lblSuccess").style.display = "";
+                        setTimeout("Hidelabel()", 10000);
+                    }
+                }
+            });
+        }
+    }*@
+    function Hidelabel() {
+        document.getElementById("lblSuccess").style.display = "none";
+    }
+</script>
+
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

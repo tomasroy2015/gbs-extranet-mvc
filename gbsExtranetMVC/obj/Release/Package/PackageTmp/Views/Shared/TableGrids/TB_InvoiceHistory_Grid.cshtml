@@ -1,0 +1,213 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_InvoiceHistory")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="col-md-5  col-sm-5">
+
+                <div class="col-md-5  col-sm-5">
+                    <label>@MessageColumnCaptions.TB_InvoiceHistory("InvoiceID") </label>
+                </div>
+                <div class="col-md-7  col-sm-7">
+                    <input id="txtInvoiceid" style="width: 100%;" class="form-control" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-4">
+                <div class="col-md-3  col-sm-3">
+                    <label> @MessageColumnCaptions.TB_InvoiceHistory("FirmID")</label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input id="drpFirm" style="width: 100%; " />
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-5  col-sm-5">
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label> @MessageColumnCaptions.TB_InvoiceHistory("LogDateTime") (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-5  col-sm-5">
+
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.TB_InvoiceHistory("LogDateTime")  (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $Invoice = $("#txtInvoiceid").val();
+        $FirmID = $("#drpFirm").val();
+        $Firm = $("#drpFirm").data("kendoDropDownList").text();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+        if ($Invoice) {
+            $filter.push({ field: "InvoiceID", operator: "equals", value: String($Invoice) });
+        }
+        if ($FirmID) {
+            $filter.push({ field: "Firm", operator: "equals", value: $Firm });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        var grid = $("#TB_InvoiceHistory_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetFirmDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpFirm").kendoDropDownList({
+
+                    filter: "contains",
+
+                    optionLabel: AllSelectText,
+                    dataTextField: "FirmName",
+                    dataValueField: "FirmID",
+                    dataSource: data
+                });
+
+            }
+        })
+
+    });
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_InvoiceHistory_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+        $("#txtInvoiceid").val('');
+
+        var dropdownlistPart = $("#drpFirm").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_InvoiceHistoryExt>()
+                                        .Name("TB_InvoiceHistory_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Read(read => read.Action("_Read", "TB_InvoiceHistory", new { TableID = (int)ViewBag.TableID }))
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.ID).Width(150);
+
+                    columns.Bound(p => p.InvoiceID).Width(150).Title(MessageColumnCaptions.TB_InvoiceHistory("InvoiceID"));
+                    columns.Bound(p => p.Firm).Width(250).Title(MessageColumnCaptions.TB_InvoiceHistory("FirmID"));
+                    columns.Bound(p => p.InvoiceStatus).Width(150).Title(MessageColumnCaptions.TB_InvoiceHistory("InvoiceStatusID"));
+                    columns.Bound(p => p.InvoiceDate).Width(200).Title(MessageColumnCaptions.TB_InvoiceHistory("InvoiceDate"));
+                    columns.Bound(p => p.Period).Width(250).Title(MessageColumnCaptions.TB_InvoiceHistory("PeriodID"));
+                    columns.Bound(p => p.DueDate).Width(200).Title(MessageColumnCaptions.TB_InvoiceHistory("DueDate"));
+                    columns.Bound(p => p.Amount).Width(150).Title(MessageColumnCaptions.TB_InvoiceHistory("Amount"));
+                    columns.Bound(p => p.LogDateTime).Width(250).Title(MessageColumnCaptions.TB_InvoiceHistory("LogDateTime"));
+                    columns.Bound(p => p.Loguser).Width(250).Title(MessageColumnCaptions.TB_InvoiceHistory("LogUserID"));
+
+                })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    // tool.Excel();
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                                    .FileName("TB_InvoiceHistory.xlsx")
+                .Filterable(true))
+
+)
+
+
+
+

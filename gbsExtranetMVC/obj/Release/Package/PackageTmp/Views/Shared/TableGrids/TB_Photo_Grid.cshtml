@@ -1,0 +1,219 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_Photo")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style=" margin-top: 15px;margin-bottom: 5px;">
+        <div class="col-md-12">            
+            <div class="col-md-2 col-sm-2">
+                <div class="col-md-3 col-sm-3 col-xs-3" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.TB_PhotoCaption("PartID")</label>
+                </div>
+                <div class="col-md-9 col-sm-9 col-xs-9" style="padding: 5px;">
+                    <input id="drpPartID" style="width: 100%;" />
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:5px;">
+                    <label>@MessageColumnCaptions.TB_PhotoCaption("RecordID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding: 5px;">
+                    <input id="txtRecord" type="text" class="form-control" style="width:100%" placeholder="@MessageColumnCaptions.TB_PhotoCaption("RecordID")" />
+                </div>
+            </div>
+            <div class="col-md-1 col-sm-1">
+                <div class="col-md-10 col-sm-10 col-xs-10" style="padding:5px;">
+                    <label>@MessageColumnCaptions.TB_PhotoCaption("MainPhoto")</label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2" style="padding: 5px;">
+                    <input id="ChkMainPhoto" type="checkbox" />
+                </div>
+            </div>
+            <div class="col-md-1 col-sm-1">
+                <div class="col-md-10 col-sm-10 col-xs-10" style="padding:5px;">
+                    <label>@MessageColumnCaptions.TB_PhotoCaption("Active")</label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2" style="padding: 5px;">
+                    <input id="ChkActive" type="checkbox" />
+                </div>
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 5px;">
+                <button id="btnfilter" class="k-button" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>   
+</div>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_PhotoExt>()
+                .Name("TB_PhotoGrid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                    .Create(update => update.Action("_Create", "TB_Photo"))
+                    .Read(read => read.Action("_Read", "TB_Photo", new { TableID = (int)ViewBag.TableID }))
+            .Update(update => update.Action("_Update", "TB_Photo"))
+            .Destroy(destroy => destroy.Action("_Destroy", "TB_Photo"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                           columns.Command(
+
+                               command =>
+                               {
+                                   command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                                   command.Destroy().Text(Resources.Delete);
+                               }).Locked(true).Width(180);
+                        
+                        columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.PartName).Title(MessageColumnCaptions.TB_PhotoCaption("PartID")).EditorTemplateName("ddlPart").Width(150).Locked(true);
+                        columns.Bound(p => p.RecordID).Title(MessageColumnCaptions.TB_PhotoCaption("RecordID")).Width(150);
+                        columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_PhotoCaption("Name")).Width(300);
+                        columns.Bound(p => p.MainPhoto).ClientTemplate("<div style='text-align:center;'> #if(MainPhoto){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_PhotoCaption("MainPhoto")).Width(150);
+                        columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_PhotoCaption("Sort")).Width(100);
+                        columns.Bound(p => p.Active).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_PhotoCaption("Active")).Width(100);                                               
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Tb_HotelRateHistoryRpt.xlsx")
+                .Filterable(true))
+
+)
+
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_PhotoGrid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $RecordID = $("#txtRecord").val();        
+
+        $PartValue = $("#drpPartID").data("kendoDropDownList").text();
+        $PartID = $("#drpPartID").val();
+        
+
+        $Active = "false";
+        if ($('#ChkActive').prop('checked')) {
+            $Active = "true";
+        }
+        
+        $MainPhoto = "false";
+        if ($('#ChkMainPhoto').prop('checked')) {
+            $MainPhoto = "true";
+        }        
+
+        if ($RecordID) {
+            $filter.push({ field: "RecordID", operator: "equals", value: String($RecordID) });
+        }
+        
+        if ($PartID) {
+            $filter.push({ field: "PartName", operator: "contains", value: $PartValue });
+        }      
+        
+        if ($Active == "true") {            
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        
+        if ($MainPhoto == "true") {            
+            $filter.push({ field: "MainPhoto", operator: "eq", value: $MainPhoto });
+        }        
+        
+        var grid = $("#TB_PhotoGrid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {       
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPartID").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "PartName",
+                    dataValueField: "PartID ",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_PhotoGrid").data("kendoGrid").dataSource;
+        datasource.filter([]);
+        $("#txtRecord").val('');
+        //$('#ChkActive').checked = false;
+        //$('#ChkMainPhoto').checked = false;
+        document.getElementById('ChkActive').checked = false
+        document.getElementById('ChkMainPhoto').checked = false
+        var dropdownlistPart = $("#drpPartID").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+
+
+</script>
+
+
+
+
+

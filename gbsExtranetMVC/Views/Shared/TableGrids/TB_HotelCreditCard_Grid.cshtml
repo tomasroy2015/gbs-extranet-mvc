@@ -1,0 +1,156 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_HotelCreditCard")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelCreditCardCaption("HotelID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtFilterID" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelCreditCardExt>()
+        .Name("TB_HotelCreditCard_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                                .Create(update => update.Action("_Create", "TB_HotelCreditCard"))
+                                .Read(read => read.Action("_Read", "TB_HotelCreditCard", new { TableID = (int)ViewBag.TableID }))
+                                .Update(update => update.Action("_Update", "TB_HotelCreditCard"))
+                                .Destroy(destroy => destroy.Action("_Destroy", "TB_HotelCreditCard"))
+        )
+
+        .Columns(columns =>
+        {
+            columns.Command(
+             command =>
+             {
+                 command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                 command.Destroy().Text(Resources.Delete);
+             }).Locked(true).Width(180).Title("Operation");
+
+            columns.Bound(p => p.ID).Width(100).Title(MessageColumnCaptions.TB_HotelCreditCardCaption("ID"));
+            columns.Bound(p => p.Hotel).Title(MessageColumnCaptions.TB_HotelCreditCardCaption("HotelID")).EditorTemplateName("ddlHotels").Width(200);
+            columns.Bound(p => p.CreditCardType).Title(MessageColumnCaptions.TB_HotelCreditCardCaption("CreditCardTypeID")).EditorTemplateName("ddlCreditCardType").Width(130);        
+        })
+        .ToolBar(tool =>
+        {
+            tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+            tool.Excel().Text(Resources.ExporttoExcel);
+        })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                                .FileName("TB_HotelCreditCard.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelCreditCard_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+        $PartText = $("#txtFilterID").data("kendoDropDownList").text();
+        $PartValue = $("#txtFilterID").val();
+
+
+        if ($PartValue) {
+            $filter.push({ field: "Hotel", operator: "contains", value: $PartText });
+        }
+
+        var grid = $("#TB_HotelCreditCard_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotels",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#txtFilterID").kendoDropDownList({
+                    filter: "contains",
+                    Name: "Hotel",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelCreditCard_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+
+
+        var dropdownlistPart = $("#txtFilterID").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+
+</script>

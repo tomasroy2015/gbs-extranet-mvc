@@ -1,0 +1,239 @@
+﻿
+
+@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_UserHistory")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4">
+
+                <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                    <input id="txtUserID" type="text" class="form-control" style="width:100%" placeholder="@Resources.UserID" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+
+                <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                    <input id="txtName" type="text" class="form-control" style="width:100%" placeholder="@Resources.Name" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+
+                <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                    <input id="txtSurName" type="text" class="form-control" style="width:100%" placeholder="@Resources.Surname" />
+                </div>
+            </div>
+            </div>
+        <div class="col-md-12">
+            <div class="col-md-3  col-sm-3" style="padding: 0px;">
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@mailColumnCaptions.SendingDate (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-3 col-sm-3" style="padding: 0px;">
+
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@mailColumnCaptions.SendingDate (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()"> @Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_UserHistoryExt>()
+                .Name("BizTbl_UserHistoryExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            //model.Field(p => p.ID).Editable(false);
+        })
+                //.Create(update => update.Action("_Create", "BizTbl_TableSecurityGroupRight"))
+                .Read(read => read.Action("_Read", "BizTbl_UserHistory", new { TableID = (int)ViewBag.TableID }))
+        //.Update(update => update.Action("_Update", "BizTbl_TableSecurityGroupRight"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "BizTbl_TableSecurityGroupRight"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           // command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           //command.Destroy();
+                       });
+
+                    columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.UserID).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("UserID")).Width(150);
+                    columns.Bound(p => p.SalutationType).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("SalutationTypeID")).Width(150);
+                    columns.Bound(p => p.Name).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Name")).Width(150);
+                    columns.Bound(p => p.Surname).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Surname")).Width(150);
+                    columns.Bound(p => p.Country).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("CountryID")).Width(150);
+                    columns.Bound(p => p.CityID).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("City")).Width(150);
+                    columns.Bound(p => p.City).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("City")).Width(150);
+                    columns.Bound(p => p.Address).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Address")).Width(150);
+                    columns.Bound(p => p.Email).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Email")).Width(150);
+                    columns.Bound(p => p.Phone).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Phone")).Width(150);
+                    columns.Bound(p => p.PostCode).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("PostCode")).Width(150);
+                    columns.Bound(p => p.UserName).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("UserName")).Width(150);
+                    columns.Bound(p => p.Password).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Password")).Width(150);
+                    columns.Bound(p => p.Firm).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("FirmID")).Width(150);
+                    columns.Bound(p => p.Status).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("StatusID")).Width(150);
+                    columns.Bound(p => p.PromotionalEmail).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("PromotionalEmail")).Width(350);
+                    columns.Bound(p => p.VerificationCode).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("VerificationCode")).Width(150);
+                    columns.Bound(p => p.DisplayName).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("DisplayName")).Width(150);
+                    columns.Bound(p => p.Locked).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Locked")).Width(150).
+                   ClientTemplate("<div style='text-align:center;'> #if(Locked=='True'){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>"); 
+                    columns.Bound(p => p.Active).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("Active")).Width(150).
+                   ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>");
+                    columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("IPAddress")).Width(150);
+                    columns.Bound(p => p.LogDateTime).ClientTemplate("#= kendo.toString(LogDateTime,'dd/MM/yyyy HH:mm:ss') #").Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("LogDateTime")).Width(150);
+                    columns.Bound(p => p.LogUserID).Title(MessageColumnCaptions.BizTbl_UserHistoryCaption("LogUserID")).Width(150);
+                    columns.Bound(p => p.OpDateTime).Hidden(true);
+                    columns.Bound(p => p.OpUserID).Hidden(true);
+                })
+                .ToolBar(tool =>
+                {
+                   // tool.Custom().Name("cmdAddNewRecord")
+                   //.Text(Resources.NewRecord)
+                   //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                   // tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_UserHistoryExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#BizTbl_UserHistoryExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $UserID = $("#txtUserID").val();
+        $Name = $("#txtName").val();
+        $SurName = $("#txtSurName").val();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+        if ($UserID) {
+            $filter.push({ field: "UserID", operator: "contains", value: String($UserID) });
+        }
+        if ($Name) {
+            $filter.push({ field: "Name", operator: "contains", value: String($Name) });
+        }
+        if ($SurName) {
+            $filter.push({ field: "Surname", operator: "equals", value: String($SurName) });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        var grid = $("#BizTbl_UserHistoryExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+    $(document).ready(function () {
+        // create DateTimePicker from input HTML element
+        //$("#datetimepicker").kendoDateTimePicker({
+        //    value: new Date()
+        //});
+
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+    });
+
+       
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_UserHistoryExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtUserID").val('')
+        $("#txtName").val('');
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+
+        $("#txtSurName").val('');
+
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>
+

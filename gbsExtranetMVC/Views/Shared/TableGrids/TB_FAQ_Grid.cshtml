@@ -1,0 +1,93 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_FAQ")</h1>
+<script>
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+    function OnEdit(e) {
+        if (e.model.isNew() == false) {
+            $('input[name=ID]').parent().html(e.model.ID);
+        }
+    }
+
+
+</script>
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_FAQExt>()
+                        .Name("TB_FAQ_Grid")
+                             .Events(events => events.Edit("OnEdit"))
+
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+                    .Create(update => update.Action("_Create", "TB_FAQ"))
+                    .Read(read => read.Action("_Read", "TB_FAQ", new { TableID = (int)ViewBag.TableID }))
+                    .Update(update => update.Action("_Update", "TB_FAQ"))
+                    .Destroy(destroy => destroy.Action("_Destroy", "TB_FAQ"))
+        )
+
+        .Columns(columns =>
+        {
+            columns.Command(
+             command =>
+             {
+                 command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                 command.Destroy().Text(Resources.Delete);
+             }).Locked(true).Width(180);
+
+            columns.Bound(p => p.ID).Width(100).Title(MessageColumnCaptions.TB_FAQCaption("ID"));
+            columns.Bound(p => p.Question).Title(MessageColumnCaptions.TB_FAQCaption("Question_en")).Width(400);
+            columns.Bound(p => p.Answer).Title(MessageColumnCaptions.TB_FAQCaption("Answer_en")).Width(400);
+            columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_FAQCaption("Sort")).Width(100);
+            columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_FAQCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+        })
+        .ToolBar(tool =>
+        {
+            tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+            tool.Excel().Text(Resources.ExporttoExcel);
+        })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                    .FileName("TB_FAQ.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_FAQ_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

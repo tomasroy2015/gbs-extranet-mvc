@@ -1,0 +1,202 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_FirmRequestHistory")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_FirmRequestHistoryCaption("FirmRequestID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtFilterID" type="text" class="form-control" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_FirmRequestHistoryCaption("FirmID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtFilterCode" style="width:100%" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4  col-sm-4" style="padding: 0px;">
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.LogDate (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-4 col-sm-4" style="padding: 0px;">
+
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.LogDate (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">Clear Filter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_FirmRequestHistoryExt>()
+                                                .Name("TB_FirmRequestHistory_Grid")
+                       .DataSource(dataSource => dataSource
+                       .Ajax()
+                       .PageSize(25)
+                       .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+
+                                  .Read(read => read.Action("_Read", "TB_FirmRequestHistory", new { TableID = (int)ViewBag.TableID }))
+
+        )
+
+        .Columns(columns =>
+        {
+
+
+            columns.Bound(p => p.ID).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("ID")).Width(100);
+            columns.Bound(p => p.FirmRequestID).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("FirmRequestID")).Width(100);
+            columns.Bound(p => p.Firm).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("FirmID")).Width(100);
+            columns.Bound(p => p.RequestType).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("RequestTypeID")).Width(100);
+            columns.Bound(p => p.ReservationID).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("ReservationID")).Width(100);
+            columns.Bound(p => p.FirmRequestStatus).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("FirmRequestStatusID")).Width(100);
+            columns.Bound(p => p.CheckinDate).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("CheckInDate")).Width(120);
+            columns.Bound(p => p.CheckoutDate).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("CheckOutDate")).Width(120);
+            columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+            columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("IPAddress")).Width(120);
+            columns.Bound(p => p.LogDate).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+            columns.Bound(p => p.LogUser).Title(MessageColumnCaptions.TB_FirmRequestHistoryCaption("LogUserID")).Width(120);
+        })
+                  .ToolBar(tool =>
+                        {
+                            tool.Excel().Text(Resources.ExporttoExcel);
+                        })
+                    .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                    .Pageable(p => p.Refresh(true))
+                    .Sortable()
+                    .Navigatable()
+                    .Groupable()
+                    .Scrollable(scr => scr.Height(370))
+                    .Filterable()
+                        .Excel(excel => excel
+                            .FileName("TB_FirmRequestHistory_Grid.xlsx")
+                        .Filterable(true))
+
+)
+
+<script>
+    $("#btnfilter").click(function () {
+        // alert("dfgd")
+        $filter = new Array();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        //  alert($StartDate)
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+        //  alert($EndDate)
+        $PartText = $("#txtFilterCode").data("kendoDropDownList").text();
+        $PartValue = $("#txtFilterCode").val();
+        //   alert($PartValue)
+        $Code = $("#txtFilterID").val();
+        //   alert($Code)
+
+        if ($PartValue != -1) {
+            $filter.push({ field: "Firm", operator: "contains", value: $PartText });
+        }
+        if ($Code) {
+            $filter.push({ field: "FirmRequestID", operator: "Equals", value: $Code });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDate", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDate", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+
+        var grid = $("#TB_FirmRequestHistory_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/Firm",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#txtFilterCode").kendoDropDownList({
+                    filter: "contains",
+                    Name: "FirmID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "FirmID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+        function clearFiter() {
+            $("form.k-filter-menu button[type='reset']").trigger("click");
+        }
+
+        $("#btnClearFilter").click(function (e) {
+            e.preventDefault();
+            var datasource = $("#TB_FirmRequestHistory_Grid").data("kendoGrid").dataSource;
+            datasource.filter([]);
+
+            $("#datetimepickerStart").data("kendoDatePicker").value(null);
+            $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+
+            var dropdownlistPart = $("#txtFilterCode").data("kendoDropDownList");
+            dropdownlistPart.select("");
+        });
+
+    });
+
+
+</script>
+
+

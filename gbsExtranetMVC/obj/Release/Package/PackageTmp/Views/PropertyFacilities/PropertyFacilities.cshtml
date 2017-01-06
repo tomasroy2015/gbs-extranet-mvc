@@ -1,0 +1,247 @@
+﻿@model gbsExtranetMVC.Models.Repositories.PropertyFacilitiesExt
+@using Resources
+@using MessageColumnCaptions
+@{
+    ViewBag.Title = "PropertyFacilities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageTitle("AdminHotelFacility.aspx")</h1>
+<style>
+    legend.scheduler-border {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+    }
+    .header-title{
+        color: rgb(255, 255, 255);   
+        background-color: #007894;
+        height: 42px;
+        padding-top: 11px;
+        padding-left: 8px;
+        border-radius: 3px;
+}
+    /*.container.custom-content{
+        margin-left:4px;
+    }*/
+    .thumbnail{
+        margin-right:5px;
+    }
+</style>
+<style>
+    @@media (min-width: 992px) {
+        .col-md-4 {
+            width: 31.333333%;
+        }
+    }
+</style>
+
+
+    <div class="col-md-12">
+        @foreach (var header in ViewBag.PropertyConditionsheader)
+        {
+            var facilityItems = header.PropertyFacilitiesItems;
+            if(facilityItems!=null && facilityItems.Count > 0)
+            { 
+                <div class="col-md-4 thumbnail">
+                    <h4 class="header-title">
+                        @header.AttributeHeaderName
+                    </h4>
+                    @foreach (var item in facilityItems)
+                    {
+                        <div class="col-md-8" style="margin-bottom:5px;">
+                            <label onclick="CheckAttribChecked(@item.AttributeID)">
+                                @Html.CheckBox("value", (bool)item.hasAttribute, new { @class = "chkAttributes", @value = item.AttributeID, @id = "chkMainAttrib_" + @item.AttributeID })
+                                @item.AttributeName
+                            </label>
+                        </div>
+                        var Chargeable = item.Charged;
+                        // var Chargeable1 = HotelAttributes3.Charged1;
+                        if (Chargeable == true)
+                        {
+                            <div class="col-md-2" style="float: right; margin-top: -30px;  background-color: #F5F6CE; width: 30%; margin-right: 20px; height: 30px;">
+                                <label>
+                                    @Html.CheckBox("value", (bool)item.Charged, new { @class = "chkAttribu", @disabled = "disabled", @value = item.Charged, @id = "chkPaidAttrib_" + @item.AttributeID })
+                                    <span>@Resources.Charged</span>
+                                </label>
+                            </div>
+                        }
+                        else if (Chargeable == false)
+                        {
+                            <div class="col-md-2" style="float: right; margin-top: -30px;  background-color: #F5F6CE; width: 30%; margin-right: 20px; height: 30px;">
+                                <label>
+                                    @Html.CheckBox("value", (bool)item.Charged, new { @class = "chkAttribu", @disabled = "disabled", @value = item.Charged, @id = "chkPaidAttrib_" + @item.AttributeID })
+                                    <span>@Resources.Charged</span>
+                                </label>
+                            </div>
+                        }
+                        else if (Chargeable == null)
+                        {
+                            <div class="col-md-2" style="float: right; margin-top: -30px; margin-right: 20px; background-color: #F5F6CE; width: 30%; height: 30px;">
+                                <label style="display:none">
+                                    @Html.CheckBox("value", new { @class = "chkAttribu", @disabled = "disabled", @id = "chkPaidAttrib_" + @item.AttributeID })
+                                    <span>@Resources.Charged</span>
+                                </label>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        }
+        <div>
+            <button id="btnsave" style=" margin-top: 40%; margin-left: 13%; width: 93px;" class="k-button btn-info" onclick="btnSave_Click()">@Resources.Save</button>
+        </div>
+
+        <div align="center" style="padding-top:5px;">
+            <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+        </div>
+    </div>
+
+
+   
+    <script>
+        $(document).ready(function () {
+            $(".chkAttributes:checked").each(function () {
+                $('#chkPaidAttrib_' + $(this).val()).prop('disabled', false);
+            });
+            //$(".chkAttributes1:checked").each(function () {
+            //    $('#chkPaidAttrib_' + $(this).val()).prop('disabled', false);
+            //});
+            //$(".chkAttributes2:checked").each(function () {
+            //    $('#chkPaidAttrib_' + $(this).val()).prop('disabled', false);
+            //});
+        })
+        function CheckAttribChecked(AtrribID) {
+            if (AtrribID != "") {
+                if ($("#chkMainAttrib_" + AtrribID).is(':checked')) {
+                    //alert(AtrribID)
+                    $('#chkPaidAttrib_' + AtrribID).prop('disabled', false);
+                }
+                else {
+                    $('#chkPaidAttrib_' + AtrribID).attr('checked', false);
+                    $('#chkPaidAttrib_' + AtrribID).prop('disabled', true);
+                }
+
+            }
+        }
+
+        function btnSave_Click() {
+            var HotelID = 100001;
+
+            var json = { HotelID: HotelID }
+            $.ajax({
+                type: "get",
+                url: "/PropertyCondition/InsertPropertyConditions",
+                traditional: true,
+                data: json,
+                dataType: "Json",
+                success: function (res) {
+                    if (res != 0) {
+                        document.getElementById("lblSuccess").style.display = "";
+                        setTimeout("Hidelabel()", 5000);
+                    }
+                }
+            });
+        }
+        function Hidelabel() {
+            document.getElementById("lblSuccess").style.display = "none";
+        }
+
+    </script>
+
+
+    <script>
+        //var Charged = new Array(0, 0, 0);
+        function btnSave_Click() {
+            // var HotelID = 100001;
+            var chkcharged = [];
+
+            var chkHotelAttributes = [];
+            $(".chkAttributes:checked").each(function () {
+                chkHotelAttributes.push($(this).val());
+                //  alert($(this).val())
+                if ($('#chkPaidAttrib_' + $(this).val()).is(':checked')) {
+                    chkcharged.push("1");
+                }
+                else {
+                    chkcharged.push("0")
+                }
+            });
+            // alert(chkcharged);
+            //$(".chkAttribu:checked").each(function () {
+            //    chkcharged.push($(this).val());
+            //    alert(chkcharged)
+            //    if (chkcharged == false) {
+            //        chkcharged = 1;
+            //    }
+            //    else  {
+            //        chkcharged = 0;
+            //    }
+            //   // Charged[0] = 1;
+            //});
+            //alert("jib")
+
+            //var chkHotelAttributes1 = [];
+            //$(".chkAttributes1:checked").each(function () {
+            //    chkHotelAttributes1.push($(this).val());
+
+            //    if ($("#chkPaidAttrib_" + $(this).val()).is(':checked')) {
+            //        chkcharged.push("1");
+            //    }
+            //    else {
+            //        chkcharged.push("0")
+            //    }
+
+            //});
+            //var chkHotelAttributes2 = [];
+            //$(".chkAttributes2:checked").each(function () {
+            //    chkHotelAttributes2.push($(this).val());
+            //    if ($("#chkPaidAttrib_" + $(this).val()).is(':checked')) {
+            //        chkcharged.push("1");
+            //    }
+            //    else {
+            //        chkcharged.push("0")
+            //    }
+            //});
+            // alert("ji1")
+            var HotelAttributes = chkHotelAttributes.join(',');
+            //var HotelAttributes1 = chkHotelAttributes1.join(',');
+            //var HotelAttributes2 = chkHotelAttributes2.join(',');
+            //alert(HotelAttributes)
+            // alert("hi")
+            var json = { HotelAttributes: HotelAttributes, Charged: [chkcharged] }
+            $.ajax({
+                type: "get",
+                url: "/PropertyFacilities/SavePropertyFacility",
+                traditional: true,
+                data: json,
+                dataType: "Json",
+                success: function (res) {
+                    //alert(res)
+                    if (res != 0) {
+                        document.getElementById("lblSuccess").style.display = "";
+                        setTimeout("Hidelabel()", 5000);
+                    }
+                }
+            });
+
+        }
+        function Hidelabel() {
+            document.getElementById("lblSuccess").style.display = "none";
+        }
+
+    </script>
+
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-63530100-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>

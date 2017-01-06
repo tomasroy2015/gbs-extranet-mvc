@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                .Name("RegionID")
+                .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                    .DataTextField("Region")
+                .DataValueField("RegionID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetRegion", "DropDownLists");
+        });
+    })
+)

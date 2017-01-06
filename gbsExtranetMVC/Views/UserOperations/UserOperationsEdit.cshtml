@@ -1,0 +1,567 @@
+﻿
+@model gbsExtranetMVC.Models.Repositories.UsersOperationsExt
+@using Resources
+@{
+    ViewBag.Title = "UserOperationsEdit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link href="~/CSS/273a2ab1caefa644826a63c1e305fdc1347cb81f.css" rel="stylesheet" />*@
+<link href="~/CSS/jquery-ui-theme.css" rel="stylesheet" />
+<script src="~/Scripts/common.js"></script>
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
+<h2 style="color: black; text-align: center;">User Information</h2>
+
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("UserOperationsEdit", "Management", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.ID)
+        <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.ID, Resources.UserID)
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.ID, new { @class = "k-textbox", @readonly = "readonly", @id = "txtUserCode", @name = "txtUserCode" })
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Title, Resources.Salutation)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.SalutionTypeID)
+                                .Name("Title")
+                                .OptionLabel(@Resources.SelectSalutation)
+                                .BindTo((SelectList)ViewBag.SalutionType)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbSalution", @name = "drbSalution" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblSalutationWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Title)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Name)
+                            
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "k-textbox", @id = "txtName", @name = "txtName" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblNameWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Name)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Surname)
+                            
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.SurName, new { @class = "k-textbox", @id = "txtSurName", @name = "txtSurName" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblSurnameWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.SurName)
+                            </div>
+                        </td>
+                    </tr>
+
+                   
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Country, Resources.Country)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CountryID)
+                                .Name("Country")
+                                .OptionLabel(@Resources.SelectCountry)
+                                .BindTo((SelectList)ViewBag.Countries)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbCountry", @name = "drbCountry" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblCountryWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Country)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Region)                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Region, new { @class = "k-textbox", @id = "txtRegion", @name = "txtRegion" })
+                            @Html.HiddenFor(m => m.RegionID, new { @class = "k-textbox", @id = "hdnRegionID" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblRegionWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Region)
+                            </div>
+                        </td>
+                    </tr>
+
+                  
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Address)
+                            
+                        </th>
+                        <td>
+                            @Html.TextAreaFor(m => m.Address, new { @class = "k-textbox", @style = "width: 200px;", @id = "txtAddress", @name = "txtAddress" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblAddressWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Address)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Postcode)
+                            
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.PostalCode, new { @class = "k-textbox", @id = "txtPostalCode", @name = "txtPostalCode" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblPostcodeWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.PostalCode)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Email)
+                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "k-textbox", @id = "txtEmail", @name = "txtEmail" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblEmailWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Phone)
+                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Phone, new { @class = "k-textbox", @id = "txtPhone", @name = "txtPhone" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblPhoneWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Phone)
+                            </div>
+                        </td>
+                    </tr>
+                  
+                    <tr>
+                       
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.UserName)
+                            
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox", @id = "txtUserName", @name = "txtUserName" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblUserNameeWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.UserName)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Firm)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.FirmID)
+                                .Name("Firm")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.Firm)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbFirm", @name = "drbFirm" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblFirmWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Country)
+                            </div>
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Password, Resources.Password)
+                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Password, new { @class = "k-textbox", @id = "txtPassword" })
+
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Name)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Status, Resources.Status)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.StatusID)
+                                .Name("Status")
+                                .OptionLabel(@Resources.SelectStatus)
+                .BindTo((SelectList)ViewBag.status)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbStatus", @name = "drbStatus" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblStatusWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Status)
+                            </div>
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        
+                    </tr>
+                    @*<tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Locked)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "k-textbox" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Name)
+                            </div>
+                        </td>
+                    </tr>*@
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Active)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.Active, new { @checked = "checked" , @id = "chkActive", @name = "chkActive" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Active)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.Locked)                            
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.Locked, new { @id = "chkLocked", @name = "chkLocked" })                           
+                        </td>                        
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.IPAddress)
+                            @Html.Label("*", new { @class = "requiredfiled" })
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.IPAddress, new { @class = "k-textbox", @id = "txtIPAddress", @name = "txtIPAddress" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.IPAddress)
+                            </div>
+                        </td>
+                    </tr>
+                  
+                </table>
+                
+            </div>
+        </div>
+    }
+    <div align="center">
+
+
+        <input type="button"  class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" value="@Resources.Save" onclick="UpdateUserOperations();" />
+        <a title='Click here to Edit Firm Details' style='text-decoration:underline;' href='/Management/UserOperations'><input type="button" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" value="@Resources.Back" /></a><br />
+        <br/>
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+        <label id="lblFailure" style="color:red;font-size:medium;display:none;">@Resources.FillFieldsWarningAbove</label>
+    </div>
+</div>
+
+<script>
+    function UpdateUserOperations() {
+      //  alert("hi")
+        var UserCode = document.getElementById('txtUserCode').value;
+     //   alert(UserCode);
+        //var Salutiontxt = $("#drbSalution:selected").text();
+        //alert(Salutiontxt)
+        var SalutionId = document.getElementById('drbSalution').value;
+     //   alert(SalutionId)
+        var Name = document.getElementById('txtName').value;
+    //    alert(Name);
+        var SurName = document.getElementById('txtSurName').value;
+    //    alert(SurName);
+        var Country = document.getElementById('drbCountry').value;
+    //    alert(Country);
+        var Region = document.getElementById('txtRegion').value;
+        //    alert(Region);
+        var hdnRegionId = document.getElementById('hdnRegionID').value;
+
+        var Address = document.getElementById('txtAddress').value;
+     //   alert(Address);
+        var PostalCode = document.getElementById('txtPostalCode').value;
+     //   alert(PostalCode);
+        var Email = document.getElementById('txtEmail').value;
+     //   alert(Email);
+        var Phone = document.getElementById('txtPhone').value;
+     //   alert(Phone);
+        var Firm = document.getElementById('drbFirm').value;
+    //    alert(Firm);
+        var UserName = document.getElementById('txtUserName').value;
+     //   alert(UserName);
+        var Status = document.getElementById('drbStatus').value;
+     //    alert(Status);
+        var Active = document.getElementById('chkActive').checked;
+        //    alert(Active);
+
+        var Locked = document.getElementById('chkLocked').checked;
+       // alert(Locked)
+
+        var IPAddress = document.getElementById('txtIPAddress').value;
+        var Password = document.getElementById('txtPassword').value;
+    //     alert(IPAddress);
+
+        if (SalutionId == "") {
+            document.getElementById('lblSalutationWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblSalutationWarning').style.display = "none";
+        }
+
+        if (Name == "") {
+            document.getElementById('lblNameWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblNameWarning').style.display = "none";
+        }
+        if (SurName == "") {
+            document.getElementById('lblSurnameWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblSurnameWarning').style.display = "none";
+        }
+        if (Country == "") {
+            document.getElementById('lblCountryWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblCountryWarning').style.display = "none";
+        }
+
+        if (Region == "" || hdnRegionId == "") {
+            document.getElementById('lblRegionWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblRegionWarning').style.display = "none";
+        }
+
+        if (Address == "") {
+            document.getElementById('lblAddressWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblAddressWarning').style.display = "none";
+        }
+
+        if (PostalCode == "") {
+            document.getElementById('lblPostcodeWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblPostcodeWarning').style.display = "none";
+        }
+
+        if (Email == "") {
+            document.getElementById('lblEmailWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblEmailWarning').style.display = "none";
+        }
+
+        if (Phone == "") {
+            document.getElementById('lblPhoneWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblPhoneWarning').style.display = "none";
+        }
+
+        if (Firm == "") {
+            document.getElementById('lblFirmWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblFirmWarning').style.display = "none";
+        }
+
+        if (UserName == "") {
+            document.getElementById('lblUserNameeWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblUserNameeWarning').style.display = "none";
+        }
+
+        if (Status == "") {
+            document.getElementById('lblStatusWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblStatusWarning').style.display = "none";
+        }
+
+
+        if (SalutionId != "" && Name != "" && SurName != "" && Country != "" && Region != "" && Address != "" && PostalCode != "" && Email != "" && Phone != "" && Firm != "" && UserName != "" && Status != "" && hdnRegionId != "") {
+
+            var json = {
+                UserCode: UserCode, SalutionId: SalutionId, Name: Name, SurName: SurName, Country: Country, Region: Region, Address: Address, PostalCode: PostalCode,
+                Email: Email, Phone: Phone, Firm: Firm, UserName: UserName, Status: Status, Active: Active, IPAddress: IPAddress, Password: Password, Locked: Locked, hdnRegionId: hdnRegionId
+            }
+            $.ajax({
+                type: "Get",
+                url: "/UserOperations/UpdateUserOperations",
+                data: json,
+                datatype: "JSON",
+                success: function (res) {
+                    if (res != 0) {
+                        document.getElementById("lblSuccess").style.display = "";
+                        document.getElementById("lblFailure").style.display = "none";
+                        //alert(res);
+                    }
+                }
+            })
+
+        }
+        else {
+            document.getElementById("lblSuccess").style.display = "none";
+            document.getElementById("lblFailure").style.display = "";
+        }
+    }
+
+</script>
+<script>
+    $(function () {
+
+        //     alert('Hi')
+
+        $("#txtRegion").autocomplete({
+
+            source: function (request, response) {
+
+                //var Keyword = document.getElementById('divDestinationSearchvalue').value;
+
+                var json = { Keyword: request.term, CountryID: "" }
+                $.ajaxSetup({ cache: false });
+                $.ajax({
+                    type: "Get",
+                    url: "/FirmOperations/GetDestinationSearchResult",
+                    data: json,
+                    datatype: "json",
+                    success: function (data) {
+
+                        //document.getElementById('hdnDestinationSearchID').value = '';
+                        //document.getElementById('hdnDestinationSearchType').value = '';
+                        //document.getElementById('hdnDestinationName').value = '';
+                        //document.getElementById('hdnRegionID').value = '';
+                        //document.getElementById('hdnRegionName').value = '';
+                        //document.getElementById('hdnHotelID').value = '';
+                        //document.getElementById('hdnHotelName').value = '';
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.Name + (item.ParentName == '' ? '' : ', ' + item.ParentName) + (item.SecondParentName == '' ? '' : ', ' + item.SecondParentName) + ', ' + item.CountryName,
+                                key: item.ID,
+                                DestinationSearchType: item.DestinationSearchType,
+                                DisplayName: item.DisplayName,
+                                CountryName: item.CountryName,
+                                Name: item.Name,
+                                ParentName: item.ParentName,
+                                SecondParentName: item.SecondParentName,
+                                RegionID: item.RegionID,
+                                RegionName: item.RegionName,
+                                HotelID: item.HotelID,
+                                HotelName: item.HotelName,
+                                DestinationSearchTypeImagePath: item.DestinationSearchTypeImagePath
+                            }
+                        }))
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //alert(textStatus);
+                    }
+                });
+            },
+            open: function () {
+                $(this).autocomplete('widget').css('z-index', 9999);
+                return false;
+            },
+            select: function (event, ui) {
+
+                //document.getElementById('hdnDestinationSearchID').value = ui.item.key;
+                //document.getElementById('hdnDestinationSearchType').value = ui.item.DestinationSearchType;
+                //document.getElementById('hdnDestinationName').value = ui.item.Name;
+                document.getElementById('txtRegion').value = ui.item.label;
+                document.getElementById('hdnRegionID').value = ui.item.RegionID;
+                //document.getElementById('hdnRegionName').value = ui.item.RegionName;
+                //document.getElementById('hdnHotelID').value = ui.item.HotelID;
+                //document.getElementById('hdnHotelName').value = ui.item.HotelName;
+
+            },
+            minLength: 3,
+            html: true,
+            autoFocus: false,
+            messages: {
+                noResults: '',
+                results: function () { }
+            }
+        })
+        .data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .data("ui-autocomplete-item", item)
+            .append('<a>' +
+            '<table class="SearchAutoComplete" border="0" cellpadding="0" cellspacing="0">' +
+            '<tr>' +
+            '<td align="left" width="200px">' + '<b>' + item.Name + '</b>' + (item.ParentName == '' ? '' : ', ' + item.ParentName) + (item.SecondParentName == '' ? '' : ', ' + item.SecondParentName) + ', ' + item.CountryName + '</td>' +
+            '<td align="right"><div style="color:navy;font-style:italic;float:right;"><div><img src=\'' + item.DestinationSearchTypeImagePath + '\'></div></td></tr></table></a>')
+            .appendTo(ul);
+        };
+    });
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

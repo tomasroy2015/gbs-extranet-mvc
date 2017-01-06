@@ -1,0 +1,152 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_IPToNation")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+
+        <div class="col-md-12">
+                 <div class="col-md-4  col-sm-4">
+                <div class="col-md-3  col-sm-3">
+                    <label> @MessageColumnCaptions.TB_IPToNation("CountryID")</label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input id="drpCountry" style="width: 100%; " />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+
+        </div>
+        
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        
+        $CountryID = $("#drpCountry").val();
+        $Country = $("#drpCountry").data("kendoDropDownList").text();
+     
+    
+        if ($CountryID) {
+            $filter.push({ field: "Country", operator: "equals", value: $Country });
+        }
+       
+        var grid = $("#TB_IPToNation_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpCountry").kendoDropDownList({
+
+                    filter: "contains",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Country",
+                    dataValueField: "CountryID",
+                    dataSource: data
+                });
+
+            }
+        })
+
+    });
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_IPToNation_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+        $("#txtInvoiceid").val('');
+
+        var dropdownlistPart = $("#drpCountry").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+    });
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_IPToNationExt>()
+                                            .Name("TB_IPToNation_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                    .Read(read => read.Action("_Read", "TB_IPToNation", new { TableID = (int)ViewBag.TableID }))
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.ID).Width(150);
+
+                    columns.Bound(p => p.Country).Width(150).Title(MessageColumnCaptions.TB_IPToNation("CountryID"));
+                    columns.Bound(p => p.BeginningIpAddress).Width(250).Title(MessageColumnCaptions.TB_IPToNation("BeginningIpAddress"));
+                    columns.Bound(p => p.EndingIpAddress).Width(150).Title(MessageColumnCaptions.TB_IPToNation("EndingIpAddress"));
+                    columns.Bound(p => p.BeginningIpNumber).Width(200).Title(MessageColumnCaptions.TB_IPToNation("BeginningIpNumber"));
+                    columns.Bound(p => p.EndingIpNumber).Width(250).Title(MessageColumnCaptions.TB_IPToNation("EndingIpNumber "));
+                    columns.Bound(p => p.OpDateTime).Width(200).Title(MessageColumnCaptions.TB_IPToNation("OpDateTime"));
+                    columns.Bound(p => p.OpLoguser).Width(150).Title(MessageColumnCaptions.TB_IPToNation("OpUserID"));
+                   
+
+                })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    // tool.Excel();
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                                        .FileName("TB_IPToNation.xlsx")
+                .Filterable(true))
+
+)
+
+
+
+

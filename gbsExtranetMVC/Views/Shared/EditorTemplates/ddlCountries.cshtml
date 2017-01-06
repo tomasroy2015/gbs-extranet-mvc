@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+            .Name("CountryID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                    .DataTextField("Country")
+                .DataValueField("CountryID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetCountries", "DropDownLists");
+        });
+    })
+)

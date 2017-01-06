@@ -1,0 +1,86 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("BizTbl_SecurityGroupRight")</h1>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_SecurityGroupRightExt>()
+                        .Name("BizTbl_SecurityGroupRightExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                        .Create(update => update.Action("_Create", "BizTbl_SecurityGroupRight"))
+                        .Read(read => read.Action("_Read", "BizTbl_SecurityGroupRight", new { TableID = (int)ViewBag.TableID }))
+                        .Update(update => update.Action("_Update", "BizTbl_SecurityGroupRight"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_SecurityGroupRight"))
+
+
+        )
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Locked(true).Width(180);
+
+                        columns.Bound(p => p.ID).Width(130).Title(MessageColumnCaptions.BizTbl_SecurityGroupRightCaption("ID"));
+                        columns.Bound(p => p.Role).EditorTemplateName("ddlRole").Title(MessageColumnCaptions.BizTbl_SecurityGroupRightCaption("SecurityGroupID")).Width(400);
+                        columns.Bound(p => p.SecurityCode).EditorTemplateName("ddlSecurityCode").Title(MessageColumnCaptions.BizTbl_SecurityGroupRightCaption("SecurityID")).Width(400);
+                        columns.Bound(p => p.Right).Width(130).Title(MessageColumnCaptions.BizTbl_SecurityGroupRightCaption("HasRight"))
+                             .ClientTemplate("<div style='text-align:center;'> #if(Right){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                             .Width(100); 
+
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                    .FileName("BizTbl_SecurityGroupRightExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#BizTbl_SecurityGroupRightExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+    });
+</script>

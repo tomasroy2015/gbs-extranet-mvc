@@ -1,0 +1,93 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_Period")</h1>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.Tables.TB_PeriodExt>()
+                .Name("TB_PeriodGrid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Create(update => update.Action("_Create", "TB_Period"))
+                .Read(read => read.Action("_Read", "TB_Period", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "TB_Period"))
+                .Destroy(destroy => destroy.Action("_Destroy", "TB_Period"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                            command =>
+                            {
+                                command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                                command.Destroy().Text(Resources.Delete);
+                            }).Locked(true).Width(180);
+
+                        columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.StartDate).EditorTemplateName("Date").Title(MessageColumnCaptions.TB_PeriodCaption("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy') #").Width(250);
+                        columns.Bound(p => p.EndDate).EditorTemplateName("Date").Title(MessageColumnCaptions.TB_PeriodCaption("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy') #").Width(250);
+                        columns.Bound(p => p.Period).Title(MessageColumnCaptions.TB_PeriodCaption("Period")).Width(300);                                                
+                        columns.Bound(p => p.Active).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_PhotoCaption("Active")).Width(100);
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Tb_PeriodRpt.xlsx")
+                .Filterable(true))
+
+)
+
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_PeriodGrid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+
+
+
+

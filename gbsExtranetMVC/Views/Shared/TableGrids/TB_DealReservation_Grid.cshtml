@@ -1,0 +1,263 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_DealReservation")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.DealReservationID</label>
+                <input id="txtDealReservationID" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-4 col-sm-3" style="display: inline-flex;">
+                <label>@Resources.Firm</label>&nbsp;&nbsp;
+                &nbsp;<input type="text" id="drbFirm" style="width: 100%;" />
+            </div>
+            <div class="col-md-4 col-sm-3" style="display: inline-flex;">
+                <label>@Resources.Deal</label>&nbsp;&nbsp;
+                &nbsp;<input type="text" id="drbDeal" style="width: 100%;" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.PromotionCode</label>
+                <input id="txtPromotionCode" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.GuestName</label>
+                <input id="txtGuestName" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-2  col-sm-2">
+                <div class="col-md-8  col-sm-5">
+                    <label>@Resources.Active</label>
+                </div>
+                <div class="col-md-2  col-sm-7">
+                    <input type="checkbox" id="chkStatus" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_DealReservationExt>()
+                    .Name("TB_DealReservationExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            //model.Field(p => p.ID).Editable(false);
+        })
+            //.Create(update => update.Action("_Create", "BizTbl_TableSecurityGroupRight"))
+                    .Read(read => read.Action("_Read", "TB_DealReservation", new { TableID = (int)ViewBag.TableID }))
+        //.Update(update => update.Action("_Update", "BizTbl_TableSecurityGroupRight"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "BizTbl_TableSecurityGroupRight"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               // command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               //command.Destroy();
+                           });
+
+                        columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        //columns.Bound(p => p.DealReservationID).Title(MessageColumnCaptions.TB_DealReservationCaption("DealReservationID")).Width(250).Locked(true);
+                        columns.Bound(p => p.ReservationID).Title(MessageColumnCaptions.TB_DealReservationCaption("ReservationID")).Width(250).Locked(true);
+                        columns.Bound(p => p.Firm).Title(MessageColumnCaptions.TB_DealReservationCaption("FirmID")).Width(250).Locked(true);
+                        columns.Bound(p => p.Deal).Title(MessageColumnCaptions.TB_DealReservationCaption("DealID")).Width(250);
+                        columns.Bound(p => p.GuestFullName).Title(MessageColumnCaptions.TB_DealReservationCaption("GuestFullName")).Width(250);
+                        columns.Bound(p => p.PromotionCode).Title(MessageColumnCaptions.TB_DealReservationCaption("PromotionCode")).Width(250);
+                        columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_DealReservationCaption("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy HH:mm:ss') #").Width(250);
+                        columns.Bound(p => p.EndDate).Title(MessageColumnCaptions.TB_DealReservationCaption("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy HH:mm:ss') #").Width(250);
+                        columns.Bound(p => p.PeopleCount).Title(MessageColumnCaptions.TB_DealReservationCaption("PeopleCount")).Width(250);
+                        columns.Bound(p => p.BusinessPartnerCancelPolicy).Title(MessageColumnCaptions.TB_DealReservationCaption("BusinessPartnerCancelPolicyID")).Width(250);
+                        columns.Bound(p => p.NonRefundable).Title(MessageColumnCaptions.TB_DealReservationCaption("NonRefundable")).Width(250);
+                        columns.Bound(p => p.Amount).Title(MessageColumnCaptions.TB_DealReservationCaption("Amount")).Width(250);
+                        columns.Bound(p => p.GeneralPromotionDiscountPercentage).Title(MessageColumnCaptions.TB_DealReservationCaption("GeneralPromotionDiscountPercentage")).Width(250);
+                        columns.Bound(p => p.PromotionDiscountPercentage).Title(MessageColumnCaptions.TB_DealReservationCaption("PromotionDiscountPercentage")).Width(250);
+                        columns.Bound(p => p.PayableAmount).Title(MessageColumnCaptions.TB_DealReservationCaption("PayableAmount")).Width(250);
+                        columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_DealReservationCaption("CurrencyID")).Width(250);
+                        columns.Bound(p => p.Cost).Title(MessageColumnCaptions.TB_DealReservationCaption("Cost")).Width(250);
+                        columns.Bound(p => p.CostCurrency).Title(MessageColumnCaptions.TB_DealReservationCaption("CostCurrencyID")).Width(250);
+                        columns.Bound(p => p.ComissionRate).Title(MessageColumnCaptions.TB_DealReservationCaption("ComissionRate")).Width(250);
+                        columns.Bound(p => p.ComissionAmount).Title(MessageColumnCaptions.TB_DealReservationCaption("ComissionAmount")).Width(250);
+                        columns.Bound(p => p.ComissionCurrency).Title(MessageColumnCaptions.TB_DealReservationCaption("ComissionCurrencyID")).Width(250);
+                        columns.Bound(p => p.Deposit).Title(MessageColumnCaptions.TB_DealReservationCaption("Deposit")).Width(250);
+                        columns.Bound(p => p.DepositType).Title(MessageColumnCaptions.TB_DealReservationCaption("DepositTypeID")).Width(250);
+                        columns.Bound(p => p.DepositCurrency).Title(MessageColumnCaptions.TB_DealReservationCaption("DepositCurrencyID")).Width(250);
+                        columns.Bound(p => p.DepositInTL).Title(MessageColumnCaptions.TB_DealReservationCaption("DepositInTL")).Width(250);
+                        columns.Bound(p => p.Status).Title(MessageColumnCaptions.TB_DealReservationCaption("StatusID")).Width(250);
+                        columns.Bound(p => p.ReservationOperation).Title(MessageColumnCaptions.TB_DealReservationCaption("ReservationOperationID")).Width(250);
+                        columns.Bound(p => p.CancelDate).Title(MessageColumnCaptions.TB_DealReservationCaption("CancelDateTime")).ClientTemplate("#= kendo.toString(CancelDate,'dd/MM/yyyy HH:mm:ss') #").Width(250);
+                        columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_DealReservationCaption("Active"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                       // columns.Bound(p => p.LogDate).Title(MessageColumnCaptions.TB_DealReservationCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDate,'dd/MM/yyyy HH:mm:ss') #").Width(250);
+                       // columns.Bound(p => p.LogUser).Title(MessageColumnCaptions.TB_DealReservationCaption("LogUserID")).Width(250);
+
+                    })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_DealReservationExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_DealReservationExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+        $DealReservationID = $("#txtDealReservationID").val();
+        $FirmText = $("#drbFirm").data("kendoDropDownList").text();
+        $FirmValue = $("#drbFirm").val();
+        $DealText = $("#drbDeal").data("kendoDropDownList").text();
+        $DealValue = $("#drbDeal").val();
+        $PromotionCode = $("#txtPromotionCode").val();
+        $GuestName = $("#txtGuestName").val();
+        $SentStatus = "false";
+        if ($('#chkStatus').prop('checked')) {
+            $SentStatus = "true";
+        }
+
+        if ($DealReservationID) {
+            $filter.push({ field: "DealReservationID", operator: "equals", value: String($DealReservationID) });
+        }
+        if ($FirmValue) {
+            $filter.push({ field: "Firm", operator: "contains", value: $FirmText });
+        }
+        if ($DealValue) {
+            $filter.push({ field: "Deal", operator: "contains", value: $DealText });
+        }
+        if ($PromotionCode) {
+            $filter.push({ field: "PromotionCode", operator: "contains", value: String($PromotionCode) });
+        }
+        if ($GuestName) {
+            $filter.push({ field: "GuestFullName", operator: "contains", value: String($GuestName) });
+        }
+        if ($SentStatus == "true") {
+            //alert($SentStatus)
+            $filter.push({ field: "Active", operator: "eq", value: $SentStatus });
+        }
+
+        var grid = $("#TB_DealReservationExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/Firm",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+               // alert(data)
+                $("#drbFirm").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "FirmID ",
+                    dataSource: data
+                });
+
+            }
+        })
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/Deal",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                //alert(data)
+                $("#drbDeal").kendoDropDownList({
+                    filter: "contains",
+                    Name: "ID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+    });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_DealReservationExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtDealReservationID").val('')
+        $("#txtPromotionCode").val('');
+        $("#txtGuestName").val('');
+
+        var dropdownlistPart1 = $("#drbDeal").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+
+        var dropdownlistPart = $("#drbFirm").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        document.getElementById('chkStatus').checked = false
+    });
+
+</script>

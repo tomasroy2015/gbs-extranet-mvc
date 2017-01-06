@@ -1,0 +1,100 @@
+﻿
+@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_Date")</h1>
+
+<script>
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+    function OnEdit(e) {
+        if (e.model.isNew() == false) {
+            $('input[name=ID]').parent().html(e.model.ID);
+        }
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_DateExt>()
+                    .Name("TB_DateExt_Grid")
+                         .Events(events => events.Edit("OnEdit"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(true);
+        })
+                .Create(update => update.Action("_Create", "TB_Date"))
+                    .Read(read => read.Action("_Read", "TB_Date", new { TableID = (int)ViewBag.TableID }))
+                         .Update(update => update.Action("_Update", "TB_Date"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "TB_Date"))
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                            command =>
+                            {
+                                command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                                command.Destroy().Text(Resources.Delete);
+                            }).Width(180).Locked(true);
+
+                        columns.Bound(p => p.ID).Width(270).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.Date).Title(MessageColumnCaptions.TB_DateCaption("Date")).Format("{0:dd/MM/yyyy}").EditorTemplateName("Date").Width(500);
+                      
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                .Text(Resources.NewRecord)
+                .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                    .FileName("TB_DateExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_DateExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+
+
+
+
+

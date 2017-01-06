@@ -1,0 +1,375 @@
+﻿@using Resources
+@model gbsExtranetMVC.Models.LogOnModel
+
+@{
+    ViewBag.Title = "Login GBSExtranet";
+    Layout = "~/Views/Shared/LoginLayout.cshtml";
+    var validationMsg = "";
+    validationMsg = ViewBag.Message;
+}
+
+<script type="text/javascript">
+
+    $(window).bind('load', function () {
+       
+        $('#UserName').keyup(function (e) {
+            if (e.keyCode == 13) {
+                ValidateLogin();
+            }
+        });
+
+        $('#Password').keyup(function (e) {
+            if (e.keyCode == 13) {
+                ValidateLogin();
+            }
+        });
+    });
+
+</script>
+<script type='text/javascript'>
+
+    (function () {
+        if (window.localStorage) {
+            if (!localStorage.getItem('firstLoad')) {
+                localStorage['firstLoad'] = true;
+                window.location.reload();
+            }
+            else
+                localStorage.removeItem('firstLoad');
+        }
+    })();
+
+</script>
+
+
+<div class="col-md-12 col-xs-12">
+    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px; top: 0px; width: 100%; height: 100%; background-color: #050506; z-index: 30001; opacity: .8; filter: alpha(opacity=70); display: none">
+        <p style="position: absolute; top: 40%; left: 45%; color: White;">
+            
+            <img src="~/Image/wait_.gif" />
+        </p>
+    </div>
+</div>
+
+    <div class="pen-title">
+        @*<img id="ImageHome" class="homeLinkImage" src="/Images/logo_gbs.png" alt="Logo" />*@
+        @*<h1>
+            Login-Register Form Materialized
+        </h1>*@
+            @*<a href="http://codecanyon.net/item/login-registration-form-in-mvc-materialize-design/15716019?ref=karanpatel7193" class="download pull-right" target="_blank">Download</a>*@
+            @*</h1><span>by <a href='index.html#'>Karan Patel</a></span>*@
+    </div>
+    <div id="meassage" class="col-md-12">
+    </div>
+    <div class="message" id="message">
+    </div>
+
+    <div class="container">
+        <div class="card"></div>
+        <div class="card">
+            <img id="ImageHome" class="homeLinkImage" style="margin-left: 12%;" src="/Images/logo_gbs.png" alt="Logo" />
+            <h1 class="title">@Resources.Login</h1>
+            <label id="lblpasswordlinkmsg" style="color:red;margin-left:13%;">@validationMsg</label>
+            <form autocomplete="off" method="post" role="form">
+                <input type="hidden" />              
+                <div class="input-container">
+                    <input data-val="true" data-val-required="Please enter your username." id="UserName" name="UserName" type="text" value="" />
+                    <label for="Username">@Resources.Typeusername</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="error-container">
+                    <span class="field-validation-valid message_error box" data-valmsg-for="UserName" data-valmsg-replace="true"></span>
+                </div>
+                <div class="input-container">
+                    <input data-val="true" data-val-required="Please enter your password." id="Password" name="Password" type="password" value="" />
+                    <label for="Password">@Resources.TypePassword</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="error-container">
+                    <span class="field-validation-valid message_error" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                </div>
+                <div class="input-container">
+                    <select class="select-box" name="Language" id="Language" onchange="changelanguage()">
+                        @foreach (var Lang in ViewBag.AllCulture)
+                        {
+                            <option value="@Lang.Code,@Lang.SystemCode">@Lang.Description</option>
+                        }
+
+                    </select>
+                    <div class="bar"></div>
+                </div>
+                
+                <div class="button-container">
+                    <button type="submit"><span>@Resources.Login</span></button>
+                </div>
+                <div class="footer"><a onclick="dispaly();">@Resources.ForgottenPasswordOrLockedAccount</a></div>
+                <div id="forgetdiv" style="display:none">
+                    <div class="input-container">
+                        <input type="text" class="k-textbox " id="txtusermail" placeholder="@Resources.YourEmail" />
+                        <div class="bar"></div>
+
+                    </div>
+                    <div class="button-container">
+                        <button type="button" id="btnfilter" onclick="btnSend_Click()"><span>@Resources.Send</span></button>
+                    </div>
+                    <label id="lblfailure" style="color:red;display:none;margin-left: 18%;">@Resources.NoRegisteredUserWithThisEmail  </label>
+                </div>
+
+            </form>
+        </div>
+
+        <script src="/Scripts/jquery-1.10.2.js"></script>
+        <script src="/Scripts/jquery.validate.js"></script>
+        <script src="/Scripts/jquery.validate.unobtrusive.js"></script>
+
+
+        <div class="card alt">
+            <div class="toggle" onclick="goto_propertyAdd();"></div>
+            @*<h1 class="title">
+                Register
+                <div class="close"></div>
+            </h1>
+            <div class="button-container">
+                <button type="button" onclick="goto_propertyAdd();"><span>Next</span></button>
+            </div>
+            <form autocomplete="off" method="post" role="form">
+                <div class="input-container">
+                    <input data-val="true" data-val-regex="Please enter correct email address." data-val-regex-pattern="^([a-zA-Z0-9_\.\-])+\(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$" data-val-required="Please enter your email id." id="txtEmailId" name="EmailId" type="text" value="" />
+                    <label for="EmailId">Email</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="error-container">
+                    <span class="field-validation-valid message_error" data-valmsg-for="EmailId" data-valmsg-replace="true"></span>
+                </div>
+                <div class="input-container">
+                    <input data-val="true" data-val-required="Please enter your username." id="txtUserName" name="UserName" type="text" value="" />
+                    <label for="Username">Username</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="error-container">
+                    <span class="field-validation-valid message_error" data-valmsg-for="UserName" data-valmsg-replace="true"></span>
+                </div>
+                <div class="input-container">
+                    <input data-val="true" data-val-length="Password should contain 8 characters." data-val-length-max="255" data-val-length-min="8" data-val-required="Please enter your password." id="Password" name="Password" type="password" value="" />
+                    <label for="Password">Password</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="error-container">
+                    <span class="field-validation-valid message_error" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                </div>
+                <div class="button-container">
+                    <button><span>Next</span></button>
+                </div>
+            </form>*@
+        </div>
+
+        <script type="text/jscript">
+            //check availability of username
+            $('#txtUserName').blur(function () {
+                var url = '/Registration/CheckUserName';
+                var name = $('#txtUserName').val();
+                if (name != "") {
+                    $.get(url, { input: name }, function (data) {
+                        if (data == "Available") {
+                            $("#message").html("<div class=\"message_success\">Username available.</div>");
+                        }
+                        else {
+                            $("#message").html("<div class=\"message_error\">Sorry! Username not available.</div>");
+                        }
+                    });
+                }
+            })
+            //Check availablity of email address
+            $('#txtEmailId').blur(function () {
+                var url = '/Registration/CheckEmail';
+                var name = $('#txtEmailId').val();
+                if (name != "") {
+                    $.get(url, { input: name }, function (data) {
+                        if (data == "Not Available") {
+                            $("#message").html("<div class=\"message_error\">Sorry! This email address already registered.</div>");
+                        }
+                        else {
+                            $("#message").html("");
+                        }
+                    });
+                }
+            })
+            function goto_propertyAdd() {
+                 window.open("https://www.gbshotels.com/Home/AddProperty_en","_self");
+               
+            }
+            function password() {
+                var a = 0;
+
+                var strongRegex1 = new RegExp("^(?=.{8,}).*$", "g");
+                var strongRegex3 = new RegExp("^(?=.*[a-z]).*$", "g");
+
+                var pwd = document.getElementById("txtPassword");
+
+                if (false == strongRegex1.test(pwd.value)) {
+
+                    document.getElementById("lblpasswordformate").style.display = "";
+
+                }
+                else {
+
+                    document.getElementById("lblpasswordformate").style.display = "none";
+
+                    a = a + 1;
+                }
+                if (false == strongRegex3.test(pwd.value)) {
+                    document.getElementById("lblpasswordformate").style.display = "";
+                }
+                else {
+
+                    document.getElementById("lblpasswordformate").style.display = "none";
+                    a = a + 1;
+                }
+            }
+
+            function confirmpassword() {
+                var Password = document.getElementById('txtPassword').value;
+                var ConfirmPassword = document.getElementById('ConfirmPassword').value;
+                if (Password != ConfirmPassword) {
+                    document.getElementById("lblconfirmpassword").style.display = "";
+                }
+                else {
+                    document.getElementById("lblconfirmpassword").style.display = "none";
+                }
+            }
+            function resetpasswordfun() {
+
+                var UserName = document.getElementById('txtUserName').value;
+                var Password = document.getElementById('txtPassword').value;
+                var ConfirmPassword = document.getElementById('ConfirmPassword').value;
+                var Language = document.getElementById('Language').value;
+
+                var json = { Password: Password, Language: Language, UserName: UserName }
+                $.ajax({
+                    type: "GET",
+                    url: "/Account/updatepassword",
+                    data: json,
+                    datatype: "json",
+                    success: function (status) {
+
+
+                    }
+                })
+            }
+            function changelanguage() {
+
+                var language = document.getElementById('Language').value;
+
+
+                var json = { UserLanguage: language }
+                $.ajax({
+                    type: "GET",
+                    url: "/Account/ChangeCulture",
+                    data: json,
+                    datatype: "json",
+                    success: function (data) {
+
+                        location.reload();
+
+                        document.getElementById('Language').value = language;
+                    }
+                })
+
+
+            }
+            var selectedLanguage = '@ViewBag.SelectedLanguage';
+            $(document).ready(function () {
+
+                SelectedLanguage();
+            })
+
+            function SelectedLanguage() {
+
+                if (selectedLanguage != null && selectedLanguage != "," && selectedLanguage != "") {
+
+                    document.getElementById('Language').value = selectedLanguage;
+                }
+
+
+
+            }
+
+            function hideMsg() {
+                $("#meassage").delay(5000).hide();
+            }
+
+            function dispaly() {
+                $("#forgetdiv").toggle();
+
+            }
+            function btnSend_Click() {
+                var usermail = document.getElementById('txtusermail').value;
+                if (usermail == "") {
+                    document.getElementById('txtusermail').style.borderColor = 'red';
+                }
+                else {
+                    document.getElementById('txtusermail').style.borderColor = '';
+                }
+                document.getElementById('lblfailure').style.display = 'none';
+                if (usermail != "") {
+                    $("#divLoading").show();
+                    var json = { username: usermail }
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/Account/GetUserinfo",
+                        data: json,
+                        datatype: "json",
+                        success: function (data) {
+                            $("#divLoading").hide();
+
+                            if (data == "Success") {
+
+                                $("#meassage").html("<div class=\"alert alert-success alert-dismissable\"><button aria-hidden=\"true\" data-dismiss=\"alert\" class=\"close\" type=\"button\">×</button>Related e-mail has been sent to the email address you supplied. Please check your e-mail and click the link in the e-mail.</div>");
+                                setTimeout(hideMsg, 5000);
+                                $('#forgetdiv').hide();
+                                
+                            }
+                            else if (data == "false") {
+                                document.getElementById('lblfailure').style.display = '';
+                            }
+                        }
+                    })
+                }
+            }
+           
+
+        </script>
+
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', 'UA-63530100-1', 'auto');
+            ga('send', 'pageview');
+
+        </script>
+
+    </div>
+
+
+    <div class="wrapper">
+        <ul class="bg-bubbles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
+

@@ -1,0 +1,107 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_Firm")</h1>
+<script>
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_FirmExt>()
+                .Name("TB_Firm_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+            //.Resizable(resizable => resizable.Content(true).Toolbar(true))
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+
+
+        })
+                        .Create(update => update.Action("_Create", "TB_Firm"))
+                        .Read(read => read.Action("_Read", "TB_Firm", new { TableID = (int)ViewBag.TableID }))
+                        .Update(update => update.Action("_Update", "TB_Firm"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "TB_Firm"))
+
+        )
+
+                            .Columns(columns =>
+                            {
+                                columns.Command(
+            command =>
+            {
+                command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                command.Destroy().Text(Resources.Delete);
+            }).Locked(true).Width(180);
+                                
+                                columns.Bound(p => p.ID).Title(MessageColumnCaptions.TB_FirmCaption("ID")).Width(80);
+                                columns.Bound(p => p.Firm).Title(MessageColumnCaptions.TB_FirmCaption("Name")).Width(150);
+                                columns.Bound(p => p.Country).EditorTemplateName("ddlCountries").Title(MessageColumnCaptions.TB_FirmCaption("CountryID")).Width(120);
+                                columns.Bound(p => p.City).EditorTemplateName("Cities").Title(MessageColumnCaptions.TB_FirmCaption("CityID")).Width(120);
+                                columns.Bound(p => p.Address).Title(MessageColumnCaptions.TB_FirmCaption("Address")).Width(200);
+                                columns.Bound(p => p.Phone).Title(MessageColumnCaptions.TB_FirmCaption("Phone")).Width(150);
+                                columns.Bound(p => p.Fax).Title(MessageColumnCaptions.TB_FirmCaption("Fax")).Width(150);
+                                columns.Bound(p => p.Postal_code).Title(MessageColumnCaptions.TB_FirmCaption("PostCode")).Width(100);
+                                columns.Bound(p => p.Email).Title(MessageColumnCaptions.TB_FirmCaption("Email")).Width(160);
+                                columns.Bound(p => p.Tax_Office).Title(MessageColumnCaptions.TB_FirmCaption("TaxDepartment")).Width(120);
+                                columns.Bound(p => p.Tax_ID).Title(MessageColumnCaptions.TB_FirmCaption("TaxNo")).Width(100);
+                                columns.Bound(p => p.Executive_Title).Title(MessageColumnCaptions.TB_FirmCaption("ContactPersonSalutationTypeID")).EditorTemplateName("ddlTypeSalutation").Width(100);
+                                columns.Bound(p => p.Executive_Name).Title(MessageColumnCaptions.TB_FirmCaption("ContactPersonName")).Width(120);
+                                columns.Bound(p => p.Executive_Surname).Title(MessageColumnCaptions.TB_FirmCaption("ContactPersonSurname")).Width(120);
+                                columns.Bound(p => p.Executive_Position).Title(MessageColumnCaptions.TB_FirmCaption("ContactPersonPosition")).Width(120);
+                                columns.Bound(p => p.Executive_Phone).Title(MessageColumnCaptions.TB_FirmCaption("ContactPersonPhone")).Width(120);
+                                columns.Bound(p => p.Executive_Email).Title(MessageColumnCaptions.TB_FirmCaption("ContactPersonEmail")).Width(120);
+                                columns.Bound(p => p.Status).Title(MessageColumnCaptions.TB_FirmCaption("StatusID")).EditorTemplateName("ddlTypeStatus").Width(100);
+                                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_FirmCaption("Active")).Width(100)
+                                     .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                                     .Width(100);
+                                columns.Bound(p => p.IpAddress).Title(MessageColumnCaptions.TB_FirmCaption("IPAddress")).Width(120);                              
+
+
+                            })
+
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+              //  .Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_Firm.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_Firm_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

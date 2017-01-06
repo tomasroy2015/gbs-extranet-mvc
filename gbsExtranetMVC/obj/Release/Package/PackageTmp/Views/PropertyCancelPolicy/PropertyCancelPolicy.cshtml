@@ -1,0 +1,237 @@
+﻿@using Resources
+@model gbsExtranetMVC.Models.Repositories.PropertyCancelPolicyExt
+@{
+    ViewBag.Title = "PropertyCancelPolicy";
+}
+
+<h2 style="color: black; text-align: center;">@*Property Cancel Policy*@ @Resources.CancelPolicy</h2>
+
+<style>
+    #txtRefundableDayCount{
+        width:88%;
+    }
+</style>
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("PropertyCancelPolicy", "PropertyCancelPolicy", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.CancelTypeID, new { @id = "CancelTypeID" })
+    <div class="jumbotron" style="text-align: left; margin-bottom: 50px; border-radius: 8px; padding: 10px; font-size: 15px; font-weight: 100; line-height: 1.142857; padding-bottom: 58px; ">
+        <div class="col-md-12">
+
+            <div class="col-md-4 col-sm-4" style="padding-left:0px;">
+                <div class="col-md-1 col-sm-1">
+                    <input type="radio" name="Refund" id="rdononrefundable" onchange="nonrefundable()" value="1"  />
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6" style="padding:2px;">
+                    <label style="font-weight:bold;color:black">@Resources.NonRefundable</label>
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4" style="padding-left:0px;">
+                <div class="col-md-1 col-sm-1">
+                    <input type="radio" name="Refund" id="rdorefundable" onchange="refundable()" />
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:2px;">
+                    <label style="font-weight:bold;color:black">@Resources.Refundable</label>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div id="divrefunadable1" style="display:none">
+            <div class="col-md-12">
+                <div class="col-md-9 col-sm-9 col-xs-9" style="margin-top: 5px; color: black;">
+                    <label>@Resources.HotelRefundableDayCount</label>
+                </div>
+                <div class="col-md-3 col-sm-3" id="valuerefund">
+                    @Html.TextBoxFor(m => m.RefundableDayCount, new { @class = "k-textbox", @id = "txtRefundableDayCount", @name = "txtName" })
+                    
+                    @Html.Label("*", new { @class = "requiredfield" })
+                    <br />
+                    <span id="lblrequired" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+
+                </div>
+               
+        
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <div class="col-md-12">
+                <div class="col-md-9 col-sm-9 col-xs-9" style="margin-top: 5px; color: black;">
+                    <label>@Resources.ReservationPenaltyRate</label>
+                </div>
+
+                <div class="col-md-3 col-sm-3" id="vauerfunddrp">
+                    @(Html.Kendo().DropDownListFor(m => m.PenaltyRateTypeID)
+                                .Name("Name")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.PenaltyRate)
+                                .HtmlAttributes(new { @style = "width:88%;", @id = "drppenaltyrate" })
+                    )
+                    @Html.Label("*", new { @class = "requiredfield" })
+                    
+                    <span id="lblrequired1" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />Please select from list!</span>
+                </div>
+               
+                <div class="col-md-3 col-sm-3">
+
+                </div>
+            </div>
+        </div>
+
+
+        </div>
+            }
+
+
+        </div>
+  
+        
+        <div style="text-align: center;">
+            <button id="btnfilter" class="k-button btn btn-info" onclick="btnSave_Click()">@Resources.Save</button>
+        </div>
+        <div align="center" style="padding-top:5px;">
+            <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+        </div>
+        <br />
+        <script>
+
+            $(document).ready(function () {
+                
+                var CancelTypeID = document.getElementById('CancelTypeID').value;
+               
+                if (CancelTypeID == 2) {
+                 
+                    document.getElementById('rdorefundable').checked = true;
+                    document.getElementById('divrefunadable1').style.display = '';
+                }
+                else if(CancelTypeID==1||CancelTypeID=="") {
+
+                    document.getElementById("rdononrefundable").checked = true;
+                    document.getElementById('divrefunadable1').style.display = 'none';
+                }
+              
+             
+
+            })
+
+            function btnSave_Click() {
+              
+                var HotelID = '';
+                var CanceltypeID = document.getElementById("rdononrefundable").checked;
+                if (CanceltypeID == true) {
+                    CanceltypeID = 1;
+                }
+                else {
+                    CanceltypeID = 2;
+                }
+              
+                if (CanceltypeID == 2)
+                {
+                  
+                    var PenaltyRateType = document.getElementById("drppenaltyrate").value;
+
+                    var RefundableDayCount = document.getElementById("txtRefundableDayCount").value;
+                   
+                    if (RefundableDayCount == "") {
+                        document.getElementById("lblrequired").style.display = "";
+                    }
+                    else {
+                        document.getElementById("lblrequired").style.display = "none";
+                    }
+                    if (PenaltyRateType == "") {
+                        document.getElementById("lblrequired1").style.display = "";
+                    }
+                    else {
+                        document.getElementById("lblrequired1").style.display = "none";
+                    }
+                    if (PenaltyRateType != "" && RefundableDayCount != "") {
+                        var json = { HotelID: HotelID, CanceltypeID: CanceltypeID, PenaltyRateType: PenaltyRateType, RefundableDayCount: RefundableDayCount }
+                        if (RefundableDayCount != "") {
+                            $.ajax({
+                                type: "GET",
+                                url: "/PropertyCancelPolicy/UpdatePropertyCancelPolicyInfo",
+                                data: json,
+                                datatype: "json",
+                                success: function (data) {
+
+                                    if (data != 0) {
+                                        document.getElementById("lblSuccess").style.display = "";
+                                        setTimeout("Hidelabel()", 5000);
+                                    }
+                                }
+                            })
+                        }
+                    }
+                }
+                else {
+                   
+                    var json = { HotelID: HotelID, CanceltypeID: CanceltypeID, PenaltyRateType: PenaltyRateType, RefundableDayCount: RefundableDayCount }
+                    if (RefundableDayCount != "") {
+                        $.ajax({
+                            type: "GET",
+                            url: "/PropertyCancelPolicy/UpdatePropertyCancelPolicyInfo",
+                            data: json,
+                            datatype: "json",
+                            success: function (data) {
+
+                                if (data != 0) {
+                                    document.getElementById("lblSuccess").style.display = "";
+                                    setTimeout("Hidelabel()", 5000);
+                                }
+                            }
+                        })
+                    }
+                }
+               
+            }
+            function Hidelabel() {
+                document.getElementById("lblSuccess").style.display = "none";
+            }
+            function refundable()
+            {
+                var Refundabale = document.getElementById('rdorefundable').checked;
+               
+                if (Refundabale == true) {
+                    document.getElementById('divrefunadable1').style.display = '';
+                    //document.getElementById('valuerefund').style.display = 'none';
+                    //document.getElementById('vauerfunddrp').style.display = 'none';
+                    
+                    
+                }
+                else {
+
+                    document.getElementById('txtdivrefunadable').style.display = 'none';
+                }
+
+            }
+
+            function nonrefundable() {
+             
+                document.getElementById('divrefunadable1').style.display = 'none';
+               // document.getElementById('divrefunadable').style.display = 'none';
+            }
+        </script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

@@ -1,0 +1,294 @@
+﻿@model gbsExtranetMVC.Models.Repositories.FirmExt
+@using Resources
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+</style>
+<div id="content" class="span10">
+
+    @using (Html.BeginForm("Edit", "Firm", FormMethod.Post))
+    {
+        @*@Html.AntiForgeryToken()*@
+
+        @*<div class="row-fluid">*@
+        <h1>Edit Company: @Model.Name</h1>
+
+        @Html.HiddenFor(u => u.FirmID)
+   
+        <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.FirmID, "Company code")
+                            </th>
+                            <td>
+                                @Html.DisplayFor(m => m.FirmID)
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.Name, Resources.Name)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.Name, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Name)
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.Country, Resources.Countries)
+                            </th>
+                            <td>
+                                @(Html.Kendo().DropDownListFor(m => m.CountryID)
+                                .Name("Country")
+                                .OptionLabel("Select Country...")
+                                .BindTo((SelectList)ViewBag.Countries)
+                                .HtmlAttributes(new { @style = "width: 200px;" })
+                                )
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Name)
+                                </div>
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.CityName, Resources.City)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.CityName, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.CityName)
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.Address, Resources.Address)
+                            </th>
+                            <td>
+                                @Html.Kendo().MaskedTextBoxFor(m => m.Address).HtmlAttributes(new { style = "width: 200px;" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Address)
+                                </div>
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.Phone, Resources.Phone)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.Phone, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Phone)
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.Fax, Resources.Fax)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.Fax, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Fax)
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.Postcode, Resources.Postcode)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.Postcode, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Postcode)
+                                </div>
+                            </td>
+                            <th>
+                                @*@Html.LabelFor(m => m.Email, Resources.Email)*@
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.ExecutiveEmail, new { @class = "k-textbox" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.TaxOffice, Resources.TaxDepartment)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.TaxOffice, new { @class = "k-textbox" })
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.TaxID, Resources.TaxNo)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.TaxID, new { @class = "k-textbox" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.ExecutiveTitle, Resources.Salutation)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.ExecutiveTitle, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.ExecutiveTitle)
+                                </div>
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.ExecutiveName, Resources.ContactPersonName)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.ExecutiveName, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.ExecutiveName)
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.ExecutiveSurname, Resources.ContactPersonSurname)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.ExecutiveSurname, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.ExecutiveSurname)
+                                </div>
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.ExecutivePhone, Resources.Phone)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.Phone, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Phone)
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.ExecutiveSurname, Resources.ContactPersonSurname)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.ExecutiveSurname, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.ExecutiveSurname)
+                                </div>
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.ExecutiveEmail, Resources.ContactPersonEmail)
+                            </th>
+                            <td>
+                                @Html.TextBoxFor(m => m.ExecutiveEmail, new { @class = "k-textbox" })
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.ExecutiveEmail)
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                @Html.LabelFor(m => m.ExecutiveTitle, Resources.ContactPersonSalutation)
+                            </th>
+                            <td>
+                                @*@(Html.Kendo().DropDownListFor(m => m.ExecutiveTitleID)
+                                    .Name("Title")
+                                    .OptionLabel("Select Title...")
+                                    .BindTo((SelectList)ViewBag.Title)
+                                    .HtmlAttributes(new { @style = "width: 200px;" })
+                                    )*@
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.ExecutiveTitle)
+                                </div>
+                            </td>
+                            <th>
+                                @Html.LabelFor(m => m.Status, Resources.Status)
+                            </th>
+                            <td>
+                                @(Html.Kendo().DropDownListFor(m => m.StatusID)
+                                .Name("Status")
+                                .OptionLabel("Select Status...")
+                                .BindTo((SelectList)ViewBag.Status)
+                                .HtmlAttributes(new { @style = "width: 200px;" })
+                                )
+                                @Html.Label("*", new { @class = "requiredfield" })
+                                <div>
+                                    @Html.ValidationMessageFor(m => m.Status)
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th> @Html.LabelFor(m => m.IsActive, Resources.Active)</th>
+                            <td>@Html.CheckBoxFor(m => m.IsActive, new { @class = "k-textbox" })</td>
+                            <th>@Html.LabelFor(m => m.IPAddress, Resources.IPAddress)</th>
+                            <td>@Html.TextBoxFor(m => m.IPAddress, new { @class = "k-textbox", @readonly = "readonly" })</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <div style="padding-top:5px;">
+        <input type="submit" value="Update" class="k-button" style="width:300px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+    </div>
+        @*</div>*@
+    }
+</div>
+
+<script type="text/javascript">
+
+    $(window).bind("load", function () {
+
+        @*var Validation_RowVersion_Str = $("#Validation_RowVersion_Str");
+        if (Validation_RowVersion_Str != "") {
+            Validation_RowVersion_Str.html("Client Information Already Modified , Please  <a href='/Users/Edit/@Model.UserID'>Click here</a> to Refresh and Try Again");
+        }*@
+    });
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

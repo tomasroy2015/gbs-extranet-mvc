@@ -1,0 +1,262 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_ReservationReview")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3" style="padding:0px">
+                <div class="col-md-5 col-sm-5">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewCaption("ReservationID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtReservationID" type="text" class="form-control" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationHistoryCaption("ReservationID")' />
+                </div>                
+            </div>
+
+            <div class="col-md-3 col-sm-3" style="padding:0px">
+                <div class="col-md-5 col-sm-5">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewCaption("ReviewStatusID")</label>
+                </div>
+                <div class="col-md-7 col-md-7">
+                    <input id="drpStatus" style="width: 100%;" />
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-3" style="padding:0px">
+                <div class="col-md-5 col-sm-5">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewCaption("TravellerTypeID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="drpTravellerType" style="width: 100%;" />
+                </div>
+            </div>
+
+            <div class="col-md-1  col-sm-1" style="padding:0px">
+                <div class="col-md-8 col-sm-8">
+                    <label> @MessageColumnCaptions.TB_ReservationReviewCaption("Active")</label>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <input id="ChkFilterActive" name="ChkFilterActive" type="checkbox" />
+                </div>
+            </div>
+            <div class="col-md-2  col-sm-2">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+          
+        </div>
+            
+    </div>
+</div>
+
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_ReservationReviewExt>()
+                    .Name("TB_ReservationReview_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+        //.Create(update => update.Action("_Create", "Message"))
+        .Read(read => read.Action("_Read", "TB_ReservationReview", new { TableID = (int)ViewBag.TableID }))
+        //.Update(update => update.Action("_Update", "Message"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "Message"))
+        )
+
+        .Columns(columns =>
+        {
+         
+            columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true);
+            columns.Bound(p => p.ReservationID).Title(MessageColumnCaptions.TB_ReservationReviewCaption("ReservationID")).Width(200);
+            columns.Bound(p => p.ReviewStatus).Title(MessageColumnCaptions.TB_ReservationReviewCaption("ReviewStatusID")).Width(200);
+            columns.Bound(p => p.TravellerType).Title(MessageColumnCaptions.TB_ReservationReviewCaption("TravellerTypeID")).Width(200);
+            columns.Bound(p => p.Review).Title(MessageColumnCaptions.TB_ReservationReviewCaption("Review")).Width(200);
+            columns.Bound(p => p.AveragePoint).Title(MessageColumnCaptions.TB_ReservationReviewCaption("AveragePoint")).Width(200);
+            columns.Bound(p => p.Anonymous).Title(MessageColumnCaptions.TB_ReservationReviewCaption("Anonymous")).Width(200);
+            columns.Bound(p => p.Active).ClientTemplate("<div style='text-align:center;'> #if(Active==true){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+            columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.TB_ReservationReviewCaption("IPAddress")).Width(200);           
+        })
+               .ToolBar(tool =>
+                                    {
+                                        tool.Excel().Text(Resources.ExporttoExcel);
+                                    })
+        
+                    .Scrollable(scrollable => scrollable.Height(430))        
+                    .Pageable(p => p.Refresh(true))
+                    .Sortable()
+                    .Navigatable()
+                    .Groupable()
+                    .Scrollable(scr => scr.Height(370))
+                    .Filterable()
+                    .Excel(excel => excel
+                    .FileName("TB_ReservationReview.xlsx")
+                    .Filterable(true))
+)
+
+<script>
+
+    var AllSelectText = '@Resources.ListAllExpression'
+   
+    $(document).ready(function () {
+      //  alert('hi');
+        var json = {}    
+
+     
+       
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetTraveller",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpTravellerType").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "TravellerName",
+                    dataValueField: "TravellerID",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+            }
+        })
+
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetTypeStatus",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpStatus").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "StatusName",
+                    dataValueField: "StatusID",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+            }
+        })
+      
+
+
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+
+        $ReservationID = $("#txtReservationID").val();
+        // alert($ReservationID)
+
+        $StatusText = $("#drpStatus").data("kendoDropDownList").text();
+        $StatusValue = $("#drpStatus").val();
+        //   alert($StatusValue)
+        $TravellerTypeText = $("#drpTravellerType").data("kendoDropDownList").text();
+        $TravellerTypeValue = $("#drpTravellerType").val();
+        //  alert($TravellerTypeValue)
+
+        $Active = "false";
+        if ($('#ChkFilterActive').prop('checked')) {
+            $Active = "true";
+        }
+
+
+
+        if ($ReservationID) {
+            $filter.push({ field: "ReservationID", operator: "contains", value: String($ReservationID) });
+        }
+
+        if ($StatusValue) {
+            $filter.push({ field: "ReviewStatus", operator: "contains", value: $StatusText });
+        }
+
+        if ($TravellerTypeValue) {
+            $filter.push({ field: "TravellerType", operator: "contains", value: $TravellerTypeText });
+        }
+        if ($Active == "true") {
+            //alert($Active)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        // alert($filter)
+
+        var grid = $("#TB_ReservationReview_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    //$("#btnfilter").click(function () {
+
+    //    $filter = new Array();
+
+    //    $ReservationID = $("#txtReservationID").val();
+    //   // alert($ReservationID)
+
+    //    $StatusText = $("#drpStatus").data("kendoDropDownList").text();
+    //    $StatusValue = $("#drpStatus").val();
+    // //   alert($StatusValue)
+    //    $TravellerTypeText = $("#drpTravellerType").data("kendoDropDownList").text();
+    //    $TravellerTypeValue = $("#drpTravellerType").val();
+    //  //  alert($TravellerTypeValue)
+       
+    //    $Active = "false";
+    //    if ($('#ChkFilterActive').prop('checked')) {
+    //        $Active = "true";
+    //    }     
+      
+       
+        
+    //    if ($ReservationID) {
+    //        $filter.push({ field: "ReservationID", operator: "contains", value: String($ReservationID) });
+    //    }       
+
+    //    if ($StatusValue) {
+    //        $filter.push({ field: "ReviewStatus", operator: "contains", value: $StatusText });
+    //    }
+
+    //    if ($TravellerTypeValue) {
+    //        $filter.push({ field: "TravellerType", operator: "contains", value: $TravellerTypeText });
+    //    }
+    //    if ($Active == "true") {
+    //        //alert($Commom)
+    //        $filter.push({ field: "Active", operator: "eq", value: $Active });
+    //    }
+    //   // alert($filter)
+
+    //    var grid = $("#TB_ReservationReview_Grid").data("kendoGrid");
+    //    grid.dataSource.filter($filter);
+
+    //});
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_ReservationReview_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtReservationID").val('');
+        document.getElementById('ChkFilterActive').checked = false
+
+
+        var dropdownlistPart = $("#drpStatus").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+
+        var dropdownlistPart1 = $("#drpTravellerType").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+    });
+
+
+</script>

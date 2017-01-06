@@ -1,0 +1,15 @@
+﻿
+@(Html.Kendo().DropDownList()
+                .Name("SecurityGroupId")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                        .DataTextField("Role")
+                    .DataValueField("SecurityGroupId")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetSecurityGroup", "DropDownLists");
+        });
+    })
+)

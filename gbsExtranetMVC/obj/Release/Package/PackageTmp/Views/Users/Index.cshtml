@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h2>Index</h2>
+
+<h1>Users</h1>
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.UsersExt>()
+        .Name("Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(50)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .Model(model =>
+        {
+            model.Id(p => p.UserID);
+            model.Field(p => p.UserID).Editable(false);
+
+        })
+                .Read(read => read.Action("_Read", "Users"))
+            //.Update(update => update.Action("_Update", "Users"))
+            //.Create(create => create.Action("_Create", "Users"))
+                .Destroy(destroy => destroy.Action("_Destroy", "Users"))
+        .ServerOperation(true)
+        )
+
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.Fullname).ClientTemplate("<a title='Click here to Edit User Details' style='text-decoration:underline;' href='/Users/Edit/#=UserID#'>#=Fullname#</a>");
+            columns.Bound(p => p.Username);
+            //columns.Bound(p => p.Password);
+            columns.Bound(p => p.UserRole);
+            columns.Bound(p => p.Locked).ClientTemplate("#if(Locked){#Yes#}else{#No#}#");
+
+            columns.Bound(p => p.RowVersion_Str).Hidden(true);
+            columns.Command(command =>
+            {
+                // command.Edit().UpdateText("Insert/Update");
+                command.Destroy();
+
+            }).Width(200);
+        })
+        .ToolBar(tool =>
+        {
+            tool.Custom().Name("cmdAddNewUser").Text("Add New User").Action("Create", "Users");
+            tool.Excel();
+        })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+
+                .Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Users.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+            function AddUser()
+            {
+                location.href = "/Users/Create";
+            }
+
+
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

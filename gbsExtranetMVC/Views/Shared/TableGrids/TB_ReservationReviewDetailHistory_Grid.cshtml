@@ -1,0 +1,187 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_ReservationReviewDetailHistory")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-6 col-sm-6">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReservationReviewDetailID")</label>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <input id="txtReservationReviewDetailID" type="text" class="form-control" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReservationReviewDetailID")' />
+                </div>
+            </div>
+
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-5 col-sm-5">
+                    <label>@MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReservationReviewID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <input id="txtReservationReviewID" type="text" class="form-control" style="width:100%" placeholder='@MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReservationReviewID")' />
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12">
+            <div class="col-md-4  col-sm-4">
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label>@Resources.Date (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-4">
+
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label>@Resources.Date (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 5px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+            </div>
+        </div>
+
+
+        </div>
+
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_ReservationReviewDetailHistoryExt>()
+                            .Name("TB_ReservationReviewDetailHistory_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+            //.Create(update => update.Action("_Create", "Message"))
+               .Read(read => read.Action("_Read", "TB_ReservationReviewDetailHistory", new { TableID = (int)ViewBag.TableID }))
+                //.Update(update => update.Action("_Update", "Message"))
+                //.Destroy(destroy => destroy.Action("_Destroy", "Message"))
+        )
+
+        .Columns(columns =>
+        {
+
+            columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true);
+            columns.Bound(p => p.ReservationReviewDetailID).Title(MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReservationReviewDetailID")).Width(200);
+            columns.Bound(p => p.ReservationReviewID).Title(MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReservationReviewID")).Width(200);
+            columns.Bound(p => p.ReviewType).Title(MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReviewTypeID")).Width(200);
+            columns.Bound(p => p.ReviewScale).Title(MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("ReviewScaleTypeID")).Width(200);
+            columns.Bound(p => p.LogDate).Title(MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDate,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+            columns.Bound(p => p.LogUser).Title(MessageColumnCaptions.TB_ReservationReviewDetailHistoryCaption("LogUserID")).Width(200);
+        })
+             .ToolBar(tool =>
+                                            {
+                                                tool.Excel().Text(Resources.ExporttoExcel);
+                                            })
+
+                            .Scrollable(scrollable => scrollable.Height(430))
+                            .Pageable(p => p.Refresh(true))
+                            .Sortable()
+                            .Navigatable()
+                            .Groupable()
+                            .Scrollable(scr => scr.Height(370))
+                            .Filterable()
+                            .Excel(excel => excel
+                                .FileName("TB_ReservationReviewDetailHistory.xlsx")
+                            .Filterable(true))
+        )
+
+        <script>
+
+
+
+            $(document).ready(function () {
+                //  alert('hi');
+                var json = {}
+
+                $("#datetimepickerStart").kendoDatePicker({
+                    animation: {
+                        close: {
+                            effects: "zoom:out",
+                            duration: 300
+                        }
+                    }
+                });
+                $("#datetimepickerEnd").kendoDatePicker({
+                    animation: {
+                        close: {
+                            effects: "zoom:out",
+                            duration: 300
+                        }
+                    }
+                });
+            });
+
+            function clearFiter() {
+                $("form.k-filter-menu button[type='reset']").trigger("click");
+            }
+
+            $("#btnfilter").click(function () {
+
+                $filter = new Array();
+
+                $ReservationReviewDetailID = $("#txtReservationReviewDetailID").val();
+               // alert($ReservationReviewDetailID)
+                $ReservationReviewID = $("#txtReservationReviewID").val();
+              //  alert($ReservationReviewID)
+
+                $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+              //  alert($StartDate)
+                $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+               // alert($EndDate)
+
+                if ($ReservationReviewDetailID) {
+                    $filter.push({ field: "ReservationReviewDetailID", operator: "contains", value: String($ReservationReviewDetailID) });
+                }
+
+                if ($ReservationReviewID) {
+                    $filter.push({ field: "ReservationReviewID", operator: "contains", value: String($ReservationReviewID) });
+                }
+
+                if ($StartDate) {
+                    $filter.push({ field: "LogDate", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+                }
+                if ($EndDate) {
+                    $filter.push({ field: "LogDate", operator: "IsLessThanOrEqualTo", value: $EndDate });
+                }
+                // alert($filter)
+               
+                // alert($filter)
+                var grid = $("#TB_ReservationReviewDetailHistory_Grid").data("kendoGrid");
+                grid.dataSource.filter($filter);
+
+            });
+
+            $("#btnClearFilter").click(function (e) {
+                e.preventDefault();
+                var datasource = $("#TB_ReservationReviewDetailHistory_Grid").data("kendoGrid").dataSource;
+                //Clear Custom filters:
+                datasource.filter([]);
+                //Clear Fields
+              
+                $("#txtReservationReviewDetailID").val('');
+                $("#txtReservationReviewID").val('');
+                $("#datetimepickerStart").data("kendoDatePicker").value(null);
+                $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+            });
+
+
+        </script>

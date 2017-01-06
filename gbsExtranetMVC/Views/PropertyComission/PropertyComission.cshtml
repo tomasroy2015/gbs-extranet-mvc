@@ -1,0 +1,322 @@
+﻿@using PropertyComissionColumnCaption
+@using Resources
+@{
+    ViewBag.Title = "PropertyComission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h2 style="color: black; text-align: center;">@Resources.HotelComission</h2>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.PropertyComissionExt>()
+                .Name("PropertyComission_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+            //.Resizable(resizable => resizable.Content(true).Toolbar(true))
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            //model.Field(p => p.Date).Editable(false);
+
+
+        })
+                    .Create(update => update.Action("_Create", "PropertyComission"))
+                    .Read(read => read.Action("_Read", "PropertyComission"))
+                    .Update(update => update.Action("_Update", "PropertyComission"))
+                    .Destroy(destroy => destroy.Action("_Destroy", "PropertyComission"))
+
+        )
+
+                            .Columns(columns =>
+                            {
+                                columns.Bound(p => p.StartDate).Title(PropertyComissionColumnCaption.StartDate).Width(390).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy HH:mm:ss') #");
+                                columns.Bound(p => p.EndDate).Title(PropertyComissionColumnCaption.EndDate).Width(390).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy HH:mm:ss') #");
+                                columns.Bound(p => p.Comission).Title(PropertyComissionColumnCaption.Comission).Width(280);
+
+
+                                columns.Command(
+
+                                    command =>
+                                    {
+                                        //  command.Edit();
+                                        //  command.Destroy();
+
+                                    });
+
+
+
+                            })
+
+
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+        // .Scrollable(scrollable => scrollable.Height(430))
+        //  .Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+        //   .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                        .FileName("PropertyComission.xlsx")
+                .Filterable(true))
+
+)
+
+<br />
+<br />
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+   
+                <div class="col-md-2 col-sm-3 " style="padding: 8px;">
+                    <label>@PropertyComissionColumnCaption.StartDate</label>
+                </div>
+                <div class="col-md-10 col-sm-9">
+                    <input id="StartDate" onblur="CheckTodayDate()" style="width:180px;" />
+                    <span id="lblrequired" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                    <label class="requiredfield" for="">*</label>&nbsp;&nbsp;
+                    <label id="lblTodayComparisionWarning" style="color:red;font-size:medium;display:none;">@Resources.TodayComparisionWarning</label>
+                </div>
+
+            
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="col-md-2 col-sm-3 " style="padding: 8px;">
+                <label>@PropertyComissionColumnCaption.EndDate</label>
+            </div>
+                <div class="col-md-10 col-sm-9">
+                    <input id="EndDate" onblur="CheckDate()" style="width:180px;" />
+                    <span id="lblrequired1" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                    <label class="requiredfield" for="">*</label>
+                    <label id="lblDateComparisionWarning" style="color:red;font-size:medium;display:none;">@Resources.DateComparisionWarning</label>
+                </div>        
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="col-md-2 col-sm-3 " style="padding: 8px;">
+                <label>@PropertyComissionColumnCaption.Comission (%)</label>
+            </div>
+            <div class="col-md-10 col-sm-9">
+                <input id="Comission" style="width:180px;" />
+                <span id="lblrequiredCommision" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                <label class="requiredfield" for="">*</label>
+            </div>
+        </div>
+    </div>
+
+    <div align="center">
+        <a title='Click here to Save Commission Details' style='text-decoration:underline;'>
+            <input type="button" value="@Resources.Save" onclick="SaveComission()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        </a>
+        <br />
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.SaveSuccessFully</label>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $("#StartDate").kendoDatePicker({
+
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#EndDate").kendoDatePicker({
+
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+
+            }
+        });
+    });
+
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    $(document).ready(function () {
+
+        var SelectText = '@Resources.Select';
+        var SelectTextValue = decodeHtml(SelectText);
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetComission",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Comission").kendoDropDownList({
+                    filter: "contains",
+                    Name: "Comission",
+                    optionLabel: SelectTextValue,
+                    dataTextField: "Comission",
+                    dataValueField: "Comission",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+    var DateValidationStart = "Valid";
+    var DateValidationDiff = "Valid";
+    function CheckTodayDate() {
+
+        var StartDate = document.getElementById('StartDate').value
+
+        var jsonStart = { StartDate: StartDate }
+        if (StartDate != "") {
+            document.getElementById("lblrequired").style.display = "none";
+            // alert(StartDate)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckTodayDate",
+                data: jsonStart,
+                datatype: "json",
+                success: function (data) {
+                    //alert("TodayDate" + data)
+                    if (data >= 1) {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "";
+                        DateValidationStart = "Invalid"
+                    }
+                    else {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "none";
+                        DateValidationStart = "Valid"
+                    }
+                }
+            })
+        }
+    }
+    function CheckDate() {
+
+        var StartDate = document.getElementById('StartDate').value
+        var Enddate = document.getElementById('EndDate').value
+
+        var json = { StartDate: StartDate, Enddate: Enddate }
+        if (StartDate != "" && Enddate != "" ) {
+            document.getElementById("lblrequired").style.display = "none";
+            document.getElementById("lblrequired1").style.display = "none";
+            // alert("hi")
+            // alert(json)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckDateDiff",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+                    //  alert("TodayDateDiff" + data)
+                    if (data >= 1) {
+                        document.getElementById("lblDateComparisionWarning").style.display = "";
+                        DateValidationDiff = "Invalid"
+                    }
+                    else {
+                        document.getElementById("lblDateComparisionWarning").style.display = "none";
+                        DateValidationDiff = "Valid"
+                    }
+
+                }
+            })
+        }
+    }
+
+    function SaveComission()
+    {
+        var StartDate = document.getElementById('StartDate').value;
+        if (StartDate == "")
+        {
+            document.getElementById("lblrequired").style.display = "";
+            document.getElementById("lblTodayComparisionWarning").style.display = "none";
+        }
+        else {
+            document.getElementById("lblrequired1").style.display = "none";
+           // document.getElementById("lblTodayComparisionWarning").style.display = "none";
+        }
+
+       // alert(StartDate)
+        var EndDate = document.getElementById('EndDate').value;
+        if (EndDate == "") {
+            document.getElementById("lblrequired1").style.display = "";
+            document.getElementById("lblDateComparisionWarning").style.display = "none";
+        }
+        else {
+            document.getElementById("lblrequired1").style.display = "none";
+            // document.getElementById("lblTodayComparisionWarning").style.display = "none";
+        }
+        //  alert(EndDate)
+        var Comission = document.getElementById('Comission').value;
+        if (Comission=="")
+        {
+            document.getElementById("lblrequiredCommision").style.display = "";
+        }
+        else
+        {
+            document.getElementById("lblrequiredCommision").style.display = "none";
+        }
+
+            //  alert(Comission)
+        if (StartDate != "" && EndDate != "" && Comission != "" && DateValidationStart == "Valid" && DateValidationDiff == "Valid")
+        {
+            var json = {
+                StartDate: StartDate, EndDate: EndDate, Comission: Comission
+            }
+            $.ajax({
+                type: "Get",
+                url: "/PropertyComission/SaveComission",
+                data: json,
+                datatype: "JSON",
+                success: function (res) {
+                    if (res != 0) {
+                        document.getElementById("lblSuccess").style.display = "";
+                        //alert(res);
+                        ///RefreshGrid(e);
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+    }
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

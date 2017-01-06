@@ -1,0 +1,177 @@
+﻿@model gbsExtranetMVC.Models.Repositories.FirmInformationExt
+@using Resources
+@{
+    ViewBag.Title = "FirmInformation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2 style="color: black; text-align: center;">@Resources.FirmInfo</h2>
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+</style>
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("FirmInformation", "FirmInformation", FormMethod.Post))
+    {
+    @Html.HiddenFor(u => u.ID)
+         <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.FirmName, Resources.FirmName)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.FirmName)
+                            @Html.HiddenFor(m => m.FirmName, new { @id = "txtFirmName" })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Country, Resources.Country)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.Country)                            
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.City, Resources.City)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.City)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Address, Resources.Address)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.Address)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Phone, Resources.Phone)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.Phone)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Fax, Resources.Fax)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.Fax)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.PostCode, Resources.Postcode)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.PostCode)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.EmailID, Resources.Email)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.EmailID)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.TaxOffice, Resources.TaxDepartment)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.TaxOffice)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.TaxNo, Resources.TaxNo)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.TaxNo)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.ExecutiveName, Resources.ContactPersonName)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.ExecutiveName)
+                        </td>
+                    </tr>
+                 </table>
+              </div>
+    
+   </div>
+    }
+</div>
+        
+<script>
+
+    $(document).ready(function () {
+
+       // FirmInformation();
+
+    });
+    
+
+
+    function FirmInformation()
+    {
+        var json = {}
+        $.ajax({
+            type: "Get",
+            url: "/FirmInformation/DisplayFirmInformation",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                if (res != 0) {                  
+                }
+            }
+        })
+    }
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

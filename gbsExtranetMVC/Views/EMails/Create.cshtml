@@ -1,0 +1,288 @@
+﻿@using Resources
+@using mailColumnCaptions
+@using MessageColumnCaptions
+@model gbsExtranetMVC.Models.Repositories.EmailExt
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .tblEmails {
+        width: 1000px;
+    }
+
+        .tblEmails th {
+            width: 100px;
+        }
+
+        .tblEmails td {
+            width: 200px;
+            padding-bottom: 5px;
+        }
+</style>
+@{
+    string EMailBody = Html.Raw(Server.HtmlDecode(Model.Content)).ToString();    
+}
+<h1 style="color: black; text-align:center">Create Email</h1>
+@using (Html.BeginForm("Create", "Emails", FormMethod.Post, new { @id = "frmEmails" }))
+{
+    <div>
+        <input type="button" class="k-button" value="Save" onclick="CreateEmail()" />
+        <a href="/Maintenance/EMails"><input type="button" class="k-button" value="Back to Emails List" /></a>
+    </div>
+    <div>
+        <div>@Html.ValidationMessageFor(m => m.MailTemplateID)</div>
+        <div>@Html.ValidationMessageFor(m => m.MailFrom)</div>
+        <div>@Html.ValidationMessageFor(m => m.MailTo)</div>
+        <div>@Html.ValidationMessageFor(m => m.Subject)</div>
+        <div>@Html.ValidationMessageFor(m => m.Content)</div>
+        <div>@Html.ValidationMessageFor(m => m.ResentCount)</div>
+        <div>@Html.ValidationMessageFor(m => m.SendingDate)</div>
+    </div>
+    <table class="tblEmails NoBorderTables">
+        <tr>
+            <th>ID</th>
+            <td colspan="5">@Model.ID</td>
+        </tr>
+        <tr>
+            <th>@mailColumnCaptions.Template</th>
+            <td colspan="5">
+                @(Html.Kendo().DropDownListFor(m => m.MailTemplateID)
+            .OptionLabel("-- Select --")
+            .BindTo((SelectList)ViewData["EmailTemplates"])
+            .HtmlAttributes(new { style = "width:871px", @id = "drbTemplate" })
+                )
+                <div class="col-md-12" style="margin-top:5px">
+                    <span id="lblTemplateWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>@mailColumnCaptions.MailFrom</th>
+            <td>@Html.TextBoxFor(m => m.MailFrom, new { @class = "k-textbox", @id = "txtMailFrom" })
+                <div class="col-md-12" style="margin-top:5px">
+                    <span id="lblMailFromWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                </div>
+            </td>
+
+            <th>@mailColumnCaptions.MailTo</th>
+            <td>@Html.TextBoxFor(m => m.MailTo, new { @class = "k-textbox", @id = "txtMailTo" })
+                <div class="col-md-12" style="margin-top:5px">
+                    <span id="lblMailToWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                </div>
+            </td>
+            <th>@mailColumnCaptions.MailCC</th>
+            <td>@Html.TextBoxFor(m => m.MailCC, new { @class = "k-textbox", @id = "txtMailCC" })</td>
+        </tr>
+
+        <tr>
+            <th>@mailColumnCaptions.SentStatus</th>
+            <td>@Html.Kendo().CheckBoxFor(m => m.SentStatus)</td>
+            @Html.HiddenFor(m => m.SentStatus, new { @id = "hdnSentStatus" })
+            <th>@mailColumnCaptions.ResentCount</th>
+            <td>@Html.Kendo().IntegerTextBoxFor(m => m.ResentCount).HtmlAttributes(new { @style = "width:80px; height:25px;", @id = "txtResentCount" })
+                <div class="col-md-12" style="margin-top:8px">
+                    <span id="lblResentCountWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                </div>
+            </td>
+            <th>@mailColumnCaptions.SendingDate</th>
+            <td>@Html.Kendo().DateTimePickerFor(m => m.SendingDate).HtmlAttributes(new { @style = "width:200px; height:25px;", @id = "txtSendingDate" })
+                <div class="col-md-12" style="margin-top:8px">
+                    <span id="lblSendingDateWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>@mailColumnCaptions.Record</th>
+            <td colspan="5">@Html.TextBoxFor(m => m.Record, new { @class = "k-textbox", @id = "txtRecord" })</td>
+        </tr>
+        <tr>
+            <th>@mailColumnCaptions.Subject</th>
+            <td colspan="5">@Html.TextBoxFor(m => m.Subject, new { @class = "k-textbox", @style = "width:500px;", @id = "txtSubject" })
+                <div class="col-md-12" style="margin-top:5px">
+                    <span id="lblSubjectWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>@mailColumnCaptions.Content</th>
+            <td colspan="5" id="FullContent" >
+                @(Html.Kendo().EditorFor(m => m.Content)
+                    .Tools(tools => tools
+                .Clear()
+                .Bold().Italic().Underline().Strikethrough()
+                .FontColor().BackColor()
+                .JustifyLeft().JustifyCenter().JustifyRight().JustifyFull()
+                .InsertUnorderedList().InsertOrderedList()
+                .Outdent().Indent()
+                .CreateLink().Unlink()
+                .SubScript()
+                .SuperScript()
+                .TableEditing()
+                .Formatting()
+                .CleanFormatting()
+                .FontName()
+                .FontSize()
+                
+        )
+    .Encode(false)
+    .Value(EMailBody)
+    .HtmlAttributes(new { @style = "height:500px;", @id = "txtContent", @class ="NewContent" })
+    
+
+                )
+                
+                <div class="col-md-12" style="margin-top:5px">
+                    <span id="lblContentWarning" style="display:none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                </div>
+            </td>
+
+        </tr>
+    </table>
+}
+
+
+<script>
+    function CreateEmail()
+    {
+      //  alert('Hi')
+        var Template = document.getElementById('drbTemplate').value;
+        var MailFrom = document.getElementById('txtMailFrom').value;
+        var MailTo = document.getElementById('txtMailTo').value;
+        var MailCC=  document.getElementById('txtMailCC').value;
+        var SentStatus = document.getElementById('hdnSentStatus').checked;
+        var ResentCount = document.getElementById('txtResentCount').value;
+        var SendingDate = document.getElementById('txtSendingDate').value;
+        var Record =  document.getElementById('txtRecord').value;
+        var Subject = document.getElementById('txtSubject').value;
+        var Content = document.getElementById('txtContent').value;
+        
+
+        //var Contents = $("#FullContent").html();
+        //alert(Contents)
+     //   alert(Content)
+        //var NewContent = $('#FullContent').wrap('</table>').parent().html();
+        
+
+       // alert(NewContent)
+      //  alert(Template)
+      //  alert(MailFrom)
+      //  alert(MailTo)
+      //  alert(MailCC)
+      //  alert(SentStatus)
+      //  alert(ResentCount)
+      //  alert(SendingDate)
+      //  alert(Record)
+        //  alert(Subject)
+      
+
+        if(Template=="")
+        {
+            document.getElementById('lblTemplateWarning').style.display = "";
+        }
+        else
+        {
+            document.getElementById('lblTemplateWarning').style.display = "none";
+        }
+
+        if (MailFrom == "") {
+            document.getElementById('lblMailFromWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblMailFromWarning').style.display = "none";
+        }
+
+        if (MailTo == "") {
+            document.getElementById('lblMailToWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblMailToWarning').style.display = "none";
+        }
+
+        if (ResentCount == "") {
+            document.getElementById('lblResentCountWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblResentCountWarning').style.display = "none";
+        }
+
+        if (SendingDate == "") {
+            document.getElementById('lblSendingDateWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblSendingDateWarning').style.display = "none";
+        }
+
+        if (Subject == "") {
+            document.getElementById('lblSubjectWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblSubjectWarning').style.display = "none";
+        }
+
+        var text = $('#txtContent').getKendoEditor().value()
+        var strippedText = text.replace(/(<([^>]+)>)/ig, "");
+
+        if (strippedText == "") {
+            
+            document.getElementById('lblContentWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblContentWarning').style.display = "none";
+        }
+        //,
+        if (Template != "" && MailFrom != "" && MailTo != "" && ResentCount != "" && SendingDate != "" && Subject != "" && strippedText != "")
+        {
+            //var json = {
+
+            //    Template: Template, MailFrom: MailFrom, MailTo: MailTo, ResentCount: ResentCount, SendingDate: SendingDate, Subject: Subject, Content: NewContent, MailCC: MailCC, SentStatus: SentStatus, Record: Record
+            //}
+            //$.ajax({
+            //    type: "Get",
+            //    url: "/EMails/InsertEmail",
+            //    data: json,
+            //    datatype: "JSON",
+            //    success: function (res) {
+            //        if (res != 0) {
+            //            document.getElementById("lblSuccess").style.display = "";
+            //            document.getElementById('lblFailure').style.display = "none";
+            //            //alert(res);
+            //        }
+            //    }
+            //})
+
+            $.post("/EMails/InsertEmail", { Template: Template, MailFrom: MailFrom, MailTo: MailTo, ResentCount: ResentCount, SendingDate: SendingDate, Subject: Subject, Content: Content, MailCC: MailCC, SentStatus: SentStatus, Record: Record }, function (data)
+            { 
+                if (data != 0) {
+
+                                window.location.href = '/Maintenance/EMails/';
+                                document.getElementById("lblSuccess").style.display = "";
+                                document.getElementById('lblFailure').style.display = "none";
+
+                                
+                                //alert(res);
+                            }
+            })
+
+        }
+        else
+        {
+
+        }
+       
+    }
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

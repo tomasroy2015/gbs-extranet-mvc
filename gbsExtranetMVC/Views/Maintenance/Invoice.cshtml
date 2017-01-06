@@ -1,0 +1,333 @@
+﻿
+@using Resources
+@using InvoiceColumnCaptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<style>
+    @@media (min-width: 992px) {
+        .col-md-5 {
+            width: 31.666667%;
+        }
+    }
+</style>
+
+<h1 style="text-align: center;">@Resources.Invoice</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-5 col-sm-5 " style="padding: 8px;">
+                    <label>@InvoiceColumnCaptions.InvoiceID</label>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <input id="InvoiceID" type="text" class="k-textbox" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-5 col-sm-5 " style="padding: 8px;">
+                    <label>@InvoiceColumnCaptions.FirmName</label>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <input id="Firm"  style="width:100%" />
+                </div>
+            </div>          
+        </div>
+        <div class="col-md-2  col-sm-2" style="padding: 0px;">
+            <button id="btnfilter" class="k-button btn btn-info"  onclick="Filter()">@Resources.Filter</button>
+            <button class="k-button btn btn-info"  id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+        </div>
+
+    </div>
+
+  
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-5 col-sm-5 " style="padding: 8px;">
+                    <label>@InvoiceColumnCaptions.Period</label>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <input id="Period" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-5 col-sm-5 " style="padding: 8px;">
+                    <label>@InvoiceColumnCaptions.status</label>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <input id="Status" style="width:100%" />
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+   
+    
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.InvoiceExt>()
+            .Name("Ivoice_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+            //.Resizable(resizable => resizable.Content(true).Toolbar(true))
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            //model.Field(p => p.Date).Editable(false);
+
+
+        })
+                .Create(update => update.Action("_Create", "Invoice"))
+                .Read(read => read.Action("_Read", "Invoice"))
+                .Update(update => update.Action("_Update", "Invoice"))
+                .Destroy(destroy => destroy.Action("_Destroy", "Invoice"))
+
+        )
+
+                            .Columns(columns =>
+                            {
+                                columns.Bound("").Width(150).Title(InvoiceColumnCaptions.Operation).ClientTemplate("<div style='text-align:center;'> <a href='/Invoice/View/#=ID#'><img src='/Image/detail.png' style='width:32px;margin-left:8px;cursor:pointer;' title='View Invoice Details'  alt='detail'></a>  #if(IsAdmin==true && InvoiceStatusID==1){# <img src='/Images/approve.png' onclick='Update(#=ID#)' title='Invice Paid'  style='width:32px;margin-left:8px;cursor:pointer;'  alt='creditcard'>#}# </div>").Locked(true);
+                                columns.Bound(p => p.ID).Title(InvoiceColumnCaptions.InvoiceID).Width(120).Locked(true);
+                                columns.Bound(p => p.Firm).Title(InvoiceColumnCaptions.FirmName).Width(150).Locked(true);
+                                columns.Bound(p => p.InvoiceDate).Title(InvoiceColumnCaptions.InvoiceDate).Width(200).Locked(true);
+                                columns.Bound(p => p.Period).Title(InvoiceColumnCaptions.InvoiceDonem).Width(200).Locked(true);
+                                columns.Bound(p => p.DueDate).Title(InvoiceColumnCaptions.DueDate).Width(200);
+                                columns.Bound(p => p.Invoice_Amount).Title(InvoiceColumnCaptions.Invoice_Amount).Width(200);
+                                columns.Bound(p => p.status).Title(InvoiceColumnCaptions.status).Width(120); 
+
+                                //columns.Command(
+
+                                //    command =>
+                                //    {
+                                //      //  command.Edit();
+                                //      //  command.Destroy();
+                                                                           
+                                //    });
+                                   
+                                
+
+                            })
+                            
+               
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+               // .Scrollable(scrollable => scrollable.Height(430))
+               //  .Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+             //   .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                    .FileName("Invoice.xlsx")
+                .Filterable(true))
+
+)
+
+<script>
+
+    $("#btnfilter").click(function () {
+        //   alert('HI')
+        $filter = new Array();
+        //  alert($filter)
+        $InvoiceIDValue = $("#InvoiceID").val();
+        // alert($FirmValue)
+    
+
+
+        $PeriodText = $("#Period").data("kendoDropDownList").text();
+        $PeriodValue = $("#Period").val();
+        //  alert($CountryValue)
+
+        $FirmText = $("#Firm").data("kendoDropDownList").text();
+        $FirmValue = $("#Firm").val();
+        //  alert($RegionValue)
+        $StatusText = $("#Status").data("kendoDropDownList").text();
+        $StatusValue = $("#Status").val();
+       
+
+        //  alert($ActiveText)
+        //  alert($ActiveValue)
+
+        if ($PeriodValue) {
+            $filter.push({ field: "Period", operator: "contains", value: $PeriodText });
+        }
+        if ($FirmValue) {
+            $filter.push({ field: "Firm", operator: "contains", value: $FirmText });
+        }
+        if ($StatusValue) {
+            $filter.push({ field: "status", operator: "equals", value: $StatusText });
+        }
+     //   alert($StatusValue)
+    //    alert($StatusText)    
+  
+        if ($InvoiceIDValue) {
+            $filter.push({ field: "ID", operator: "equals", value: String($InvoiceIDValue) });
+        }
+      
+
+        var grid = $("#Ivoice_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+   
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPeriod",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Period").kendoDropDownList({
+                    filter: "contains",
+                    Name: "PeriodID",
+                    optionLabel: "@Resources.All",
+                    dataTextField: "Period",
+                    dataValueField: "PeriodID",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+    $(document).ready(function () {
+        var json = {}
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/DropDownLists/Firm",
+        //    data: json,
+        //    datatype: "json",
+        //    success: function (data) {
+
+        //        $("#Firm").kendoDropDownList({
+        //            filter: "contains",
+        //            Name: "FirmID",
+        //            dataTextField: "Firm",
+        //            dataValueField: "FirmID ",
+        //            dataSource: data,
+        //            optionLabel: "All..."
+        //        });
+        //    }
+        //})
+
+        $.ajax({
+            type: "GET",
+            url: "/Invoice/FirmDropDown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Firm").kendoDropDownList({
+                    filter: "contains",
+                    Name: "FirmID",
+                    dataTextField: "Firm",
+                    dataValueField: "FirmID ",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+            }
+        })
+
+    });
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetTypeInvoiceStatus",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#Status").kendoDropDownList({
+                    filter: "contains",
+                    Name: "InvoiceStatusID",                   
+                    dataTextField: "InvoiceStatus",
+                    dataValueField: "InvoiceStatusID",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+
+            }
+        })
+    });
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#Ivoice_Grid").data("kendoGrid").dataSource;
+        datasource.filter([]);
+
+        $InvoiceIDValue = $("#InvoiceID").val('');
+
+        var Country = $("#Period").data("kendoDropDownList");
+        Country.select("");
+        var Region = $("#Firm").data("kendoDropDownList");
+        Region.select("");
+        var Status = $("#Status").data("kendoDropDownList");
+        Status.select("");
+       
+
+
+    });
+
+
+
+
+
+
+</script>
+
+<script>
+    function Update(ID) {
+        //  alert(ID);
+        var json = { ID: ID }
+
+        $.ajax({
+            type: "GET",
+            url: "/Invoice/Update",
+            data: json,
+            datatype: "JSON",
+            success: function (res) {
+                var grid = $("#Ivoice_Grid").data("kendoGrid");
+                grid.dataSource.read();
+            }
+        });
+    }
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

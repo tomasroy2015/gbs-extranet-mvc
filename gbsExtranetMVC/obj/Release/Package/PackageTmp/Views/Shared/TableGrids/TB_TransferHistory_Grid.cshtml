@@ -1,0 +1,187 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TransferHistory")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:5px;">
+                    <label style="font-weight:bold">@MessageColumnCaptions.TB_TransferHistoryCaption("TransferID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding: 5px;">
+                    <input type="text" class="form-control" id="txtTransferID" placeholder='@MessageColumnCaptions.TB_TransferHistoryCaption("TransferID")' style="width: 100%;" />
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-5 col-sm-5 col-xs-5" style="padding:5px;">
+                    <label style="font-weight:bold">@MessageColumnCaptions.TB_TransferHistoryCaption("BusinessPartnerID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7" style="padding: 5px;">
+                    <input class="form-control" id="drpBusinessPartner" style="width: 100%;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="col-md-5  col-sm-5">
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label style="font-weight:bold">@MessageColumnCaptions.TB_TransferHistoryCaption("LogDateTime") (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-5  col-sm-5">
+
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label style="font-weight:bold">@MessageColumnCaptions.TB_TransferHistoryCaption("LogDateTime") (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+        </div>
+</div>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+       
+        var grid = $("#TB_TransferHistory_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_TransferHistory_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        document.getElementById('ChkFilterCommon').checked = false
+
+        var dropdownlistPart = $("#drpBusinessPartner").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TransferHistoryExt>()
+                .Name("TB_TransferHistory_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+        })
+                                .Read(read => read.Action("_Read", "TB_TransferHistory", new { TableID = (int)ViewBag.TableID }))
+
+
+        )
+
+
+            .Columns(columns =>
+            {
+   
+                columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+                columns.Bound(p => p.TransferID).Title(MessageColumnCaptions.TB_TransferHistoryCaption("TransferID")).Width(150);
+                columns.Bound(p => p.BusinessPartnerName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("BusinessPartnerID")).Width(150);
+                columns.Bound(p => p.TransferPeriodName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("TransferPeriodID")).Width(150);
+                columns.Bound(p => p.TransferPaxName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("TransferPaxID")).Width(150);
+                columns.Bound(p => p.DepartureRegionName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("DepartureRegionID")).Width(150);
+                columns.Bound(p => p.DestinationRegionName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("DestinationRegionID")).Width(150);
+                columns.Bound(p => p.Amount).Title(MessageColumnCaptions.TB_TransferHistoryCaption("Amount")).Width(150);
+                columns.Bound(p => p.CurrencyName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("CurrencyID")).Width(150);
+                columns.Bound(p => p.Cost).Title(MessageColumnCaptions.TB_TransferHistoryCaption("Cost")).Width(150);
+                columns.Bound(p => p.CostCurrencyName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("CostCurrencyID")).Width(150);
+                columns.Bound(p => p.Deposit).Title(MessageColumnCaptions.TB_TransferHistoryCaption("Deposit")).Width(150);
+                columns.Bound(p => p.DepositCurrencyName).Title(MessageColumnCaptions.TB_TransferHistoryCaption("DepositCurrencyID")).Width(150);
+                columns.Bound(p => p.HitCount).Title(MessageColumnCaptions.TB_TransferHistoryCaption("HitCount")).Width(150);
+                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_TransferHistoryCaption("Active"))
+                .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+                columns.Bound(p => p.LogDateTime).ClientTemplate("#= kendo.toString(LogDateTime,'dd/MM/yyyy HH:mm:ss') #").Title(MessageColumnCaptions.TB_TransferHistoryCaption("LogDateTime")).Width(150);
+                columns.Bound(p => p.LoggedUserID).Title(MessageColumnCaptions.TB_TransferHistoryCaption("LogUserID")).Width(150);
+               
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_TransferHistory.xlsx")
+                .Filterable(true))
+
+)
+
+
+
+<script>
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+        $(document).ready(function () {
+            var json = {}
+            $.ajax({
+                type: "GET",
+                url: "/BizTbl_UserBusinessPartner/_ReadPart",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#drpBusinessPartner").kendoDropDownList({
+                        filter: "contains",
+                        Name: "TableID",
+                        optionLabel: AllSelectText,
+                        dataTextField: "Name",
+                        dataValueField: "ID ",
+                        // dataValueField: "Name",
+                        dataSource: data
+                    });
+
+                }
+            })
+
+            $("#datetimepickerStart").kendoDatePicker({
+                animation: {
+                    close: {
+                        effects: "zoom:out",
+                        duration: 300
+                    }
+                }
+            });
+            $("#datetimepickerEnd").kendoDatePicker({
+                animation: {
+                    close: {
+                        effects: "zoom:out",
+                        duration: 300
+                    }
+                }
+            });
+        });
+
+</script>

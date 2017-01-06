@@ -1,0 +1,96 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_Currency")</h1>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_CurrencyExt>()
+                        .Name("TB_CurrencyExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+           // model.Field(p => p.ID).Editable(false);
+        })
+                    .Create(update => update.Action("_Create", "TB_Currency"))
+                        .Read(read => read.Action("_Read", "TB_Currency", new { TableID = (int)ViewBag.TableID }))
+                             .Update(update => update.Action("_Update", "TB_Currency"))
+                            .Destroy(destroy => destroy.Action("_Destroy", "TB_Currency"))
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Width(170).Locked(true);
+
+                        columns.Bound(p => p.ID).Width(270).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.Code).Title(MessageColumnCaptions.TB_CurrencyCaption("Code")).Width(200);
+                        columns.Bound(p => p.Symbol).Title(MessageColumnCaptions.TB_CurrencyCaption("Symbol")).Width(200);
+                        columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_CurrencyCaption("Name_en")).Width(200);
+                        columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_CurrencyCaption("Sort")).Width(200);
+                        columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_CurrencyCaption("Active"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                       
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                .Text(Resources.NewRecord)
+                .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_CurrencyExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_CurrencyExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+
+
+
+
+

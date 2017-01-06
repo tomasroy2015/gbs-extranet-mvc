@@ -1,0 +1,236 @@
+﻿
+
+
+@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_BankHistory")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6 col-sm-3" style="padding: 0px;display: inline-flex;">
+                <label>@Resources.Country</label>
+                <input type="text" id="drbCountry" style="width: 100%;" />
+            </div>
+            <div class="col-md-6 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.BankName</label>
+                <input id="txtBank" class="form-control" type="text" style="width:100%" />
+            </div>
+        </div>
+        <br />
+        <br /><br />
+        <div class="col-md-12">
+            <div class="col-md-4  col-sm-3" style="padding: 0px;">
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_BankHistoryCaption("LogDateTime") (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-4 col-sm-3" style="padding: 0px;">
+
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_BankHistoryCaption("LogDateTime") (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-6  col-sm-6" style="padding: 8px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_BankHistoryExt>()
+                .Name("TB_BankHistoryExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            //model.Field(p => p.ID).Editable(false);
+        })
+        //.Create(update => update.Action("_Create", "BizTbl_TableSecurityGroupRight"))
+                .Read(read => read.Action("_Read", "TB_BankHistory", new { TableID = (int)ViewBag.TableID }))
+        //.Update(update => update.Action("_Update", "BizTbl_TableSecurityGroupRight"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "BizTbl_TableSecurityGroupRight"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           // command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           //command.Destroy();
+                       });
+
+                    columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.BankID).Title(MessageColumnCaptions.TB_BankHistoryCaption("BankID")).Width(150);
+                    columns.Bound(p => p.Country).Title(MessageColumnCaptions.TB_BankHistoryCaption("CountryID")).Width(250);
+                    columns.Bound(p => p.Currency).Title(MessageColumnCaptions.TB_BankHistoryCaption("CurrencyID"));
+                   // columns.Bound(p => p.Surname).Title(MessageColumnCaptions.TB_BankHistoryCaption("Surname")).Width(150);
+                    columns.Bound(p => p.BankName).Title(MessageColumnCaptions.TB_BankHistoryCaption("BankName")).Width(150);
+                    columns.Bound(p => p.BankBranchName).Title(MessageColumnCaptions.TB_BankHistoryCaption("BankBranchName")).Width(150);
+                    columns.Bound(p => p.BankAccountNumber).Title(MessageColumnCaptions.TB_BankHistoryCaption("BankAccountNumber")).Width(150);
+                    columns.Bound(p => p.IBAN).Title(MessageColumnCaptions.TB_BankHistoryCaption("IBAN")).Width(150);
+                    columns.Bound(p => p.SWIFT).Title(MessageColumnCaptions.TB_BankHistoryCaption("SWIFT")).Width(150);
+                    columns.Bound(p => p.OtherInfo).Title(MessageColumnCaptions.TB_BankHistoryCaption("OtherInfo")).Width(150);
+                    columns.Bound(p => p.LogDateTime).Title(MessageColumnCaptions.TB_BankHistoryCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                    columns.Bound(p => p.LogUserID).Title(MessageColumnCaptions.TB_BankHistoryCaption("LogUserID")).Width(150);
+                    columns.Bound(p => p.OpDateTime).Title(MessageColumnCaptions.TB_BankHistoryCaption("OpDateTime")).ClientTemplate("#= kendo.toString(OpDateTime,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                    columns.Bound(p => p.OpUserID).Title(MessageColumnCaptions.TB_BankHistoryCaption("OpUserID")).Width(150);
+                })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel();
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_BankHistoryExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#TB_BankHistoryExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $CountryText = $("#drbCountry").data("kendoDropDownList").text();
+        $CountryValue = $("#drbCountry").val();
+        $Bank = $("#txtBank").val();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+        if ($CountryValue) {
+            $filter.push({ field: "Country", operator: "contains", value: $CountryText });
+        }
+        if ($Bank) {
+            $filter.push({ field: "BankName", operator: "contains", value: String($Bank) });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        var grid = $("#TB_BankHistoryExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+
+            var json = {}
+            $.ajax({
+                type: "GET",
+                url: "/DropDownLists/GetCountries",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#drbCountry").kendoDropDownList({
+                        filter: "contains",
+                        Name: "CountryID",
+                        optionLabel: AllSelectText,
+                        dataTextField: "Country",
+                        dataValueField: "CountryID ",
+                        dataSource: data
+                    });
+
+                }
+            })
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+    });
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_BankHistoryExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtBank").val('')
+        //$("#txtName").val('');
+        //$("#datetimepickerStart").val('');
+        //$("#datetimepickerEnd").val('');
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+        //$("#txtSurName").val('');
+
+        var dropdownlistPart = $("#drbCountry").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>
+

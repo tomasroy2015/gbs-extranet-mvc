@@ -1,0 +1,187 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("BizTbl_Message")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-12">
+            <div class="col-md-2 col-sm-2" style="padding: 0px; display: flex;">
+                <label style="width:25px; padding-top: 6px">ID</label>
+                <input id="txtFilterID" type="text" class="k-textbox" style="width:80%" placeholder="ID" />
+            </div>
+            <div class="col-md-2 col-sm-2" style="padding: 0px; display: flex;">
+                <label style="width: 45px; padding-top: 6px">@MessageColumnCaptions.BizTbl_MessageCaption("Code")</label>
+                <input id="txtFilterCode" type="text" class="k-textbox" style="width:80%" placeholder="@Resources.Code" />
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 0px; display: flex;margin-left:10px;">
+                <label style="width: 90px; padding-top: 6px"> @MessageColumnCaptions.BizTbl_MessageCaption("Description_en")</label>
+                <input id="txtFilterDescription" type="text" class="k-textbox" style="width:80%" placeholder='@MessageColumnCaptions.BizTbl_MessageCaption("Description_en")' />
+            </div>
+            <div class="col-md-1  col-sm-2" style="padding: 0px; display: flex;margin-left:10px;">
+                <label style="padding-top: 6px"> @MessageColumnCaptions.BizTbl_MessageCaption("IsCommon")</label> &nbsp;
+
+                <input style="margin-top: 10px;" id="ChkFilterCommon" name="ChkFilterCommon" type="checkbox" />
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 0px; margin-left:10px;">
+                <button id="btnfilter" class="k-button btn btn-info"  style="background: #25A6E1; color: white" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" style="background: #25A6E1; color: white" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+
+          </div>
+        </div>
+    </div>
+
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.MessageExt>()
+                    .Name("Message_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Create(update => update.Action("_Create", "Message"))
+                .Read(read => read.Action("_Read", "Message"))
+                .Update(update => update.Action("_Update", "Message"))
+                .Destroy(destroy => destroy.Action("_Destroy", "Message"))
+        )
+
+        .Columns(columns =>
+        {
+            columns.Command(
+             command =>
+             {
+                 command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                 command.Destroy().Text(Resources.Delete);
+             }).Locked(true).Width(180);
+            
+            columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+            columns.Bound(p => p.Code).Title(MessageColumnCaptions.BizTbl_MessageCaption("Code")).Width(150).Locked(true);
+            columns.Bound(p => p.Description_en).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_en")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_tr).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_tr")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_de).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_de")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_es).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_es")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_fr).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_fr")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_ru).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_ru")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_it).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_it")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_ar).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_ar")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_ja).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_ja")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_pt).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_pt")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.Description_zh).Title(MessageColumnCaptions.BizTbl_MessageCaption("Description_zh")).EditorTemplateName("TextArea").Width(200);
+            columns.Bound(p => p.IsCommon).Title(MessageColumnCaptions.BizTbl_MessageCaption("IsCommon"))
+                .ClientTemplate("<div style='text-align:center;'> #if(IsCommon){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                .Width(100);
+        })
+        .ToolBar(tool =>
+        {
+            tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+            tool.Excel();
+        })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Messages.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#Message_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $ID = $("#txtFilterID").val();
+        $Commom = "false";
+        if ($('#ChkFilterCommon').prop('checked')) {
+            $Commom = "true";
+        }
+        $Code = $("#txtFilterCode").val();
+        $Description = $("#txtFilterDescription").val();
+        if ($ID) {
+            $filter.push({ field: "ID", operator: "equals", value: String($ID) });
+        }
+        if ($Code) {
+            $filter.push({ field: "Code", operator: "contains", value: $Code });
+        }
+        if ($Description) {
+            $filter.push({ field: "Description_en", operator: "contains", value: $Description });
+        }
+
+        if ($Description) {
+            $filter.push({ field: "Description_en", operator: "contains", value: $Description });
+        }
+        if ($Commom == "true") {
+            //alert($Commom)
+            $filter.push({ field: "IsCommon", operator: "eq", value: $Commom });
+        }
+        var grid = $("#Message_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#Message_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtFilterID").val('')
+        $("#txtFilterCode").val('');
+        $("#txtFilterDescription").val('');
+        document.getElementById('ChkFilterCommon').checked = false
+    });
+
+
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

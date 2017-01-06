@@ -1,0 +1,135 @@
+﻿@*@model gbsExtranetMVC.Models.Repositories.DropDownListsExt*@
+@model gbsExtranetMVC.Models.Repositories.UsersOperationsExt
+@using Resources
+
+@{
+    ViewBag.Title = "UserRole";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="color: black; text-align: center;">UserRole</h2>
+<table class="col-md-12 responsive" align="center">
+    <tbody>
+        <tr>
+            <td>
+                <span>@Resources.Name</span>
+            </td>
+            <td>
+               
+            <span>@ViewBag.Username</span>
+                  
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span>@Resources.SecurityGroup</span>
+            </td>
+            <td>
+            <td>
+              @(Html.Kendo().MultiSelect()
+             .Name("Description")
+             .Placeholder("Select...")
+             .AutoClose(false)
+              .BindTo((SelectList)ViewBag.securityGroups)
+             .Value(ViewBag.UserRights)
+             .HtmlAttributes(new { @style = "width: 200px;", @id = "drpsecurityMultiple" })
+            )
+            </td>
+            
+        </tr>
+        <tr>
+            <td>
+                <span>@Resources.AuthorizedHotels</span>
+            </td>
+            <td>
+            <td>
+                @(Html.Kendo().MultiSelect()
+                .Name("HotelName")
+                .Placeholder("Select...")
+                .AutoClose(false)
+                .BindTo((SelectList)ViewBag.Hotels )
+                .Value(ViewBag.UserHotels)
+                .HtmlAttributes(new { @style = "width: 200px;", @id = "drphotelsMutiple" })
+                )
+            </td>
+
+        <tr>
+            <td>
+                <span>@Resources.AuthorizedBusinessPartners</span>
+            </td>
+            <td>
+            <td>
+                @(Html.Kendo().MultiSelect()
+                .Name("BusinessPartnerType")
+                .Placeholder("Select...")
+                .AutoClose(false)
+                .BindTo((SelectList)ViewBag.BusinessPartners)
+                //.Value(ViewBag.UserBusinessPartners)
+                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpbusinesspartnerMutiple" })
+               )
+            </td>
+
+        </tr>
+      </tbody>
+      </table>
+<div align="center" style="margin-top: 20px;">
+    <input type="button" class="k-button btn btn-info" value="Save" style="margin-right:20px;" onclick="Saveauthorizations()">
+    <input type="button" class="k-button btn btn-info" value="Back" oncancel="backuseroperations()">
+</div>
+<div align="center" style="padding-top:5px;">
+    <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+</div>
+<script>
+    function backuseroperations()
+    {
+        window.location.href = "/Management/UserOperations";
+    }
+    function Saveauthorizations()
+    {
+       
+        var Multiplesecurity = $("#drpsecurityMultiple").data("kendoMultiSelect");
+        var Selectedsecurity = Multiplesecurity.value($("#Value").val());
+        var Multiplehotels = $("#drphotelsMutiple").data("kendoMultiSelect");
+        var Selectedhotels = Multiplehotels.value($("#Value").val());
+         var Multiplebusinesspartner = $("#drpbusinesspartnerMutiple").data("kendoMultiSelect");
+         var Selectedbusinesspartner = Multiplebusinesspartner.value($("#Value").val());
+         alert(Selectedbusinesspartner)
+       var json = { Selectedsecurity: [Selectedsecurity], Selectedhotels: [Selectedhotels], Selectedbusinesspartner: [Selectedbusinesspartner] }
+        $.ajax({
+            type: "Get",
+            url: "/UserOperations/InsertAuthurization",
+            data: json,
+            datatype: "JSON",
+            traditional: true,
+            success: function (res) {
+
+                if(res!="")
+                {
+                    //document.getElementById("drpsecurityMultiple").value = res.SecurityGroupID;
+                    document.getElementById("lblSuccess").style.display = "";
+                    setTimeout("Hidelabel()", 5000);
+                }
+            }
+        })
+    }
+    function Hidelabel() {
+        document.getElementById("lblSuccess").style.display = "none";
+    }
+
+   
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

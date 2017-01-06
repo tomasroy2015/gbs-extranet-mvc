@@ -1,0 +1,246 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_UserSession")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">ID</label>
+                <input id="txtID" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">User</label>
+                <input id="txtUser" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.Country</label>
+                <input id="drbCountry" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@Resources.IPAddress</label>
+                <input id="txtIpAddress" class="form-control" type="text" style="width:100%" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+
+        <div class="col-md-12">
+            <div class="col-md-3  col-sm-3" style="padding: 0px;display: inline-flex;">
+                <label>@Resources.Date (@Resources.FilterLowerLimitDescription)</label>
+                <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="padding: 0px;display: inline-flex;">
+                <label>@Resources.Date (@Resources.FilterUpperLimitDescription)</label>
+                <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">Clear Filter</button>
+            </div>
+        </div>
+    </div>
+    @*<div class="col-md-2 col-sm-2">
+
+            <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                <input id="txtPart" class="form-control" type="text" style="width:100%" />
+            </div>
+        </div>*@
+
+</div>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_UserSessionExt>()
+                .Name("BizTbl_UserSessionExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            model.Field(p => p.Date).Editable(true);
+        })
+               .Create(update => update.Action("_Create", "BizTbl_UserSession"))
+                .Read(read => read.Action("_Read", "BizTbl_UserSession", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "BizTbl_UserSession"))
+                .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_UserSession"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy();
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.code).Title(MessageColumnCaptions.BizTbl_UserSessionCaption("Code")).Width(300).Locked(true);
+                    columns.Bound(p => p.User).Title(MessageColumnCaptions.BizTbl_UserSessionCaption("UserID")).Width(200).EditorTemplateName("ddlUser").Locked(true);
+                    columns.Bound(p => p.Country).Title(MessageColumnCaptions.BizTbl_UserSessionCaption("CountryID")).EditorTemplateName("ddlCountries").Width(150);
+                    columns.Bound(p => p.IpAddress).Title(MessageColumnCaptions.BizTbl_UserSessionCaption("IpAddress")).Width(200);
+                    columns.Bound(p => p.Date).Title(MessageColumnCaptions.BizTbl_UserSessionCaption("OpDateTime")).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+                    columns.Bound(p => p.OpUserID).Hidden(true);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                  .Text(Resources.NewRecord)
+                  .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_UserSessionExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#BizTbl_UserSessionExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+        $ID = $("#txtID").val();
+        $User = $("#txtUser").val();
+        $PartText = $("#drbCountry").data("kendoDropDownList").text();
+        $PartValue = $("#drbCountry").val();
+        $IpAddress = $("#txtIpAddress").val();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+       
+
+        if ($ID) {
+            $filter.push({ field: "ID", operator: "equals", value: String($ID) });
+        }
+        if ($User) {
+            $filter.push({ field: "User", operator: "contains", value: String($User) });
+        }
+
+        if ($PartValue) {
+            $filter.push({ field: "Country", operator: "contains", value: $PartText });
+        }
+        if ($IpAddress) {
+            $filter.push({ field: "IpAddress", operator: "contains", value: String($IpAddress) });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "Date", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "Date", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        var grid = $("#BizTbl_UserSessionExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+
+            var json = {}
+            $.ajax({
+                type: "GET",
+                url: "/DropDownLists/GetCountries",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#drbCountry").kendoDropDownList({
+                        filter: "contains",
+                        Name: "CountryID",
+                        optionLabel: AllSelectText,
+                        dataTextField: "Country",
+                        dataValueField: "CountryID ",
+                        dataSource: data
+                    });
+
+                }
+            })
+
+        });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_UserSessionExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtID").val('')
+        $("#txtUser").val('');
+        $("#txtIpAddress").val('');
+       $("#datetimepickerStart").val('');
+        $("#datetimepickerEnd").val('');
+      
+
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>
+
+
+
+
+

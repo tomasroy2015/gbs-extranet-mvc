@@ -1,0 +1,198 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelReservationPromotion")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="col-md-5  col-sm-5">
+
+                <div class="col-md-5  col-sm-5">
+                    <label>@MessageColumnCaptions.TB_HotelReservationPromotion("ReservationID") </label>
+                </div>
+                <div class="col-md-7  col-sm-7">
+                    <input id="txtreservationid" style="width: 100%;" class="form-control" />
+                </div>
+
+            </div>
+            <div class="col-md-5  col-sm-5">
+                <div class="col-md-6  col-sm-6">
+                    <label> @MessageColumnCaptions.TB_HotelReservationPromotion("HotelReservationID")</label>
+                </div>
+                <div class="col-md-6  col-sm-6">
+                    <input id="txthotelreservationid" style="width: 100%; " class="form-control" />
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <div class="col-md-12">
+            <div class="col-md-5  col-sm-5">
+                <div class="col-md-3  col-sm-3">
+                    <label> @MessageColumnCaptions.TB_HotelReservationPromotion("PromotionID")</label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input id="drppromotion" style="width: 100%; " />
+                </div>
+            </div>
+            <div class="col-md-5  col-sm-5">
+                    <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                    <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $Reservationid = $("#txtreservationid").val();
+        $HotelReservationid = $("#txthotelreservationid").val();
+
+        $promotion = $("#drppromotion").data("kendoDropDownList").text();
+        $promotionid = $("#drppromotion").val();
+       
+
+        if ($promotionid) {
+            $filter.push({ field: "Promotion", operator: "equals", value: String($promotion) });
+        }
+        if ($Reservationid) {
+            $filter.push({ field: "ReservationID", operator: "equals", value: $Reservationid });
+        }
+        if ($HotelReservationid) {
+            $filter.push({ field: "HotelReservationID", operator: "equals", value: $HotelReservationid });
+        }
+       
+        var grid = $("#TB_HotelReservationPromotion_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPromotion",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drppromotion").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Promotion",
+                    optionLabel: AllSelectText,
+                    dataValueField: "PromotionID",
+                    dataSource: data
+                });
+
+            }
+        })
+
+    });
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelReservationPromotion_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+        $("#txtreservationid").val('');
+        $("#txthotelreservationid").val('');
+
+
+        var dropdownlistPart = $("#drppromotion").data("kendoDropDownList");
+        dropdownlistPart.select("");
+      
+    });
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelReservationPromotionExt>()
+                                    .Name("TB_HotelReservationPromotion_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+            .Read(read => read.Action("_Read", "TB_HotelReservationPromotion", new { TableID = (int)ViewBag.TableID }))
+        )
+
+                .Columns(columns =>
+                {
+                    //columns.Command(
+
+                    //   command =>
+                    //   {
+                    //       command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                    //       command.Destroy();
+                    //   }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.ReservationID).Width(250).Title(MessageColumnCaptions.TB_HotelReservationPromotion("ReservationID"));
+                    columns.Bound(p => p.HotelReservationID).Width(250).Title(MessageColumnCaptions.TB_HotelReservationPromotion("HotelReservationID"));
+                    columns.Bound(p => p.Promotion).Width(250).Title(MessageColumnCaptions.TB_HotelReservationPromotion("PromotionID"));
+                    columns.Bound(p => p.HotelPromotionID).Width(250).Title(MessageColumnCaptions.TB_HotelReservationPromotion("HotelPromotionID"));
+                  
+
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                                    .FileName("TB_HotelReservationPromotion.xlsx")
+                .Filterable(true))
+
+)
+
+
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelReservationPromotion_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

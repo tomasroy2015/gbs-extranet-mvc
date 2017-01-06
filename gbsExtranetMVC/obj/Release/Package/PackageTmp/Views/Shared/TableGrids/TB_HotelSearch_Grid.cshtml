@@ -1,0 +1,167 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelSearch")</h1>
+
+
+@*<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+        <div class="row">
+
+
+           <div class="col-md-12">
+                <div class="col-md-5  col-sm-5">
+                    <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                        <label> @MessageColumnCaptions.TB_HotelSearch("Date") (@Resources.FilterLowerLimitDescription)</label>
+                    </div>
+                    <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                        <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                    </div>
+
+                </div>
+                <div class="col-md-5  col-sm-5">
+
+                    <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                        <label>@MessageColumnCaptions.TB_HotelSearch("Date")  (@Resources.FilterUpperLimitDescription)</label>
+                    </div>
+                    <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                        <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                    </div>
+
+                </div>
+
+                <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                    <button id="btnfilter" class="btn btn-info" onclick="Filter()">Filter</button>
+                    <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">Clear Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<script>
+    $(document).ready(function () {
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+    });
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+
+        if ($StartDate) {
+            $filter.push({ field: "Date", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "Date", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        var grid = $("#TB_HotelSearch_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelSearch_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+
+
+    });
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelSearchExt>()
+                                                .Name("TB_HotelSearch_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                        .Read(read => read.Action("_Read", "TB_HotelSearch", new { TableID = (int)ViewBag.TableID }))
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.SearchParameterID).Width(150).Title(MessageColumnCaptions.TB_HotelSearch("SearchParameterID")).Width(150);
+                    columns.Bound(p => p.Hotel).Width(150).Title(MessageColumnCaptions.TB_HotelSearch("HotelID")).Width(150);
+                    columns.Bound(p => p.HotelRoomID).Width(200).Title(MessageColumnCaptions.TB_HotelSearch("HotelRoomID")).Width(250);
+                    columns.Bound(p => p.MaxChildrenCount).Width(250).Title(MessageColumnCaptions.TB_HotelSearch("MaxChildrenCount")).Width(250);
+                    columns.Bound(p => p.MaxPeopleCount).Width(200).Title(MessageColumnCaptions.TB_HotelSearch("MaxPeopleCount")).Width(250);
+                    columns.Bound(p => p.ChildrenAllowed).Width(150).ClientTemplate("<div style='text-align:center;'> #if(ChildrenAllowed){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_HotelSearch("ChildrenAllowed"));
+                    columns.Bound(p => p.MinumumRoomRate).Width(150).Title(MessageColumnCaptions.TB_HotelSearch("MinumumRoomRate")).Width(150);
+                    columns.Bound(p => p.TotalRoomRate).Width(150).Title(MessageColumnCaptions.TB_HotelSearch("TotalRoomRate")).Width(150);
+                    columns.Bound(p => p.TotalRoomRateHistory).Width(150).Title(MessageColumnCaptions.TB_HotelSearch("TotalRoomRateHistory")).Width(150);
+                    columns.Bound(p => p.AvailableRoomCount).Width(150).Title(MessageColumnCaptions.TB_HotelSearch("AvailableRoomCount")).Width(150);
+                    columns.Bound(p => p.AllocatedRoomCount).Width(150).Title(MessageColumnCaptions.TB_HotelSearch("AllocatedRoomCount")).Width(150);
+                    columns.Bound(p => p.Date).Width(150).Title(Resources.Date).Width(150);
+                })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+        //.Editable(editable => editable.Mode(GridEditMode.InLine))
+        //    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_HotelSearch.xlsx")
+                .Filterable(true))
+)
+
+
+
+@*<script id="AddNewRecord">
+
+        $("#cmdAddNewRecord").click(function (e) {
+
+            var table = $("#TB_HotelSearch_Grid").data("kendoGrid");
+            var sorting = table.dataSource.sort();
+
+            if (sorting) {
+                table.dataSource.sort(null);
+            }
+            table.addRow();
+            e.preventDefault();
+            //put custom logic here
+        });
+    </script>*@

@@ -1,0 +1,210 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_Deal")</h1>
+
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_DealExt>()
+                            .Name("TB_DealExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                    .Create(update => update.Action("_Create", "TB_Deal"))
+              .Read(read => read.Action("_Read", "TB_Deal", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "TB_Deal"))
+                .Destroy(destroy => destroy.Action("_Destroy", "TB_Deal"))
+
+        )
+
+                            .Columns(columns =>
+            {
+                columns.Command(
+
+                                   command =>
+                                   {
+                                       command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                                       command.Destroy().Text(Resources.Delete);
+                                   }).Width(180).Locked(true);
+
+                columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                //columns.Bound(p => p.DealReservationID).Title(MessageColumnCaptions.TB_DealReservationCaption("DealReservationID")).Width(250).Locked(true);
+                columns.Bound(p => p.BusinessPartner).EditorTemplateName("ddlBusinessPartner").Title(MessageColumnCaptions.TB_DealCaption("BusinessPartnerID")).Width(250);
+                columns.Bound(p => p.Region).EditorTemplateName("ddlRegion").Title(MessageColumnCaptions.TB_DealCaption("RegionID")).Width(250);
+                columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_DealCaption("Name_en")).Width(250);
+                columns.Bound(p => p.Description).Title(MessageColumnCaptions.TB_DealCaption("Description_en")).Width(250);
+                columns.Bound(p => p.SpecialNote).Title(MessageColumnCaptions.TB_DealCaption("SpecialNote_en")).Width(250);
+                columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_DealCaption("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'dd/MM/yyyy HH:mm:ss') #").Width(250);
+                columns.Bound(p => p.EndDate).Title(MessageColumnCaptions.TB_DealCaption("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'dd/MM/yyyy HH:mm:ss') #").Width(250);
+                columns.Bound(p => p.Quota).Title(MessageColumnCaptions.TB_DealCaption("Quota")).Width(250);
+                columns.Bound(p => p.Amount).Title(MessageColumnCaptions.TB_DealCaption("Amount")).Width(250);
+                columns.Bound(p => p.Currency).EditorTemplateName("ddlCurrencies").Title(MessageColumnCaptions.TB_DealCaption("CurrencyID")).Width(250);
+                columns.Bound(p => p.Cost).Title(MessageColumnCaptions.TB_DealHistoryCaption("Cost")).Width(250);
+                columns.Bound(p => p.CostCurrency).EditorTemplateName("ddlGetCostCurrencies").Title(MessageColumnCaptions.TB_DealCaption("CostCurrencyID")).Width(250);
+                columns.Bound(p => p.Deposit).Title(MessageColumnCaptions.TB_DealHistoryCaption("Deposit")).Width(250);
+                columns.Bound(p => p.DepositCurrency).EditorTemplateName("ddlGetDepositCurrency").Title(MessageColumnCaptions.TB_DealCaption("DepositCurrencyID")).Width(250);
+                columns.Bound(p => p.TypeDeposit).EditorTemplateName("ddlTypeDeposit").Title(MessageColumnCaptions.TB_DealHistoryCaption("DepositTypeID")).Width(250);
+                columns.Bound(p => p.BusinessPartnerCancelPolicy).EditorTemplateName("ddlBusinessPartnerCancelPolicy").Title(MessageColumnCaptions.TB_DealCaption("BusinessPartnerCancelPolicyID")).Width(250);
+                columns.Bound(p => p.HitCount).Title(MessageColumnCaptions.TB_DealCaption("HitCount")).Width(250);
+                columns.Bound(p => p.IsPopular).Title(MessageColumnCaptions.TB_DealCaption("IsPopular"))
+                    .ClientTemplate("<div style='text-align:center;'> #if(IsPopular){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                columns.Bound(p => p.Latitude).Title(MessageColumnCaptions.TB_DealCaption("Latitude")).Width(250);
+                columns.Bound(p => p.Longitude).Title(MessageColumnCaptions.TB_DealCaption("Longitude")).Width(250);
+                columns.Bound(p => p.MapZoomIndex).Title(MessageColumnCaptions.TB_DealCaption("MapZoomIndex")).Width(250);
+                columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_DealCaption("Sort")).Width(250);
+                columns.Bound(p => p.RoutingName).Title(MessageColumnCaptions.TB_DealCaption("RoutingName")).Width(250);
+                columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_DealCaption("Active"))
+                    .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.TB_DealCaption("IPAddress")).Width(250);
+
+
+
+                // columns.Bound(p => p.LogDate).Title(MessageColumnCaptions.TB_DealReservationCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDate,'dd/MM/yyyy HH:mm:ss') #").Width(250);
+                // columns.Bound(p => p.LogUser).Title(MessageColumnCaptions.TB_DealReservationCaption("LogUserID")).Width(250);
+
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_DealExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_DealExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+@*<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+        $DealID = $("#txtDealID").val();
+        $BusinessText = $("#drbBusiness").data("kendoDropDownList").text();
+        $BusinessValue = $("#drbBusiness").val();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+
+        if ($DealID) {
+            $filter.push({ field: "DealReservationID", operator: "equals", value: String($DealID) });
+        }
+        if ($BusinessValue != -1) {
+            $filter.push({ field: "BusinessPartner", operator: "contains", value: $BusinessText });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+
+        var grid = $("#TB_DealHistoryExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/BizTbl_UserBusinessPartner/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbBusiness").kendoDropDownList({
+                    filter: "contains",
+                    Name: "TableID",
+                    // OptionLabel: "All...",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    // dataValueField: "Name",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_DealHistoryExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtDealID").val('')
+        //$("#txtPromotionCode").val('');
+        //$("#txtGuestName").val('');
+        $("#datetimepickerStart").val('');
+        $("#datetimepickerEnd").val('');
+        //document.getElementById('chkStatus').checked = false
+    });
+
+</script>*@

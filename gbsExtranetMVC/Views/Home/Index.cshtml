@@ -1,0 +1,281 @@
+﻿@model gbsExtranetMVC.Models.SelectStats_Result
+
+@using Resources
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .Homediv {
+        text-align: center;
+     
+    }
+
+    .Msg {
+        color: green;
+    }
+</style>
+
+
+
+
+@if (ViewBag.HasHotels == "false" || ViewBag.HotelList == null)
+{
+    <div class="divWelcomeAdmin" align="center" style="text-align:center;">
+        <h3 style="text-align:center;">Welcome Admin</h3>
+    </div>
+}
+   
+
+<div class="row" style="display:@ViewBag.CommonIndex">
+
+    
+
+    <div class="col-md-3 col-xs-6">
+
+        <div class="tile-stats tile-red">
+            <div class="icon"><i class="entypo-users"></i></div>
+            <div class="num" data-start="0" data-end="@Model.ActiveUsers" data-postfix="" data-duration="1500" data-delay="0">0</div>
+
+            <h3>Registered Members</h3>
+            <p>We have Active members in GBS <a style="color:white; text-decoration:underline;" href="/Maintenance/UserOperation">read more...</a></p>
+        </div>
+
+    </div>
+
+    <div class="col-md-3 col-xs-6">
+
+        <div class="tile-stats tile-green">
+            <div class="icon"><i class="entypo-chart-bar"></i></div>
+            <div class="num" data-start="0" data-end="@Model.ApprovedHotels" data-postfix="" data-duration="1500" data-delay="600">0</div>
+
+            <h3>Properties</h3>
+            <p>We have Approved Properties in GBS <a style="color:white; text-decoration:underline;" href="/Management/PropertyOperations">read more...</a></p>
+        </div>
+
+    </div>
+
+    <div class="col-md-3 col-xs-6">
+
+        <div class="tile-stats tile-aqua">
+            <div class="icon"><i class="entypo-mail"></i></div>
+            <div class="num" data-start="0" data-end="@Model.NewMessages" data-postfix="" data-duration="1500" data-delay="1200">0</div>
+
+            <h3>New Messages</h3>
+            <p>Messages Received and Unread <a style="color:white; text-decoration:underline;" href="/Management/UserMessages">read more...</a></p>
+        </div>
+
+    </div>
+
+    <div class="col-md-3 col-xs-6">
+
+        <div class="tile-stats tile-blue">
+            <div class="icon"><i class="entypo-rss"></i></div>
+            <div class="num" data-start="0" data-end="@Model.ActiveSubscriptions" data-postfix="" data-duration="1500" data-delay="1800">0</div>
+
+            <h3>Subscribers</h3>
+            <p>Active Subscribers on GBS <a style="color:white; text-decoration:underline;" href="#">read more...</a></p>
+        </div>
+
+    </div>
+</div>
+
+<div class="=row" style="display:@ViewBag.CommonIndex">
+
+    @{ Html.RenderPartial("PartialLayouts/VisitorMap"); }
+
+
+</div>
+@if (ViewBag.HasHotels == "True" && ViewBag.HotelList != null)
+{
+    <div class="divWelcome" align="center" style="text-align:center;display:@ViewBag.HotelIndex;">
+        <h3> Welcome  <label id="lblHotelName" style="display:@ViewBag.HotelLableVisible"> </label>
+
+        <select id="drpHotelList" class="form-control" onchange="ChageHotelValues();" style="width:300px;display:@ViewBag.HotelListVisible">
+             @foreach (var Hotels in ViewBag.HotelList)
+             {
+                 <option value="@Hotels.Key">@Hotels.Value </option>
+             }
+
+        </select>
+        </h3>
+    </div>
+}
+
+
+<div class="Homediv" style="display:@ViewBag.HotelIndex">
+    <h4 style="font-weight:700">@DateTime.Now.ToString(" dd MMMM yyyy, dddd")</h4>
+</div>
+
+<div style="display:@ViewBag.HotelIndex">
+    <div class="row">
+        <div class="col-md-4 col-xs-12">
+
+            <div class="tile-stats tile-blue" style=" min-height: 124px; max-height: 124px;">
+                <div class="icon"><i class="entypo-home"></i></div>
+                <a style="color: white; text-decoration: none; font-size: 14pt; " href="/PropertyInformation/PropertyInformation"><i style="color: burlywood;" class="entypo-right-circled"></i>@Resources.HotelMainPageUpdateWarning</a>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-xs-12">
+
+            <div class="tile-stats tile-cyan" style="min-height: 124px; max-height: 124px;">
+                <div class="icon"><i class="entypo-cc-nc-eu"></i></div>
+                <a style="color: white; text-decoration: none; font-size: 14pt;" href="/RoomRate/RoomRate"><i style="color: burlywood;" class="entypo-right-circled"></i>@Resources.HotelMainPageRoomRateUpdateWarning</a>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="tile-stats tile-red" style="min-height: 124px; max-height: 124px;">
+                <div class="icon"><i class="entypo-list-add"></i></div>
+                <a style="color: white; text-decoration: none; font-size: 14pt;" href="/RoomAvailability/RoomAvailability"><i style="color: burlywood;" class="entypo-right-circled"></i>@Resources.HotelMainPageRoomAvailabilityUpdateWarning</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style= "margin-top: 20px;">
+        <div class="col-md-6 col-xs-12">
+            @{ Html.RenderPartial("PartialLayouts/NearCheckinProperty"); }
+        </div>
+        <div class="col-md-6 col-xs-12">
+            @{ Html.RenderPartial("PartialLayouts/NearCheckoutProperty"); }
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6 col-xs-12">
+            @{ Html.RenderPartial("PartialLayouts/RecentHotelReservations"); }
+        </div>
+        <div class="col-md-6 col-xs-12">
+            @{ Html.RenderPartial("PartialLayouts/RecentHotelReservationCancel"); }
+        </div>
+    </div>
+   
+    @*Hi This Hotelpage
+
+    HotelMainPageUpdateWarning*@
+
+</div>
+
+    @*<div class="Homediv">
+        <h1>Welcome to GBS EXTRANET </h1>
+        <h1>Today Date: @DateTime.Now.ToString("dddd dd/MM/yyyy HH:mm")</h1>
+        <h1 class="Msg">*** GBS Booking System ***</h1>
+        <p>
+            @Resources.AboutGbshotelsText
+        </p>
+    </div>*@
+
+<script>
+
+    var SelectedHotelId = '@Session["SelectedHotelID"]'
+    var SelectedHotelName = '@Session["SelectedHotelName"]'
+    var HasHotel = '@ViewBag.HasHotels'
+    //alert(HasHotel)
+    //alert(SelectedHotelId)
+
+    function SelectHotel()
+    {
+        if (HasHotel == "True") {
+
+            var HotelText = '@ViewBag.HotelText';
+            //alert(HotelText)
+            //alert(SelectedHotelName)
+            if (HotelText != null && HotelText == 'True' && HotelText != '') {
+                if (SelectedHotelId != "") {
+                    // lblHotelName
+                    document.getElementById("drpHotelList").value = SelectedHotelId;
+                }
+            }
+            else {
+                document.getElementById("lblHotelName").innerHTML = SelectedHotelName;
+                //if (SelectedHotelId != "") {
+                //    // lblHotelName
+                //    document.getElementById("drpHotelList").value = SelectedHotelId;
+                //}
+                //if (SelectedHotelName != "") {
+                //    document.getElementById("drpHotelList").innerHTML = SelectedHotelName;
+                //}
+                //else {
+                //    var Hotelname = $('#drpHotelList').find('option:selected').text();
+
+                //    //alert(Hotelname)
+                //    document.getElementById("lblHotelName").innerHTML = Hotelname;
+
+                //}
+            }
+
+            
+        }
+    }
+
+    $(document).ready(function () {
+
+        if (HasHotel == "True") {
+
+            var HotelText = '@ViewBag.HotelText';
+            //alert(HotelText)
+            //alert(SelectedHotelName)
+            if (HotelText != null && HotelText == 'True' && HotelText != '') {
+                if (SelectedHotelId != "") {
+                    // lblHotelName
+                    document.getElementById("drpHotelList").value = SelectedHotelId;
+                }
+            }
+            else {
+                document.getElementById("lblHotelName").innerHTML = SelectedHotelName;
+                //if (SelectedHotelId != "") {
+                //    // lblHotelName
+                //    document.getElementById("drpHotelList").value = SelectedHotelId;
+                //}
+                //if (SelectedHotelName != "") {
+                //    document.getElementById("drpHotelList").innerHTML = SelectedHotelName;
+                //}
+                //else {
+                //    var Hotelname = $('#drpHotelList').find('option:selected').text();
+
+                //    //alert(Hotelname)
+                //    document.getElementById("lblHotelName").innerHTML = Hotelname;
+
+                //}
+            }
+
+
+        }
+
+
+    })
+
+    function ChageHotelValues()
+    {
+       // alert("hi")
+
+        var Hotelname = $('#drpHotelList').find('option:selected').text();
+        var HotelID = document.getElementById("drpHotelList").value;
+        var jsonResult = { HotelID: HotelID, Hotelname: Hotelname }
+
+        $.ajax({
+            type: "GET",
+            url: "/Home/ChageHotelValues",
+            data: jsonResult,
+            datatype: "json",
+            success: function (data) {
+                window.location.reload();
+            }
+        })
+    }
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

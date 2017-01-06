@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                .Name("UserID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                    .DataTextField("User")
+                .DataValueField("UserID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetUser", "DropDownLists");
+        });
+    })
+)

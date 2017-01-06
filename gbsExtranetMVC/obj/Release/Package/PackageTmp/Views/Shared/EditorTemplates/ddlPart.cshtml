@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                .Name("PartID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                        .DataTextField("PartName")
+                        .DataValueField("PartID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetPart", "DropDownLists");
+        });
+    })
+)

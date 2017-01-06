@@ -1,0 +1,113 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_LatestNews")</h1>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+    //function OnEdit(e) {
+    //    if (e.model.isNew() == false) {
+    //        $('input[name=ID]').parent().html(e.model.ID);
+    //    }
+    //}
+   
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_LatestNewsExt>()
+        .Name("TB_LatestNewsExt_Grid")
+       // .Events(events => events.Edit("OnEdit"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+           // model.Field(p => p.UserID).Editable(false);
+        })
+                    .Create(update => update.Action("_Create", "TB_LatestNews"))
+                    .Read(read => read.Action("_Read", "TB_LatestNews", new { TableID = (int)ViewBag.TableID }))
+                    .Update(update => update.Action("_Update", "TB_LatestNews"))
+                    .Destroy(destroy => destroy.Action("_Destroy", "TB_LatestNews"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               //command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               //command.Destroy();
+                           });
+                        // columns.Bound("").Sortable(false).Width(150).ClientTemplate("<div style='text-align:center;'> <a  href='/PropertyReservations/View/#=EncryptReservationID#' title='View Reservations'><input type='button' value='Edit'/></a> # # <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#&Operation=#=Encryptcc#' title='Credit Card Info'><img src='/Images/creditcard.png' style='width:32px;margin-left:8px;cursor:pointer;' alt='creditcard'></a> <a href='/Reservation/AdminHotelReservationOperations?ReservationID=#=EncryptReservationID#&Operation=#=Encrypthistory#' title='Reservation History'><img src='/Images/history.png' style='width:32px;margin-left:8px;cursor:pointer;'  alt='history'></a> </div>").Locked(true); 
+                        columns.Bound("").Sortable(false).Width(150).ClientTemplate("<div style='text-align:center;'><a  href='/LatestNews/Edit/#=ID#' title='View LatestNews'><input style='width: 40%;height: 30%;' class='k-button' type='button' value='Edit'/></div>").Locked(true); 
+                        columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.UserID).Width(150).Locked(true);
+                        columns.Bound(p => p.Title_tr).Width(200);
+                        columns.Bound(p => p.Title_en).Width(200);
+                        columns.Bound(p => p.Title_de).Width(200);
+                        columns.Bound(p => p.Title_fr).Width(200);
+                        columns.Bound(p => p.Title_ru).Width(200);
+                        columns.Bound(p => p.Title_ar).Width(200);
+                        columns.Bound(p => p.Description_tr).Width(300);
+                        columns.Bound(p => p.Description_en).Width(300);
+                        columns.Bound(p => p.Description_de).Width(300);
+                        columns.Bound(p => p.Description_fr).Width(300);
+                        columns.Bound(p => p.Description_ru).Width(300);
+                        columns.Bound(p => p.Description_ar).Width(300);
+                        columns.Bound(p => p.PostImage).EditorTemplateName("Upload").Width(300);
+                        columns.Bound(p => p.Travel).Width(100);
+                        columns.Bound(p => p.Active).Width(100)
+                             .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>");
+                        columns.Bound(p => p.CreatedDate).ClientTemplate("#= kendo.toString(CreatedDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                        
+                        //columns.Bound(p => p.OpDateTime).Hidden(true);
+                        //columns.Bound(p => p.OpUserID).Hidden(true);
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                    
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_LatestNewsExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        location.href = '/LatestNews/Create';
+        //var table = $("#Email_Grid").data("kendoGrid");
+        //var sorting = table.dataSource.sort();
+
+        //if (sorting) {
+        //    table.dataSource.sort(null);
+        //}
+        //table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

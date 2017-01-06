@@ -1,0 +1,98 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TypeSalutation")</h1>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TypeSalutationExt>()
+                .Name("TB_TypeSalutation_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                            .Create(update => update.Action("_Create", "TB_TypeSalutation"))
+                            .Read(read => read.Action("_Read", "TB_TypeSalutation", new { TableID = (int)ViewBag.TableID }))
+                            .Destroy(destroy => destroy.Action("_Destroy", "TB_TypeSalutation"))
+                            .Update(update => update.Action("_Update", "TB_TypeSalutation"))
+
+        )
+
+
+            .Columns(columns =>
+            {
+                columns.Command(
+                 command =>
+                 {
+                     command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                     command.Destroy().Text(Resources.Delete);
+                 }).Locked(true).Width(180);
+
+                columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+                columns.Bound(p => p.Name_en).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_en")).Width(150);
+                columns.Bound(p => p.Name_tr).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_tr")).Width(200);
+                columns.Bound(p => p.Name_de).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_de")).Width(200);
+                columns.Bound(p => p.Name_es).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_es")).Width(200);
+                columns.Bound(p => p.Name_fr).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_fr")).Width(200);
+                columns.Bound(p => p.Name_ru).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_ru")).Width(200);
+                columns.Bound(p => p.Name_it).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_it")).Width(200);
+                columns.Bound(p => p.Name_ar).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_ar")).Width(200);
+                columns.Bound(p => p.Name_ja).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_ja")).Width(200);
+                columns.Bound(p => p.Name_pt).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_pt")).Width(200);
+                columns.Bound(p => p.Name_zh).Title(MessageColumnCaptions.TB_TypeSalutationCaption("Name_zh")).Width(200);
+             
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_TypeSalutation.xlsx")
+                .Filterable(true))
+
+)
+
+
+<script id="AddNewRecord">
+
+
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_TypeSalutation_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

@@ -1,0 +1,90 @@
+﻿<script src="/Content/assets/js/bootstrap.js"></script>
+
+<ul class="list-inline links-list pull-right">
+
+    <!-- Language Selector -->
+    <li class="dropdown language-selector nav-drop">
+
+        Language: &nbsp;
+        <a class="dropdown-toggle" data-toggle="dropdown" data-close-others="true" style="cursor:pointer">
+            <img id="imgSelectedCulture">
+        </a>
+
+        <ul class="dropdown-menu pull-right list nav-drop-menu" id="divCultureAppend" style="cursor:pointer"></ul>
+
+    </li>
+
+    <li class="sep"></li>
+
+
+    @*<li>
+        <a href="#" data-toggle="chat" data-collapse-sidebar="1">
+            <i class="entypo-chat"></i>
+            Chat
+
+            <span class="badge badge-success chat-notifications-badge is-hidden">0</span>
+        </a>
+    </li>
+
+    <li class="sep"></li>
+    *@
+    <li>
+        <a href="/Account/Logoff">
+            Log Out <i class="entypo-logout right"></i>
+        </a>
+    </li>
+</ul>
+
+
+<script>
+    var CurrentCulture = '@Session["CultureCode"]';
+   
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/Home/GetAllCultureDB",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+               // alert(data)
+                if(data!="")
+                {
+                    //alert(CurrentCulture)
+                    //alert(data)
+                    document.getElementById("imgSelectedCulture").src = "/Image/flag/" + CurrentCulture + "__.PNG"
+                    //alert("hi")
+                    $("#divCultureAppend").empty();
+                    $.each(data, function (key, val) {
+                        var onclick = "'" + val.Code + "','" + val.SystemCode + "'";
+                        $("#divCultureAppend").append(
+                            '<li onclick="ChangeCulture(' + onclick + ')">' +
+                               '<a >' +
+                                   '<img src="/Image/flag/'+val.Code+'__.PNG" />' +
+                                   '<span>' + val.Description + '</span>' +
+                               '</a>' +
+                            '</li>'
+                       );
+                    })
+
+                   
+                }
+            }
+        })
+    });
+
+    function ChangeCulture(Code, SystemCode)
+    {
+        var json = { Code: Code ,SystemCode:SystemCode}
+        $.ajax({
+            type: "GET",
+            url: "/Home/SaveChangedLanguage",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                window.location.reload();
+            }
+        })
+    }
+</script>

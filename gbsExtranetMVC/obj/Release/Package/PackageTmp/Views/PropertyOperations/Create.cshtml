@@ -1,0 +1,1396 @@
+﻿@model gbsExtranetMVC.Models.Repositories.HotelExt
+@using Resources
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/common.js"></script>
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<link href="~/CSS/jquery-ui-theme.css" rel="stylesheet" />
+@*<link href="~/CSS/273a2ab1caefa644826a63c1e305fdc1347cb81f.css" rel="stylesheet" />*@
+
+<h1 style="color: black; text-align:center">@Resources.HotelInfo</h1>
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+    @@media (max-width:767px) {
+        .ui-autocomplete {
+            width: 210px !important;
+            font-size: 13px;
+        }
+    }
+
+    @@media (min-width:768px) {
+        .ui-autocomplete {
+            width: 202px !important;
+            font-size:13px;
+        }
+    }
+
+    .k-input {
+        width: 100% !important;
+    }
+    .k-readonly {
+        width: 100% !important;
+    }
+</style>
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("Edit", "PropertyOperations", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.ID)
+        <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.ID, Resources.HotelID)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.ID)
+                            @Html.HiddenFor(m => m.ID, new { @id = "hiddenHotelID" })
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Name, Resources.HotelName)
+                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "k-textbox",@id = "txtHotelName" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredHotelName" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Latitude, Resources.Latitude)
+                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Latitude, new { @onkeypress="return isNumberKey(event);", @class = "k-textbox", @id = "txtLatitude" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredLatitude" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                                <span id="lblLatitudeSizeWarning" style="display:none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:-90 ,@Resources.MaximumValue:90 </span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Longitude, Resources.Longitude)
+                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Longitude, new { @onkeypress = "return isNumberKey(event);", @class = "k-textbox", @id = "txtLongitude" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredLongitude" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                                <span id="lblLongitudeSizeWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RangeWarning @Resources.MinimumValue:-180 ,@Resources.MaximumValue:180 </span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.CountryName, Resources.Country)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CountryID)
+                                .Name("Country")
+                                .OptionLabel(@Resources.SelectCountry)
+                                .BindTo((SelectList)ViewBag.Countries)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpCountry" })
+                            )
+     
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.RegionName, Resources.Region)
+                         
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.RegionName, new { @onkeydown = "return KeyCheck(event);", @class = "k-textbox", @id = "txtRegion" })
+                            @Html.HiddenFor(m => m.RegionID, new { @class = "k-textbox", @id = "hdnRegionID" })
+                            @Html.HiddenFor(m => m.ParentRegionID, new { @class = "k-textbox", @id = "hdnParentRegionID" })                          
+                            @Html.Label("*", new { @class = "requiredfield" })                    
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredRegion" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.MainRegionName, Resources.MainRegion)
+                        </th>
+                        <td colspan="3">
+                            <table>
+                                <tr>
+                                    <td>
+                                        @(Html.Kendo().DropDownListFor(m => m.MainRegionID)
+                                .Name("Mainregion")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.MainRegions)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpMainRegion" })
+                                        )
+                                        @Html.Label("*", new { @class = "requiredfield" })
+                                        <div style=" margin-left: 2px; margin-top: 5px;">
+                                            <span id="lblrequiredMainRegion" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                                        </div>
+                                    </td>
+                                   
+                                    
+                                </tr>
+
+                            </table>
+
+                        </td>
+                        @*<td colspan="3" id="TdMultiSelectRegion">
+                            @(Html.Kendo().MultiSelect()
+                                .Name("MainregionSelect")
+                                .Placeholder("Select...")
+                                .AutoClose(false)
+                                .BindTo((SelectList)ViewBag.MainRegionsMutipleDropdown)
+                                .Value(ViewBag.MainRegionsByHotel)
+                                .HtmlAttributes(new { @style = "width: 464px;min-height: 26px", @id = "drpMainRegionsMutiple" })
+                            )
+                        </td>*@     
+                                                                       
+                    </tr>  
+                    <tr>
+                        <td>
+
+                        </td>
+                        
+                        <td colspan="3" id="TdMultiSelectRegion">
+                            @(Html.Kendo().MultiSelect()
+                                .Name("MainregionSelect")
+                                .Placeholder(@Resources.Select)
+                                .AutoClose(false)
+                                .BindTo((SelectList)ViewBag.MainRegionsMutipleDropdown)
+                                .Value(ViewBag.MainRegionsByHotel)
+    .HtmlAttributes(new { @style = "width: 680px;min-height: 27px", @id = "drpMainRegionsMutiple" })
+                            )
+                        </td>
+
+                    </tr>
+                   
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Address, Resources.HotelAddress)
+                        </th>
+                        <td>
+                            @Html.TextAreaFor(m => m.Address, new { @class = "k-textbox", @style = "width:200px;", @id = "txtAreaHotelAddress" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredAddress" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.PostCode, Resources.HotelPostCode)
+                          
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.PostCode, new { @class = "k-textbox", @id = "txtHotelPostCode" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredPostCode" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                       
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Phone, Resources.HotelPhone)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Phone, new { @class = "k-textbox", @id = "txtHotelPhone" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredPhone" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Fax, Resources.HotelFax)
+                           
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Fax, new { @class = "k-textbox", @id = "txtHotelFax" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredFax" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                        
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.FirmID, Resources.Firm)
+
+                        </th>
+                        <td>
+                            @*@Html.DropDownList("Firm", ViewBag.Firm as SelectList,"Select");*@
+                            @*@(Html.Kendo().DropDownListFor(m => m.FirmID)
+                                .Name("Firm")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo(ViewBag.Firm)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpFirm" })
+                            )*@
+                            @*@(Html.Kendo().DropDownList()
+                                  .Name("Firm")
+                                  .DataTextField("Text")
+                                  .DataValueField("Value")
+                                  .OptionLabel("Select")
+                                  .DataSource(source =>
+                                  {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("GetFirms", "PropertyOperations");
+                                      });
+                                  })
+                                  .HtmlAttributes(new { @style = "width: 200px;", @id = "drpFirm" }).AutoBind(false)
+                                  )*@
+                            
+                            @*@(Html.Kendo().DropDownList()
+                                  .Name("Firm")
+                                  .DataTextField("Text")
+                                  .DataValueField("Value")
+                                  .MinLength(3).OptionLabel("Select")
+                                  .HtmlAttributes(new { style = "width:200px" })                                 
+                                  .Filter(FilterType.Contains)
+                                  .DataSource(source =>
+                                  {
+                                      source.Custom()
+                                          .ServerFiltering(true)
+                                          .ServerPaging(true)
+                                          .PageSize(80)
+                                          .Type("aspnetmvc-ajax") //Set this type if you want to use DataSourceRequest and ToDataSourceResult instances
+                                          .Transport(transport =>
+                                          {
+                                              transport.Read("Firm_Read", "PropertyOperations");
+                                          });
+                                      //.Schema(schema =>
+                                      //{
+                                      //    schema.Data("Data") //define the [data](http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema.data) option
+                                      //          .Total("Total"); //define the [total](http://docs.telerik.com/kendo-ui/api/javascript/data/datasource#configuration-schema.total) option
+                                      //});
+                                  })
+                                  .Virtual(v => v.ItemHeight(26).ValueMapper("valueMapper"))
+                                )
+                           
+                            <script>
+                                function valueMapper(options) {
+                                    $.ajax({
+                                        url: "@Url.Action("Firm_Read", "PropertyOperations")",
+                                        data: convertValues(options.value),
+                                        success: function (data) {
+                                            options.success(data);
+                                        }
+                                    });
+                                }
+
+                                function convertValues(value) {
+                                    var data = {};
+
+                                    value = $.isArray(value) ? value : [value];
+
+                                    for (var idx = 0; idx < value.length; idx++) {
+                                        data["values[" + idx + "]"] = value[idx];
+                                    }
+
+                                    return data;
+                                }
+                            </script>*@
+                            <input id="drpFirmSelect" style="width: 200px" />
+                            <script>
+                                $(document).ready(function () {
+                                    $("#drpFirmSelect").kendoComboBox({
+                                        dataTextField: "Text",
+                                        dataValueField: "Value",
+                                        virtual: {
+                                            itemHeight: 26,
+                                            valueMapper: function (options) {
+                                                $.ajax({
+                                                    url: "/PropertyOperations/Firm_Read",
+                                                    //type: "GET",
+                                                    //dataType: "jsonp",
+                                                    data: convertValues(options.value),
+                                                    success: function(data) {
+                                                        options.success(data);
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        height: 250,
+                                        dataSource: {
+                                            type: "aspnetmvc-ajax",
+                                            transport: {
+                                                read: "/PropertyOperations/Firm_Read"
+                                            },
+                                            pageSize: 50,
+                                            serverPaging: true,
+                                            serverFiltering: true
+                                        }
+                                    });
+                                });
+
+                                //This is a helper method that serializes values into a understandable format for the server.
+                                //This method is not obligatory to use. Instead, you need to send the value in a format that is understandable for the server.
+                                function convertValues(value) {
+                                    var data = {};
+
+                                    value = $.isArray(value) ? value : [value];
+
+                                    for (var idx = 0; idx < value.length; idx++) {
+                                        data["values[" + idx + "]"] = value[idx];
+                                    }
+
+                                    return data;
+                                }
+                            </script>   
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredFirm" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.HotelTypeID, Resources.HotelType)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.HotelTypeID)
+                                .Name("HotelTypeID")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.PropertyType)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpHotelType" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredPropertyType" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                        </td>
+                                              
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.HotelClassID, Resources.HotelClass)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.HotelClassID)
+                                .Name("HotelClassID")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.TypeHotelClass)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpHotelClass" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredTypeHotelClass" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.HotelChainID, Resources.HotelChain)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.HotelChainID)
+                                .Name("HotelChainID")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.TypeHotelChain)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpHotelChain" })
+                            )
+            
+                        </td>
+                       
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.HotelAccommodationTypeID, Resources.AccommodationType)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.HotelAccommodationTypeID)
+                                .Name("HotelAccommodationTypeID")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.TypeHotelAccommodation)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpAccommodationType" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredHotelAccommodationType" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.RoomCount, Resources.RoomCount)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.RoomCount, new { @onkeypress = "return isNumberKeys(event);", @class = "k-textbox", @id = "txtRoomCount" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredRoomCount" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                      
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.FloorCount, Resources.FloorCount)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.FloorCount, new { @onkeypress = "return isNumberKeys(event);", @class = "k-textbox", @id = "txtFloorCount" })
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.BuiltYear, Resources.BuiltYear)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.BuiltYear)
+                                .Name("BuiltYearDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.FillYearListBuild)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpBuiltYear" })
+                            )
+                        </td>
+                       
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.RenovationYear, Resources.RenovationYear)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.RenovationYear)
+                                .Name("RenovationYearDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.FillYearListBuild)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpRenovationYearYear" })
+                            )
+
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.WebAddress, Resources.HotelWebAddress)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.WebAddress, new { @class = "k-textbox", @id = "txtWebAddress" })
+                        </td>
+                       
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Email, Resources.HotelEmail)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "k-textbox", @id = "txtHotelEmail" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredEmail" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.CheckinStart, Resources.Checkin)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CheckinStart)
+                                .Name("CheckinStartDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckinFrom)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckinStart" })
+                            )
+                            @Html.LabelFor(m => m.CheckinStart, "-")
+
+                            @(Html.Kendo().DropDownListFor(m => m.CheckinEnd)
+                                .Name("CheckinEndDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckinTo)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckinEnd" })
+                            )
+                        </td>
+                       
+                       
+                       
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.CultureID, Resources.Language)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CultureID)
+                                .Name("CultureDrop")
+                                .BindTo((SelectList)ViewBag.Culture)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpCulture", @onchange = "getlanguage()" })
+                            )
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.CheckoutStart, Resources.Checkout)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CheckoutStart)
+                                .Name("CheckoutStartDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckOutFrom)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckoutStart" })
+                            )
+                            @Html.LabelFor(m => m.CheckoutStart, "-")
+
+                            @(Html.Kendo().DropDownListFor(m => m.CheckoutEnd)
+                                .Name("CheckoutendDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.CheckOutTo)
+                                .HtmlAttributes(new { @style = "width: 95px;", @id = "drpCheckoutEnd" })
+                            )
+                        </td>
+                       
+                      
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Description, Resources.HotelDescription)
+
+                        </th>
+                        <td colspan="3">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "k-textbox", @style = "width: 680px;min-height: 160px", @id = "txtAreaDescription" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredDescription" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.CurrencyID, Resources.Currency)
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CurrencySymbol)
+                                .Name("CurrencyDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.GetCurrency)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpCurrency" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredCurrency" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Sort, Resources.HotelCreditCard)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().MultiSelect()
+                                .Name("CreditCardSelect")
+                                .Placeholder(@Resources.Select)
+                                .AutoClose(false)
+            //.BindTo(new SelectList(ViewBag.GetAllCreditCardList, "Value", "Text"))
+                                .BindTo((SelectList)ViewBag.GetAllCreditCardList)
+                                .Value(ViewBag.GetHotelCreditCardList)
+                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpCreditcardmultiple" })
+                            )
+                   
+                        </td>
+
+                       
+                       
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Sort, Resources.Sort)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Sort, new { @onkeypress = "return isNumberKeys(event);", @class = "k-textbox", @id = "txtSort" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredSort" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.MapZoomIndex, Resources.MapZoomIndex)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.MapZoomIndex, new { @onkeypress = "return isNumberKeys(event);", @class = "k-textbox", @id = "txtMapZoomIndex" })
+
+                        </td>
+                       
+                       
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.ClosestAirportID, Resources.ClosestAirport)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.ClosestAirportID)
+                                .Name("ClosestAirportDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.ClosestAirport)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpClosestAirport" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredClosestAirport" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.ClosestAirportDistance, Resources.ClosestAirportDistance)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.ClosestAirportDistance, new { @onkeypress = "return isNumberKey(event);", @class = "k-textbox", @id = "txtClosestAirportDistance" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredAirportDistance" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                        
+                      
+
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.ChannelManagerID, Resources.ChannelManager)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.ChannelManagerID)
+                                .Name("ChannelManagerDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.ChannelManager)
+                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpChannelManager" })
+                            )
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.AvailabilityRateUpdate, Resources.AvailabilityRateUpdate)
+
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.AvailabilityRateUpdate, new { @checked = "checked", @id = "chkAvailabilityRateUpdate" })
+                        </td>
+                       
+                       
+
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.StatusID, Resources.Status)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.StatusID)
+                                .Name("StatusDrop")
+                                .OptionLabel(@Resources.Select)
+                                .BindTo((SelectList)ViewBag.Status)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpStatus" })
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredStatus" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.IsSecret, Resources.SecretHotel)
+
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.IsSecret, new { @checked = "checked", @id = "chkIsSecret" })
+
+                        </td>
+                       
+
+
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.IsPreferred, Resources.PreferredHotel)
+
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.IsPreferred, new { @checked = "checked", @id = "chkIsPreferred" })
+
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Active, Resources.Active)
+
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.Active, new { @checked = "checked", @id = "chkIsActive" })
+
+                        </td>
+                        
+                        
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.CultureID, Resources.NotificationCulture)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CultureID)
+                                .Name("NotificationCultureDrop")
+                                .BindTo((SelectList)ViewBag.Culture)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drpNotificationCulture" })
+                            )
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.RoutingName, Resources.RoutingName)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.RoutingName, new { @class = "k-textbox", @id = "txtRoutingName" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div style=" margin-left: 2px; margin-top: 5px;">
+                                <span id="lblrequiredRoutingName" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                        </td>
+                       
+                      
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.IPAddress, Resources.IPAddress)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.IPAddress)
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    }
+
+    <div align="center" style="padding-top:5px;">
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.OperationSuccess</label>
+        <label id="lblFailure" style="color:red;font-size:medium;display:none;">@Resources.FillFieldsWarningAbove</label>
+        <label id="lblRoutingNameFailure" style="color:red;font-size:medium;display:none;">@Resources.RoutingNameWarning</label>
+        <br />
+
+        <input type="submit" value="@Resources.Save" onclick="SavePropertyOperation()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        <input type="submit" value="@Resources.Back" onclick="CancelPropertyOpeartion()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+    </div>
+</div>
+
+<script>
+    
+    $(document).ready(function () {
+        getlanguage();
+        
+    });
+    function getlanguage() {
+
+        var Culture = document.getElementById("drpCulture").value;
+
+        var HotelID = document.getElementById('hiddenHotelID').value;
+
+        var json = { Culture: Culture, HotelID: HotelID }
+
+        $.ajax({
+            type: "Get",
+            url: "/PropertyOperations/GetdescriptionbyCulture",
+            data: json,
+            datatype: "JSON",
+            traditional: true,
+            success: function (res) {
+                //alert(res)
+                if (res != "empty") {
+                    document.getElementById("txtAreaDescription").value = res;
+                }
+                else {
+                    document.getElementById("txtAreaDescription").value = "";
+                }
+
+            }
+        })
+
+    }
+    function SavePropertyOperation() {
+        //  alert("hi")
+        var HotelID = document.getElementById("hiddenHotelID").value;
+        var HotelName = document.getElementById("txtHotelName").value;
+        var Latitude = document.getElementById("txtLatitude").value;
+        var Longitude = document.getElementById("txtLongitude").value;
+        var Country = document.getElementById("drpCountry").value;
+        var Region = document.getElementById("hdnRegionID").value;
+        var MainRegion = document.getElementById("drpMainRegion").value;
+        var Multipleregions = $("#drpMainRegionsMutiple").data("kendoMultiSelect");
+        var SelectedRegions = Multipleregions.value($("#Value").val());
+        var HotelAddress = document.getElementById("txtAreaHotelAddress").value;
+        var HotelPostCode = document.getElementById("txtHotelPostCode").value;
+        var HotelPhone = document.getElementById("txtHotelPhone").value;
+        var HotelFax = document.getElementById("txtHotelFax").value;
+        var Firm = document.getElementById("drpFirm").value;
+        var HotelType = document.getElementById("drpHotelType").value;
+        var HotelClass = document.getElementById("drpHotelClass").value;
+        var HotelChain = document.getElementById("drpHotelChain").value;
+        var AccommodationType = document.getElementById("drpAccommodationType").value;
+        var RoomCount = document.getElementById("txtRoomCount").value;
+        var FloorCount = document.getElementById("txtFloorCount").value;
+        var BuiltYear = document.getElementById("drpBuiltYear").value;
+        var RenovationYearYear = document.getElementById("drpRenovationYearYear").value;
+        var WebAddress = document.getElementById("txtWebAddress").value;
+        var HotelEmail = document.getElementById("txtHotelEmail").value;
+        var CheckinStart = document.getElementById("drpCheckinStart").value;
+        var CheckinEnd = document.getElementById("drpCheckinEnd").value;
+        var CheckoutStart = document.getElementById("drpCheckoutStart").value;
+        var CheckoutEnd = document.getElementById("drpCheckoutEnd").value;
+        var Culture = document.getElementById("drpCulture").value;
+        var Currency = document.getElementById("drpCurrency").value;
+        var Description = document.getElementById("txtAreaDescription").value;
+        var Creditcardmultiple = $("#drpCreditcardmultiple").data("kendoMultiSelect");
+        var SelectedCards = Creditcardmultiple.value($("#Value").val());
+        var Sorts = document.getElementById("txtSort").value;
+        var MapZoomIndex = document.getElementById("txtMapZoomIndex").value;
+        var ClosestAirport = document.getElementById("drpClosestAirport").value;
+        var ClosestAirportDistance = document.getElementById("txtClosestAirportDistance").value;
+        var ChannelManager = document.getElementById("drpChannelManager").value;
+        var AvailabilityRateUpdate = false;
+        if (document.getElementById("chkAvailabilityRateUpdate").checked == true) {
+            AvailabilityRateUpdate = true
+        }
+        var Status = document.getElementById("drpStatus").value;
+        var IsSecret = false;
+        if (document.getElementById("chkIsSecret").checked == true) {
+            IsSecret = true
+        }
+        var IsPreferred = false
+        if (document.getElementById("chkIsPreferred").checked == true) {
+            IsPreferred = true
+        }
+        var IsActive = false;
+        if (document.getElementById("chkIsActive").checked == true) {
+            IsActive = true
+        }
+        var NotificationCulture = document.getElementById("drpNotificationCulture").value;
+        var RoutingName = document.getElementById("txtRoutingName").value;
+
+        if (HotelName == "") {
+            document.getElementById("txtHotelName").style.borderColor = "Red"
+            document.getElementById("lblrequiredHotelName").style.display = "";
+        }
+        else {
+            document.getElementById("txtHotelName").style.borderColor = "";
+            document.getElementById("lblrequiredHotelName").style.display = "none";
+        }
+
+
+
+        if (Latitude == "") {
+            document.getElementById("txtLatitude").style.borderColor = "Red"
+            document.getElementById("lblrequiredLatitude").style.display = "";
+        }
+        else {
+            document.getElementById("lblrequiredLatitude").style.display = "none";
+            if (Latitude <= 90 && Latitude >= -90) {
+                document.getElementById("txtLatitude").style.borderColor = "";
+                document.getElementById("lblLatitudeSizeWarning").style.display = "none";
+            }
+            else {
+                document.getElementById("lblLatitudeSizeWarning").style.display = "";
+            }
+
+        }
+
+
+        if (Longitude == "") {
+            document.getElementById("txtLongitude").style.borderColor = "Red"
+            document.getElementById("lblrequiredLongitude").style.display = "";
+        }
+        else {
+            document.getElementById("lblrequiredLongitude").style.display = "none";
+            if (Longitude <= 180 && Longitude >= -180) {
+                document.getElementById("txtLongitude").style.borderColor = "";
+                document.getElementById("lblLongitudeSizeWarning").style.display = "none";
+            }
+            else {
+                document.getElementById("lblLongitudeSizeWarning").style.display = "";
+            }
+
+        }
+        // alert(Region)
+        if (Region == "") {
+            document.getElementById("txtRegion").style.borderColor = "Red"
+            document.getElementById("lblrequiredRegion").style.display = "";
+        }
+        else {
+            document.getElementById("txtRegion").style.borderColor = "";
+            document.getElementById("lblrequiredRegion").style.display = "none";
+        }
+        if (MainRegion == "") {
+            document.getElementById("drpMainRegion").style.borderColor = "Red"
+            document.getElementById("lblrequiredMainRegion").style.display = "";
+        }
+        else {
+            document.getElementById("drpMainRegion").style.borderColor = "";
+            document.getElementById("lblrequiredMainRegion").style.display = "none";
+        }
+        if (HotelAddress == "") {
+            document.getElementById("txtAreaHotelAddress").style.borderColor = "Red"
+            document.getElementById("lblrequiredAddress").style.display = "";
+        }
+        else {
+            document.getElementById("txtAreaHotelAddress").style.borderColor = "";
+            document.getElementById("lblrequiredAddress").style.display = "none";
+        }
+        if (HotelPostCode == "") {
+            document.getElementById("txtHotelPostCode").style.borderColor = "Red"
+            document.getElementById("lblrequiredPostCode").style.display = "";
+        }
+        else {
+            document.getElementById("txtHotelPostCode").style.borderColor = "";
+            document.getElementById("lblrequiredPostCode").style.display = "none";
+        }
+        if (HotelPhone == "") {
+            document.getElementById("txtHotelPhone").style.borderColor = "Red"
+            document.getElementById("lblrequiredPhone").style.display = "";
+        }
+        else {
+            document.getElementById("txtHotelPhone").style.borderColor = "";
+            document.getElementById("lblrequiredPhone").style.display = "none";
+        }
+        if (HotelFax == "") {
+            document.getElementById("txtHotelFax").style.borderColor = "Red"
+            document.getElementById("lblrequiredFax").style.display = "";
+        }
+        else {
+            document.getElementById("txtHotelFax").style.borderColor = "";
+            document.getElementById("lblrequiredFax").style.display = "none";
+        }
+        if (Firm == "") {
+            document.getElementById("drpFirm").style.borderColor = "Red"
+            document.getElementById("lblrequiredFirm").style.display = "";
+        }
+        else {
+            document.getElementById("drpFirm").style.borderColor = "";
+            document.getElementById("lblrequiredFirm").style.display = "none";
+        }
+        if (HotelType == "") {
+            document.getElementById("drpHotelType").style.borderColor = "Red"
+            document.getElementById("lblrequiredPropertyType").style.display = "";
+        }
+        else {
+            document.getElementById("drpHotelType").style.borderColor = "";
+            document.getElementById("lblrequiredPropertyType").style.display = "none";
+        }
+        if (HotelClass == "") {
+            document.getElementById("drpHotelClass").style.borderColor = "Red"
+            document.getElementById("lblrequiredTypeHotelClass").style.display = "";
+        }
+        else {
+            document.getElementById("drpHotelClass").style.borderColor = "";
+            document.getElementById("lblrequiredTypeHotelClass").style.display = "none";
+        }
+        if (AccommodationType == "") {
+            document.getElementById("drpAccommodationType").style.borderColor = "Red"
+            document.getElementById("lblrequiredHotelAccommodationType").style.display = "";
+        }
+        else {
+            document.getElementById("drpAccommodationType").style.borderColor = "";
+            document.getElementById("lblrequiredHotelAccommodationType").style.display = "none";
+        }
+        if (RoomCount == "") {
+            document.getElementById("txtRoomCount").style.borderColor = "Red"
+            document.getElementById("lblrequiredRoomCount").style.display = "";
+        }
+        else {
+            document.getElementById("txtRoomCount").style.borderColor = "";
+            document.getElementById("lblrequiredRoomCount").style.display = "none";
+        }
+        if (HotelEmail == "") {
+            document.getElementById("txtHotelEmail").style.borderColor = "Red"
+            document.getElementById("lblrequiredEmail").style.display = "";
+        }
+        else {
+            document.getElementById("txtHotelEmail").style.borderColor = "";
+            document.getElementById("lblrequiredEmail").style.display = "none";
+        }
+        if (Currency == "") {
+            document.getElementById("drpCurrency").style.borderColor = "Red"
+            document.getElementById("lblrequiredCurrency").style.display = "";
+        }
+        else {
+            document.getElementById("drpCurrency").style.borderColor = "";
+            document.getElementById("lblrequiredCurrency").style.display = "none";
+        }
+        if (Description == "") {
+            document.getElementById("txtAreaDescription").style.borderColor = "Red"
+            document.getElementById("lblrequiredDescription").style.display = "";
+        }
+        else {
+            document.getElementById("txtAreaDescription").style.borderColor = "";
+            document.getElementById("lblrequiredDescription").style.display = "none";
+        }
+        if (Sorts == "") {
+            document.getElementById("txtSort").style.borderColor = "Red"
+            document.getElementById("lblrequiredSort").style.display = "";
+        }
+        else {
+            document.getElementById("txtSort").style.borderColor = "";
+            document.getElementById("lblrequiredSort").style.display = "none";
+        }
+        if (ClosestAirport == "") {
+            document.getElementById("drpClosestAirport").style.borderColor = "Red"
+            document.getElementById("lblrequiredClosestAirport").style.display = "";
+        }
+        else {
+            document.getElementById("drpClosestAirport").style.borderColor = "";
+            document.getElementById("lblrequiredClosestAirport").style.display = "none";
+        }
+        if (ClosestAirportDistance == "") {
+            document.getElementById("txtClosestAirportDistance").style.borderColor = "Red"
+            document.getElementById("lblrequiredAirportDistance").style.display = "";
+        }
+        else {
+            document.getElementById("txtClosestAirportDistance").style.borderColor = "";
+            document.getElementById("lblrequiredAirportDistance").style.display = "none";
+        }
+        if (Status == "") {
+            document.getElementById("drpStatus").style.borderColor = "Red"
+            document.getElementById("lblrequiredStatus").style.display = "";
+        }
+        else {
+            document.getElementById("drpStatus").style.borderColor = "";
+            document.getElementById("lblrequiredStatus").style.display = "none";
+        }
+        if (RoutingName == "") {
+            document.getElementById("txtRoutingName").style.borderColor = "Red"
+            document.getElementById("lblrequiredRoutingName").style.display = "";
+        }
+        else {
+            document.getElementById("txtRoutingName").style.borderColor = "";
+            document.getElementById("lblrequiredRoutingName").style.display = "none";
+        }
+        //alert(HotelName)
+        //alert(Latitude)
+        //alert(Longitude)
+        //alert(Region)
+        //alert(MainRegion)
+        //alert(HotelAddress)
+        //alert(HotelPostCode)
+        //alert(HotelPhone)
+        //alert(HotelFax)
+        //alert(Firm)
+        //alert(HotelType)
+        //alert(HotelClass)
+        //alert(AccommodationType)
+        //alert(RoomCount)
+        //alert(HotelEmail)
+        //alert(Currency)
+        //alert(Description)
+        //alert(Sorts)
+        //alert(ClosestAirport)
+        //alert(Status)
+        //alert(RoutingName)
+        if (HotelName != "" && Latitude != "" && Latitude <= 90 && Latitude >= -90 && Longitude <= 180 && Longitude >= -180 && Longitude != "" && Region != "" && MainRegion != "" && HotelAddress != "" && HotelPostCode != "" && HotelPhone != "" && HotelFax != "" && Firm != "" && HotelType != "" && HotelClass != "" && AccommodationType != "" && RoomCount != "" && HotelEmail != "" && Currency != "" && Description != "" && Sorts != "" && ClosestAirport != "" && ClosestAirportDistance != "" && Status != "" && RoutingName != "")
+        {
+            // alert("Success")
+            // alert(SelectedCards)
+            // alert(SelectedRegions)
+            var json = {
+                HotelName: HotelName, Latitude: Latitude, Longitude: Longitude, Country: Country, Region: Region, MainRegion: MainRegion, HotelAddress: HotelAddress,
+                HotelPostCode: HotelPostCode, HotelPhone: HotelPhone, HotelFax: HotelFax, Firm: Firm, HotelType: HotelType, HotelClass: HotelClass, HotelChain: HotelChain,
+                AccommodationType: AccommodationType, RoomCount: RoomCount, FloorCount: FloorCount, BuiltYear: BuiltYear, RenovationYearYear: RenovationYearYear, WebAddress: WebAddress,
+                HotelEmail: HotelEmail, CheckinStart: CheckinStart, CheckinEnd: CheckinEnd, CheckoutStart: CheckoutStart, CheckoutEnd: CheckoutEnd, Culture: Culture,
+                Currency: Currency, Description: Description, Sorts: Sorts, MapZoomIndex: MapZoomIndex, ClosestAirport: ClosestAirport, ClosestAirportDistance: ClosestAirportDistance,
+                ChannelManager: ChannelManager, AvailabilityRateUpdate: AvailabilityRateUpdate, Status: Status, IsSecret: IsSecret, IsPreferred: IsPreferred,
+                IsActive: IsActive, NotificationCulture: NotificationCulture, RoutingName: RoutingName, SelectedCards: [SelectedCards], SelectedRegions: [SelectedRegions]
+            }
+            $.ajax({
+                type: "Post",
+                url: "/PropertyOperations/InsertPropertyOperations",
+                data: json,
+                datatype: "JSON",
+                traditional: true,
+                success: function (res) {
+                    if (res != 0) {
+                        if (res == -5) {
+                            document.getElementById("lblSuccess").style.display = "none";
+                            document.getElementById("lblFailure").style.display = "none";
+                            document.getElementById("lblRoutingNameFailure").style.display = "";
+                        }
+                        else {
+                            document.getElementById("lblSuccess").style.display = "";
+                            document.getElementById("lblFailure").style.display = "none";
+                            document.getElementById("lblRoutingNameFailure").style.display = "none";
+                            setTimeout("Hidelabel()", 5000);
+                            setTimeout("RedirectTuEdit('" + res + "')", 5000);
+                        }
+                    }
+                }
+            })
+        }
+        else {
+            document.getElementById("lblSuccess").style.display = "none";
+            document.getElementById("lblRoutingNameFailure").style.display = "none";
+            document.getElementById("lblFailure").style.display = "";
+        }
+    }
+    function CancelPropertyOpeartion() {
+        window.location.href = "/Management/PropertyOperations";
+    }
+    function Hidelabel() {
+        document.getElementById("lblSuccess").style.display = "none";
+        document.getElementById("lblFailure").style.display = "none";
+        document.getElementById("lblRoutingNameFailure").style.display = "none";
+    }
+    function RedirectTuEdit(ID)
+    {
+        window.location.href = "/PropertyOperations/Edit/?HotelID=" + ID;
+    }
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        //alert(charCode)
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46 && charCode != 43 && charCode != 45)
+            return false;
+
+        return true;
+    }
+
+    function isNumberKeys(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        //  alert(charCode)
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+
+<script>
+    $(function () {
+
+
+        $("#txtRegion").autocomplete({
+
+            source: function (request, response) {
+
+                //var Keyword = document.getElementById('divDestinationSearchvalue').value;
+
+                var json = { Keyword: request.term, CountryID: "" }
+                $.ajaxSetup({ cache: false });
+                $.ajax({
+                    type: "Get",
+                    url: "/FirmOperations/GetDestinationSearchResult",
+                    data: json,
+                    datatype: "json",
+                    success: function (data) {
+
+
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.Name + (item.ParentName == '' ? '' : ', ' + item.ParentName) + (item.SecondParentName == '' ? '' : ', ' + item.SecondParentName) + ', ' + item.CountryName,
+                                key: item.ID,
+                                DestinationSearchType: item.DestinationSearchType,
+                                DisplayName: item.DisplayName,
+                                CountryName: item.CountryName,
+                                Name: item.Name,
+                                ParentName: item.ParentName,
+                                ParentID: item.ParentID,
+                                SecondParentName: item.SecondParentName,
+                                RegionID: item.RegionID,
+                                RegionName: item.RegionName,
+                                HotelID: item.HotelID,
+                                HotelName: item.HotelName,
+                                DestinationSearchTypeImagePath: item.DestinationSearchTypeImagePath
+                            }
+                        }))
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //alert(textStatus);
+                    }
+                });
+            },
+            open: function () {
+                $(this).autocomplete('widget').css('z-index', 9999);
+                return false;
+            },
+            select: function (event, ui) {
+
+
+                document.getElementById('txtRegion').value = ui.item.label;
+                document.getElementById('hdnRegionID').value = ui.item.RegionID;
+                document.getElementById('hdnParentRegionID').value = ui.item.ParentID;
+                var RegionSerach = document.getElementById('hdnParentRegionID').value;
+                if (RegionSerach == "") {
+                    RegionSerach = document.getElementById('hdnRegionID').value;
+                }
+                var Latitude = document.getElementById("txtLatitude").value;
+                var Longitude = document.getElementById("txtLongitude").value;
+                var Country = document.getElementById("drpCountry").value;
+                //  alert("hi")
+                var jsonAirport = { RCountryID: Country, Latitude: Latitude, Longitude: Longitude };
+                var jsonVal = { RCountryID: Country, ParentRegionID: RegionSerach, Latitude: Latitude, Longitude: Longitude };
+                $.ajax({
+                    type: "Post",
+                    url: "/DropDownLists/GetRegionsDropdown",
+                    data: jsonVal,
+                    datatype: "JSON",
+                    success: function (res) {
+                        if (res != 0) {
+                            //  alert(res)
+                            //var dropdownlistRegion = $("#drpMainRegion").data("kendoDropDownList");
+                            //dropdownlistRegion.dataSource(res);
+                            //$("#drpMainRegionsMutiple").kendoMultiSelect({
+                            //    dataSource: res,
+                            //    dataTextField: "Text",
+                            //    dataValueField: "Value"
+
+                            //});
+                            //$('#drpMainRegionsMutiple').data('kendoMultiSelect').dataSource.read();
+
+                            //$("#drpMainRegionsMutiple").kendoMultiSelect({
+                            //    dataSource: res,
+                            //    dataTextField: "Text",
+                            //    dataValueField: "Value"
+
+                            //});
+
+                            $("#drpMainRegion").kendoDropDownList({
+                                dataTextField: "Text",
+                                dataValueField: "Value",
+                                dataSource: res,
+                                optionLabel: "@Resources.Select"
+                            });
+
+                            createMainCategory(res, "Text", "Value", true);
+
+
+//  alert("res1")
+
+                        }
+                        else {
+                            $('#drpMainRegionsMutiple').data('kendoMultiSelect').dataSource.read();
+
+                            $("#drpMainRegion").kendoDropDownList({
+                                dataSource: ""
+                            });
+                        }
+                    }
+                })
+
+                function createMainCategory(ResultValue, textField, valueField, remove) {
+                    //alert(ResultValue)
+                    //alert(textField)
+                    //alert(valueField)
+                    //alert(remove)
+                    var mc = $("#drpMainRegionsMutiple");
+
+                    if (remove) {
+                        // Destroys the widget
+                        mc.data("kendoMultiSelect").destroy();
+
+                        // Get the widget wrapper element structure
+                        var p = mc.closest(".k-widget");
+
+                        // Detache the #MainCategory from the wrapper structure
+                        mc = mc.empty().detach();
+
+                        // Remove the wrapper structure
+                        p.remove();
+
+                        // Append the #MainCategory to the body again
+                        $('#TdMultiSelectRegion').append(mc);
+                    }
+                    var dfd = $("#drpMainRegionsMutiple");
+                    //  alert(dfd);
+
+                    $("#drpMainRegionsMutiple").kendoMultiSelect({
+                        dataSource: ResultValue,
+                        dataTextField: textField,
+                        dataValueField: valueField,
+                        placeholder: "@Resources.Select"
+                    });
+                }
+
+
+                $.ajax({
+                    type: "Get",
+                    url: "/DropDownLists/GetClosestAirport",
+                    data: jsonAirport,
+                    datatype: "JSON",
+                    success: function (res) {
+                        if (res != 0) {
+                            $("#drpClosestAirport").kendoDropDownList({
+                                dataTextField: "Text",
+                                dataValueField: "Value",
+                                dataSource: res
+                            });
+
+
+                            // alert("res1")
+
+                        }
+                        else {
+                            $("#drpClosestAirport").kendoDropDownList({
+                                dataSource: ""
+                            });
+
+                        }
+                    }
+                })
+            },
+            minLength: 3,
+            html: true,
+            autoFocus: false,
+            messages: {
+                noResults: '',
+                results: function () { }
+            }
+        })
+        .data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .data("ui-autocomplete-item", item)
+            .append('<a>' +
+            '<table class="SearchAutoComplete" border="0" cellpadding="0" cellspacing="0">' +
+            '<tr>' +
+            '<td align="left" width="400px">' + '<b>' + item.Name + '</b>' + (item.ParentName == '' ? '' : ', ' + item.ParentName) + (item.SecondParentName == '' ? '' : ', ' + item.SecondParentName) + ', ' + item.CountryName + '</td>' +
+            '<td align="right"><div style="color:navy;font-style:italic;float:right;"><div><img src=\'' + item.DestinationSearchTypeImagePath + '\'></div></td></tr></table></a>')
+            .appendTo(ul);
+        };
+    });
+
+
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

@@ -1,0 +1,160 @@
+﻿@using Resources
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .k-list-container .k-item {
+        white-space: nowrap;
+        float: left;
+        clear: left;
+        min-width: 500px;
+        box-sizing: border-box;
+    }
+</style>
+<h1 style="text-align:center;">@Resources.Authorization</h1>
+
+<div>
+
+</div>
+
+<div class="">
+    <div class="row col-md-12 col-sm-12 col-xs-12">
+        @*<div class="col-md-2 col-sm-2" style="padding: 0px;">
+            <label>Kullanıcı Grupları</label>
+        </div>
+        <div class="col-md-10 col-sm-10" onchange="displayGroupInfo()">
+            <select id="drpPart" style="text-align:left;width:250px"></select>
+        </div>*@       
+       
+            <label>Kullanıcı Grupları</label>
+            <select id="drpPart" onchange="displayGroupInfo()" style="text-align:left;width:250px"></select>       
+         
+    </div>
+    <br />
+    <div class="row col-md-12 col-sm-12 col-xs-12">
+        <input type="button" onclick="btnSave()" id="btnSave" class="k-button btn btn-info" value="@Resources.Save" />
+    </div>  <br />
+</div>
+
+<div>
+    <div id="Authorization_Grid"></div>
+</div>
+
+<script>
+
+    function btnSave() {
+        var ID = $("#drpPart").val();
+
+        var SecutiryIDs = [];
+        $(".check_row:checked").each(function () {
+            SecutiryIDs.push($(this).val());
+            // alert(SecutiryIDs)
+            //tabs.push('filtervaluesfaci')
+        });
+        //  alert(SecutiryIDs)
+        // alert(ID)
+        var json = { SecurityGroupID: ID, SecutiryIDs: [SecutiryIDs] }
+
+        $.ajax({
+            type: "Get",
+            url: "/Authorization/UpdateSecutiryID",
+            data: json,
+            traditional: true,
+            datatype: "JSON",
+            success: function (res) {
+                // alert(res)
+                displayGroupInfo()
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        GetSecurityGroup();
+
+        //   $("#drpPart").kendoDropDownList().parent().css("width", "100%");;
+
+    });
+
+    function GetSecurityGroup() {
+
+        $.ajax({
+            type: "Get",
+            url: "/Authorization/GetSecurityGroup",
+            data: "",
+            datatype: "JSON",
+            success: function (res) {
+                if (res != "") {
+                    $("#drpPart").kendoDropDownList({
+                        //placeholder: "Select...",
+                        dataTextField: "Info",
+                        dataValueField: "ID",
+                        dataSource: res
+                    });
+                    displayGroupInfo()
+                }
+            }
+
+        })
+    }
+
+    function displayGroupInfo() {
+        // alert("hi")
+        var ID = $("#drpPart").val();
+        // alert(ID)
+        var value = $("#drpPart option:selected").text();
+        //  alert(value)
+        var splitvalue = [];
+        splitvalue = value.split("---");
+        var securityGroupCode = splitvalue[0];
+        // alert(securityGroupCode)
+        var json = { SecurityGroupID: ID }
+        $.ajax({
+            type: "Get",
+            url: "/Authorization/SecurityGroupRights",
+            data: json,
+            beforeSend: function () {
+                ProcessingWindow("Processing Please Wait...");
+            },
+            datatype: "JSON",
+            success: function (res) {
+                //  alert(res)
+                CloseWindow();
+                $("#Authorization_Grid").kendoGrid({
+                    dataSource: res,
+                    columns: [
+                      {
+                          width: 30,
+                          //field: "HasValue",
+                          //title: "HasValue",
+                          template: "<input value='#=ID#' type='checkbox'  #= HasValue ? checked='checked' : '' # class='check_row' />"
+                      },
+
+                        //{ template: '<input type="checkbox" />' },
+                        //{  title: "HasRight", template: "<input type=\"checkbox\" #= HasValue ? checked='checked' : '' # class=\"check_row\" />" },
+       {
+           field: "Code",
+           title: "Kod"
+       }, {
+           field: "Description",
+           title: "Açıklama"
+       }]
+                });
+
+            }
+        })
+    }
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

@@ -1,0 +1,187 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelReservationRate")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelReservationRate("DateID")</label>
+                </div>
+                <div class="col-md-6 col-sm-6 " style="padding: 8px;">
+                    <input id="drpdate"  style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-5 col-sm-5 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelReservationRate("HotelReservationID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7 " style="padding: 8px;">
+                    <input style="width:100%" id="txthotelreservationid" type="text" class="form-control"/>
+
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-2">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelReservationRate("Active")</label>
+                </div>
+                <div class="col-md-8 col-sm-8 " style="padding: 8px;">
+                    <input type="checkbox" id="chkactive" />
+                </div>
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $hotelreservationid = $("#txthotelreservationid").val();
+        $Active = "false";
+        if ($('#chkactive').prop('checked')) {
+            $Active = "true";
+        }
+        $dateText = $("#drpdate").data("kendoDropDownList").text();
+        $dateid = $("#drpdate").val();
+        if ($dateid) {
+            $filter.push({ field: "Date", operator: "contains", value: String($dateText) });
+        }
+        if ($hotelreservationid) {
+            $filter.push({ field: "HotelReservationID", operator: "equals", value: $Reservationid });
+        }
+
+        if ($Active == "true") {
+
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+
+
+        var grid = $("#TB_HotelReservationRate_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetDates",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpdate").kendoDropDownList({
+
+                    filter: "contains",
+
+                    optionLabel: AllSelectText,
+
+                    dataTextField: "Date",
+                    dataValueField: "DateID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelReservationRate_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+
+        $("#txthotelreservationid").val('');
+        document.getElementById('chkactive').checked = false
+
+        var dropdownlistPart = $("#drpdate").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelReservationRateExt>()
+                            .Name("TB_HotelReservationRate_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+
+               .Read(read => read.Action("_Read", "TB_HotelReservationRate", new { TableID = (int)ViewBag.TableID }))
+
+        )
+
+                .Columns(columns =>
+                {
+
+                  
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.HotelReservationID).Width(200).Title(MessageColumnCaptions.TB_HotelReservationRate("HotelReservationID"));
+                    columns.Bound(p => p.Date).Width(200).Title(MessageColumnCaptions.TB_HotelReservationRate("DateID"));
+                    columns.Bound(p => p.RoomPrice).Width(250).Title(MessageColumnCaptions.TB_HotelReservationRate("RoomPrice"));
+                    columns.Bound(p => p.Currency).Width(250).Title(MessageColumnCaptions.TB_HotelReservationRate("CurrencyID"));
+                    columns.Bound(p => p.CancelDateTime).Width(250).Title(MessageColumnCaptions.TB_HotelReservationRate("CancelDateTime"));
+                    columns.Bound(p => p.Active).Width(150).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_HotelReservationRate("Active")); 
+                 
+                })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_HotelReservationRate.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelReservationRate_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

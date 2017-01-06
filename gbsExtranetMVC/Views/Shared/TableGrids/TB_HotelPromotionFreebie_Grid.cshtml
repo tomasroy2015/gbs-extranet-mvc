@@ -1,0 +1,198 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelPromotionFreebie")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelPromotionFreebie("HotelPromotionID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8 " style="padding: 8px;">
+                    <input style="width:100%" id="drppromotionid" />
+                </div>
+            </div>
+          
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-5 col-sm-5 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelPromotionFreebie("FreebieID")</label>
+                </div>
+                <div class="col-md-7 col-sm-7 " style="padding: 8px;">
+                    <input style="width:100%" id="drpFreebieID" />
+
+                </div>
+            </div>
+
+
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $hotelpromotionid = $("#drppromotionid").val();
+        $FreebieId = $("#drpFreebieID").val();
+      
+       
+        if ($hotelpromotionid) {
+            $filter.push({ field: "HotelPromotionID", operator: "equals", value: $hotelpromotionid });
+        }
+        if ($FreebieId) {
+            $filter.push({ field: "FreebieID", operator: "equals", value: $FreebieId });
+        }
+
+
+
+        var grid = $("#TB_HotelPromotionFreebie_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotelPromotionID",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drppromotionid").kendoDropDownList({
+
+                    filter: "contains",
+                    optionLabel: AllSelectText,
+                    dataTextField: "HotelPromotionID",
+                    dataValueField: "HotelPromotionID ",
+                    dataSource: data
+                });
+
+            }
+        })
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetFreebieID",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpFreebieID").kendoDropDownList({
+
+                    filter: "contains",
+                    optionLabel: AllSelectText,
+                    dataTextField: "FreebieID",
+                    dataValueField: "FreebieID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelPromotionFreebie_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+
+      
+        document.getElementById('chkactive').checked = false
+
+    });
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelPromotionFreebieExt>()
+                .Name("TB_HotelPromotionFreebie_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                        .Create(update => update.Action("_Create", "TB_HotelPromotionFreebie"))
+                    .Read(read => read.Action("_Read", "TB_HotelPromotionFreebie", new { TableID = (int)ViewBag.TableID }))
+                        .Update(update => update.Action("_Update", "TB_HotelPromotionFreebie"))
+                        .Destroy(destroy => destroy.Action("_Destroy", "TB_HotelPromotionFreebie"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.HotelPromotionID).Title(MessageColumnCaptions.TB_HotelPromotionFreebie("HotelPromotionID")).EditorTemplateName("ddlHotelPromotionID").Width(350);
+                    columns.Bound(p => p.FreebieID).Width(200).Title(MessageColumnCaptions.TB_HotelPromotionFreebie("FreebieID")).EditorTemplateName("ddlFreebieID").Width(350); 
+                    columns.Bound(p => p.Active).Width(250).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_HotelPromotionFreebie("Active"));
+                    columns.Bound(p => p.CreateDateTime).Width(200).Title(MessageColumnCaptions.TB_HotelPromotionFreebie("CreateDateTime")).EditorTemplateName("Date").ClientTemplate("#= kendo.toString(CreateDateTime,'dd/MM/yyyy') #").Width(250);
+                    columns.Bound(p => p.CreateUser).Width(200).Title(MessageColumnCaptions.TB_HotelPromotionFreebie("CreateUserID")).EditorTemplateName("ddlCreateUser").Width(350);
+                   
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_PageControlExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelPromotionFreebie_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

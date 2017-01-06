@@ -1,0 +1,204 @@
+﻿@using Resources
+@using BankColumnCaption
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">BizTbl_MailTemplate</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="col-md-6 col-sm-6">
+                <div class="col-md-2 col-sm-2" style="padding:7px;">
+                    <label>@Resources.Code</label>
+                </div>
+                <div class="col-md-10 col-sm-10 " >
+                    <input id="txtcode" type="text" class="form-control" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="col-md-3 col-sm-3 " style="padding:7px;">
+                    <label>@Resources.Description</label>
+                </div>
+                <div class="col-md-8 col-sm-8 ">
+                    <input id="txtdescription" type="text" class="form-control" style="width:100%" />
+                </div>
+            </div>
+            </div>
+                  <div class="col-md-5" style="margin-top:20px;">
+                    <div  style="padding: 10px;">
+                        <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                        <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+                    </div>
+                 </div>
+        <div class="col-md-7">
+            <div class="col-md-6 col-sm-6">
+                <div class="col-md-2 col-sm-2 " style="padding:7px;">
+                    <label>@Resources.Subject</label>
+                </div>
+                <div class="col-md-10 col-sm-10 " >
+                    <input id="txtSubject" type="text" class="form-control" style="width:100%" />
+                </div>
+
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="col-md-5  col-sm-5">
+                    <label>@Resources.Active</label>
+                </div>
+                <div class="col-md-3  col-sm-3">
+                    <input type="checkbox" id="chkactive" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+   
+</div>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+    
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_MailTemplateExt>()
+                        .Name("BizTbl_MailTemplateExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+
+                                .Create(update => update.Action("_Create", "BizTbl_MailTemplate"))
+                                .Read(read => read.Action("_Read", "BizTbl_MailTemplate", new { TableID = (int)ViewBag.TableID }))
+                                .Update(update => update.Action("_Update", "BizTbl_MailTemplate"))
+                                .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_MailTemplate"))
+
+        )
+
+                        .Columns(columns =>
+                        {
+                            columns.Command(
+
+                               command =>
+                               {
+                                   command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                                   command.Destroy().Text(Resources.Delete);
+                               }).Locked(true).Width(180);
+
+                            columns.Bound(p => p.ID).Width(100).Locked(true);
+                            columns.Bound(p => p.Code).Width(180).Title(MessageColumnCaptions.BizTbl_MailTemplate("Code")).Locked(true); ;
+                            columns.Bound(p => p.MailParameters).Title(MessageColumnCaptions.BizTbl_MailTemplate("MailParameters")).EditorTemplateName("TextArea").Width(300);
+                            columns.Bound(p => p.MailFrom).Title(MessageColumnCaptions.BizTbl_MailTemplate("MailFrom")).Width(150);
+                            columns.Bound(p => p.MailTo).Title(MessageColumnCaptions.BizTbl_MailTemplate("MailTo")).EditorTemplateName("TextArea").Width(200);
+                            columns.Bound(p => p.MailCC).Title(MessageColumnCaptions.BizTbl_MailTemplate("MailCC")).EditorTemplateName("TextArea").Width(200);
+                            columns.Bound(p => p.Description_en).Title(MessageColumnCaptions.BizTbl_MailTemplate("Description_en")).EditorTemplateName("TextArea").Width(200);
+                            columns.Bound(p => p.Subject_en).Title(MessageColumnCaptions.BizTbl_MailTemplate("Subject_en")).EditorTemplateName("TextArea").Width(200);
+                            columns.Bound(p => p.Body_en).Title(MessageColumnCaptions.BizTbl_MailTemplate("Body_en")).EditorTemplateName("TextArea").Encoded(false).Width(300);
+                            columns.Bound(p => p.Active).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(150);
+                            
+                            //columns.Bound(p => p.SendingDate).ClientTemplate("#= kendo.toString(SendingDate,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                            //columns.Bound(p => p.Record).Width(120);
+                            //columns.Bound(p => p.OpDateTime).Hidden(true);
+                            //columns.Bound(p => p.OpUserID).Hidden(true);
+                        })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_MailTemplateExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#BizTbl_MailTemplateExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+<script>
+
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $code = $("#txtcode").val();
+        $descriptions = $("#txtdescription").val();
+        $Subject = $("#txtSubject").val();
+        $Active = "false";
+        if ($('#chkactive').prop('checked')) {
+            $Active = "true";
+        }
+      
+        if ($code) {
+            $filter.push({ field: "Code", operator: "contains", value: String($code) });
+        }
+        if ($descriptions) {
+            $filter.push({ field: "Description_en", operator: "contains", value: String($descriptions) });
+        }
+        if ($Subject) {
+            $filter.push({ field: "Subject_en", operator: "contains", value: String($Subject) });
+        }
+        if ($Active == "true") {
+            //alert($SentStatus)
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        
+        var grid = $("#BizTbl_MailTemplateExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_MailTemplateExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtcode").val('')
+        $("#txtdescription").val('');
+        $("#txtSubject").val('');
+        document.getElementById('chkactive').checked = false
+       
+    });
+
+</script>

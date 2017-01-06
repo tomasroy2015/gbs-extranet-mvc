@@ -1,0 +1,825 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<link href="~/CSS/jquery-ui-theme.css" rel="stylesheet" />
+<style>
+
+    .message {
+        display: none;
+        color: #313130;
+        background: #FAF7A8;
+        position: absolute;
+        top: 73px;
+        width: 240px;
+        margin-left: -8px;
+        font-size: 14px;
+        border: 3px solid #FFD633;
+        border-radius: 3px;
+    }
+    .msgspan {
+        position: inherit;
+    }
+
+    .anchorInfoImage:hover + .message {
+        display: block !important;
+        z-index: 10;
+    }
+
+    .ui-slider-horizontal {
+        background: #e0e0f7 !important;
+        border: 1px solid #c1c0f3 !important;
+        height: 40px !important;
+    }
+
+    .ui-slider-range {
+        background-color: #9dc6df;
+        -moz-border-radius-topleft: 4px;
+        -webkit-border-top-left-radius: 4px;
+        -khtml-border-top-left-radius: 4px;
+        border-top-left-radius: 4px;
+        -moz-border-radius-bottomleft: 4px;
+        -webkit-border-bottom-left-radius: 4px;
+        -khtml-border-bottom-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    .ui-slider-handle {
+        /*background: url('<%=Page.ResolveUrl("/Image/sliderBig.png")%>') !important;*/
+        background: url('/Image/sliderBig.png') !important;
+        border: none !important;
+        width: 30px !important;
+        height: 46px !important;
+        cursor: pointer;
+        outline: none;
+        top: -3px !important;
+    }
+
+    .PromotionArrow {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 10px 15px 10px;
+        border-color: transparent transparent #d8cad5 transparent;
+    }
+    .PromotionDescription {
+        background-color: #d8cad5;
+        color: #63425c;
+        width: 100%;
+        padding: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .PromotionCaption {
+        font-size: 18px;
+        font-weight: bold;
+        color: #444444;
+        font-weight: bold;
+    }
+    </style>
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageTitle("AdminHotelPromotion.aspx")</h1>
+
+<script>
+
+    var MinimumPromotionDiscountPercentage = '@ViewBag.MinimumPromotionDiscountPercentage';
+    var MaximumPromotionDiscountPercentage = '@ViewBag.MaximumPromotionDiscountPercentage';
+    var DefaultPromotionDiscountPercentage = '@ViewBag.DefaultPromotionDiscountPercentage';
+    var MaximumDayCountForMinimumStayPromotion = '@ViewBag.MaximumDayCountForMinimumStayPromotion';
+    var MaximumHourCountForMinimumStayPromotion = '@ViewBag.MaximumHourCountForMinimumStayPromotion';
+   // var DiscountPercentValidation = '@ViewBag.DiscountPercentValidation';
+
+   
+
+
+    $(document).ready(function () {
+      //  alert("hi")
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/NewPromotion/GetPromotions",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                if (data != "") {
+                    $.each(data, function (key, val) {
+                        //onclick="ShowPromotion(' + val.ID + ',' + val.PromotionType + ')"
+                        var onclick = "'" + "ShowPromotion(" + '"' + val.ID + '",' + '"' + val.PromotionType + '"' + ")'"
+                        $('#divNewPromotion').append(
+                            '<div class="col-md-2">' +
+                            '<div class="row">' +
+                            '  <img class="anchorInfoImage" style="cursor:pointer;" onclick=' + onclick + '  src="/Image/Promotion_' + val.PromotionType + '.png" />' +
+                            '<p  style="padding:5px;text-align:left" class="message">' + val.PromotionDescription + '</p>' +
+                            '</div>' +
+                            '<div class="row">' +
+                            '<label style="color:Brown;font-size:14px;font-weight:bold;">' + val.PromotionName + ' </label>' +
+                            '</div>' +
+                             '<div class="row" align="center">' +
+                            '<div id="divPromotionArrow' + val.ID + '" class="PromotionArrow" style="display:none;border-color: transparent transparent ' + val.Color + ' transparent"></div>' +
+                            '</div>' +
+                            '</div>'
+                            );
+                            $('#divNewPromotionDescription').append(
+                            '<div class="row" align="center" class="PromotionDescription" style="display:none" id="divPromotionDescFull' + val.ID + '">' +
+                            '<div id="divPromotionDescription' + val.ID + '" class="PromotionDescription" style="background-color:' + val.Color + ';">' + val.PromotionDescription + '</div>' +
+                            '</div>'
+                                )
+                    })
+                }
+            }
+        })
+    })
+
+    function ShowPromotion(ID,PromotionType)
+    {
+        document.getElementById('hiddenPromotionType').value = PromotionType;
+        //alert(ID)
+        //alert(PromotionType)
+        var hiddenPromotionID = document.getElementById('hiddenPromotionID').value;
+        if (hiddenPromotionID != ID && hiddenPromotionID!=0)
+        {
+            document.getElementById('divPromotionDescFull' + hiddenPromotionID).style.display = "none";
+            document.getElementById('divPromotionDescFull' + ID).style.display = "";
+            document.getElementById('divPromotionArrow' + hiddenPromotionID).style.display = "none";
+            document.getElementById('divPromotionArrow' + ID).style.display = "";
+            document.getElementById('hiddenPromotionID').value = ID;
+        }
+        else {
+            document.getElementById('divPromotionDescFull' + ID).style.display = "";
+            document.getElementById('divPromotionArrow' + ID).style.display = "";
+            document.getElementById('hiddenPromotionID').value = ID;
+        }
+
+        if (PromotionType == "BasicDeal")
+        {
+            document.getElementById('divRowDayCountHeader').style.display = "none";
+        document.getElementById('divRowDayCount').style.display = "none";
+        document.getElementById('divRowEarlyBookerHeader').style.display = "none";
+        document.getElementById('divRowEarlyBooker').style.display = "none";
+        document.getElementById('divRowLastMinuteHeader').style.display = "none";
+        document.getElementById('divRowLastMinuteMargin').style.display = "none";
+        document.getElementById('divRowBookingDateHeader').style.display = "none";
+        document.getElementById('divRowBookingDate').style.display = "none";
+        document.getElementById('divRowSecretDealHeader').style.display = "";
+        document.getElementById('divRowSecretDeal').style.display = "";
+        ResetValues()
+        }
+        if (PromotionType == "MinimumStay") {
+            document.getElementById('divRowDayCountHeader').style.display = "";
+            document.getElementById('divRowDayCount').style.display = "";
+            document.getElementById('divRowEarlyBookerHeader').style.display = "none";
+            document.getElementById('divRowEarlyBooker').style.display = "none";
+            document.getElementById('divRowLastMinuteHeader').style.display = "none";
+            document.getElementById('divRowLastMinuteMargin').style.display = "none";
+            document.getElementById('divRowBookingDateHeader').style.display = "none";
+            document.getElementById('divRowBookingDate').style.display = "none";
+            document.getElementById('divRowSecretDealHeader').style.display = "";
+            document.getElementById('divRowSecretDeal').style.display = "";
+            ResetValues()
+        }
+        if (PromotionType == "EarlyBooker") {
+            document.getElementById('divRowDayCountHeader').style.display = "none";
+            document.getElementById('divRowDayCount').style.display = "none";
+            document.getElementById('divRowEarlyBookerHeader').style.display = "";
+            document.getElementById('divRowEarlyBooker').style.display = "";
+            document.getElementById('divRowLastMinuteHeader').style.display = "none";
+            document.getElementById('divRowLastMinuteMargin').style.display = "none";
+            document.getElementById('divRowBookingDateHeader').style.display = "none";
+            document.getElementById('divRowBookingDate').style.display = "none";
+            document.getElementById('divRowSecretDealHeader').style.display = "";
+            document.getElementById('divRowSecretDeal').style.display = "";
+            ResetValues()
+        }
+        if (PromotionType == "LastMinute") {
+            document.getElementById('divRowDayCountHeader').style.display = "none";
+            document.getElementById('divRowDayCount').style.display = "none";
+            document.getElementById('divRowEarlyBookerHeader').style.display = "none";
+            document.getElementById('divRowEarlyBooker').style.display = "none";
+            document.getElementById('divRowLastMinuteHeader').style.display = "";
+            document.getElementById('divRowLastMinuteMargin').style.display = "";
+            document.getElementById('divRowBookingDateHeader').style.display = "none";
+            document.getElementById('divRowBookingDate').style.display = "none";
+            document.getElementById('divRowSecretDealHeader').style.display = "";
+            document.getElementById('divRowSecretDeal').style.display = "";
+            ResetValues()
+        }
+        if (PromotionType == "TwentyFourHourPromotion") {
+            document.getElementById('divRowDayCountHeader').style.display = "none";
+            document.getElementById('divRowDayCount').style.display = "none";
+            document.getElementById('divRowEarlyBookerHeader').style.display = "none";
+            document.getElementById('divRowEarlyBooker').style.display = "none";
+            document.getElementById('divRowLastMinuteHeader').style.display = "none";
+            document.getElementById('divRowLastMinuteMargin').style.display = "none";
+            document.getElementById('divRowBookingDateHeader').style.display = "";
+            document.getElementById('divRowBookingDate').style.display = "";
+            document.getElementById('divRowSecretDealHeader').style.display = "";
+            document.getElementById('divRowSecretDeal').style.display = "";
+            ResetValues()
+        }
+        if (PromotionType == "Genius") {
+            document.getElementById('divRowDayCountHeader').style.display = "none";
+            document.getElementById('divRowDayCount').style.display = "none";
+            document.getElementById('divRowEarlyBookerHeader').style.display = "none";
+            document.getElementById('divRowEarlyBooker').style.display = "none";
+            document.getElementById('divRowLastMinuteHeader').style.display = "none";
+            document.getElementById('divRowLastMinuteMargin').style.display = "none";
+            document.getElementById('divRowBookingDateHeader').style.display = "none";
+            document.getElementById('divRowBookingDate').style.display = "none";
+            document.getElementById('divRowSecretDealHeader').style.display = "none";
+            document.getElementById('divRowSecretDeal').style.display = "none";
+            ResetValues()
+        }
+        document.getElementById('divPromotionInfoContent').style.display = "";
+
+    }
+
+    //if (document.getElementById('slider') != null)
+    //{
+
+    function loadslider()
+    {
+        document.getElementById('txtDiscountPercentage').value = DefaultPromotionDiscountPercentage;
+        $("#slider").slider(
+        {
+            min: 0,
+            max: 100,
+            step: 1,
+            value: DefaultPromotionDiscountPercentage,
+            slide: function (event, ui) {
+                //alert(ui.value)
+                document.getElementById('txtDiscountPercentage').value = ui.value;
+            },
+            stop: function (event, ui) {
+                document.getElementById('txtDiscountPercentage').value = ui.value;
+            }
+        });
+
+        $("txtDiscountPercentage").blur(function (event) {
+            $("#slider").slider("option", "value", document.getElementById('txtDiscountPercentage').value);
+        });
+    }
+
+    $(document).ready(function () {
+        //alert("hi")
+    
+        loadslider();
+
+            $("#datetimepickerStart").kendoDatePicker({
+                animation: {
+                    close: {
+                        effects: "zoom:out",
+                        duration: 300
+                    }
+                }
+            });
+            $("#datetimepickerEnd").kendoDatePicker({
+                animation: {
+                    close: {
+                        effects: "zoom:out",
+                        duration: 300
+                    }
+                }
+            });
+            $("#datetimepickerBookingDate").kendoDatePicker({
+                animation: {
+                    close: {
+                        effects: "zoom:out",
+                        duration: 300
+                    }
+                }
+            });
+            var jsonDaycount = { StartIndex: 2, EndIndex: MaximumDayCountForMinimumStayPromotion }
+            $.ajax({
+                type: "GET",
+                url: "/DropDownLists/FillUnitList",
+                data: jsonDaycount,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#ddlDayCount").kendoDropDownList({
+                        dataTextField: "Name",
+                        dataValueField: "ID ",
+                        // dataValueField: "Name",
+                        dataSource: data,
+                        optionLabel: "Select..."
+                    });
+
+                }
+            })
+            var jsonHourcount = { StartIndex: 1, EndIndex: MaximumHourCountForMinimumStayPromotion }
+            $.ajax({
+                type: "GET",
+                url: "/DropDownLists/FillUnitList",
+                data: jsonHourcount,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#ddlLastMinuteMargin").kendoDropDownList({
+                        dataTextField: "Name",
+                        dataValueField: "ID ",
+                        // dataValueField: "Name",
+                        dataSource: data,
+                        optionLabel: "Select..."
+                    });
+
+                }
+            })
+
+        });
+    //}
+
+</script>
+<script>
+    function ResetValues()
+    {
+        document.getElementById('txtDiscountPercentage').value = 20;
+        document.getElementById('datetimepickerStart').value = "";
+        document.getElementById('datetimepickerEnd').value = "";
+        document.getElementById('ddlDayCount').value = "";
+        document.getElementById('txtEarlyBookerMargin').value = "";
+        document.getElementById('ddlLastMinuteMargin').value = "";
+        document.getElementById('datetimepickerBookingDate').value = "";
+        loadslider();
+        document.getElementById("lblrequiredDayCount").style.display = "none";
+        document.getElementById("lblrequiredEarlyBookerMargin").style.display = "none";
+        document.getElementById("lblrequiredLastMinuteMargin").style.display = "none";
+        document.getElementById("lblrequiredBookingDate").style.display = "none";
+        document.getElementById("lblTodayComparisionWarningBookingDate").style.display = "none";
+        document.getElementById("lblrequired1").style.display = "none";
+        document.getElementById("lblrequired").style.display = "none";
+        document.getElementById("lblTodayComparisionWarning").style.display = "none";
+        document.getElementById("lblDateComparisionWarning").style.display = "none";
+
+    }
+    function SaveDeal() {
+        var WeekDay = [];
+        var PricePolicy = [];
+        var RoomCount = [];
+        var DiscountPercentage = document.getElementById('txtDiscountPercentage').value
+        var AccommodationStartDate = document.getElementById('datetimepickerStart').value;
+        if (AccommodationStartDate == "") {
+            //alert('sdgsds')
+            document.getElementById("lblrequired").style.display = "";
+        }
+        else {
+            document.getElementById("lblrequired").style.display = "none";
+        }
+        var AccommodationEndDate = document.getElementById('datetimepickerEnd').value;
+        if (AccommodationEndDate == "") {
+            document.getElementById("lblrequired1").style.display = "";
+        }
+        else {
+            document.getElementById("lblrequired1").style.display = "none";
+        }
+        var MinimumStayDayCount = document.getElementById('ddlDayCount').value
+        var EarlyBookerMargin = document.getElementById('txtEarlyBookerMargin').value
+        var LastMinuteMargin = document.getElementById('ddlLastMinuteMargin').value
+        var BookingDate = document.getElementById('datetimepickerBookingDate').value
+        var RoomType = document.getElementById('hiddenPromotionType').value;
+        var hiddenPromotionID = document.getElementById('hiddenPromotionID').value;
+        var SecretDeal = 0;
+        var validForAllRoomTypes = "true";
+        if (document.getElementById('chkSecretDeal').checked == true) {
+            SecretDeal = 1;
+        }
+        var HasDiscount = 0;
+        if (DiscountPercentage!="")
+        {
+            HasDiscount = 1;
+            if (DiscountPercentage < 5 || DiscountPercentage>90)
+            {
+                document.getElementById('lblDiscountPercentageWarning').style.display = "";
+            }
+        else{
+                document.getElementById('lblDiscountPercentageWarning').style.display = "none";
+        }
+
+                
+        }
+        var chkDay = document.getElementsByName('chkDay');
+        for (var i = 0; i < chkDay.length; i++)
+        {
+            if(chkDay[i].checked==true)
+            {
+                WeekDay.push(chkDay[i].value)
+            }
+        }
+        
+        var chkPricePolicies = document.getElementsByName('chkPricePolicies');
+        for (var i = 0; i < chkPricePolicies.length; i++) {
+            if (chkPricePolicies[i].checked == true) {
+                PricePolicy.push(chkPricePolicies[i].value)
+            }
+        }
+        var chkRoomType = document.getElementsByName('chkRoomType');
+        for (var i = 0; i < chkRoomType.length; i++) {
+            if (chkRoomType[i].checked == true) {
+                RoomCount.push(chkRoomType[i].value)
+            }
+            else {
+                validForAllRoomTypes="false"
+            }
+        }
+        if (DiscountPercentage != "")
+        {
+            document.getElementById('txtDiscountPercentage').style.borderColor = "";
+        }
+        else {
+            document.getElementById('txtDiscountPercentage').style.borderColor = "red";
+        }
+
+        if (AccommodationStartDate != "") {
+            document.getElementById('datetimepickerStart').style.borderColor = "";
+        }
+        else {
+            document.getElementById('datetimepickerStart').style.borderColor = "red";
+        }
+
+        if (AccommodationEndDate != "") {
+            document.getElementById('datetimepickerEnd').style.borderColor = "";
+        }
+        else {
+            document.getElementById('datetimepickerEnd').style.borderColor = "red";
+        }
+
+        if (WeekDay == "")
+        {
+            document.getElementById('lblDaySelectionWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblDaySelectionWarning').style.display = "none";
+        }
+        if (PricePolicy == "") {
+            document.getElementById('lblPricePolicySelectionWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblPricePolicySelectionWarning').style.display = "none";
+        }
+        if (RoomCount == "") {
+            document.getElementById('lblRoomSelectionWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblRoomSelectionWarning').style.display = "none";
+        }
+        if (MinimumStayDayCount == "" && RoomType == "MinimumStay") {
+            document.getElementById('ddlDayCount').style.borderColor = "red";
+            document.getElementById('lblrequiredDayCount').style.display = "";
+        }
+        else {
+            document.getElementById('ddlDayCount').style.borderColor = "";
+            document.getElementById('lblrequiredDayCount').style.display = "none";
+        }
+        if (EarlyBookerMargin == "" && RoomType == "EarlyBooker") {
+            document.getElementById('txtEarlyBookerMargin').style.borderColor = "red";
+            document.getElementById('lblrequiredEarlyBookerMargin').style.display = "";
+        }
+        else {
+            document.getElementById('txtEarlyBookerMargin').style.borderColor = "";
+            document.getElementById('lblrequiredEarlyBookerMargin').style.display = "none";
+        }
+        if (LastMinuteMargin == "" && RoomType == "LastMinute") {
+            document.getElementById('ddlLastMinuteMargin').style.borderColor = "red";
+            document.getElementById('lblrequiredLastMinuteMargin').style.display = "";
+        }
+        else {
+            document.getElementById('ddlLastMinuteMargin').style.borderColor = "";
+            document.getElementById('lblrequiredLastMinuteMargin').style.display = "none";
+        }
+        if (BookingDate == "" && RoomType == "TwentyFourHourPromotion") {
+            document.getElementById('datetimepickerBookingDate').style.borderColor = "red";
+            document.getElementById('lblrequiredBookingDate').style.display = "";
+        }
+        else {
+            document.getElementById('datetimepickerBookingDate').style.borderColor = "";
+            document.getElementById('lblrequiredBookingDate').style.display = "none";
+        }
+       // alert(HasDiscount);
+        if (DiscountPercentage != ""&&(DiscountPercentage >= 5 && DiscountPercentage<=90) && AccommodationStartDate != "" && AccommodationEndDate != "" && WeekDay != "" &&
+            PricePolicy != "" && RoomCount != "" && DateValidationStart == "Valid" && DateValidationDiff=="Valid" && (RoomType == "BasicDeal" || RoomType == "Genius" ||
+            MinimumStayDayCount != "" && RoomType == "MinimumStay"||EarlyBookerMargin != "" && RoomType == "EarlyBooker"||
+            LastMinuteMargin != "" && RoomType == "LastMinute" || BookingDate != "" && RoomType == "TwentyFourHourPromotion" && Promotion24=="Valid"))
+
+        {
+          //  alert("Sucesss")
+            var json = {
+                DiscountPercentage: DiscountPercentage, AccommodationStartDate: AccommodationStartDate, AccommodationEndDate: AccommodationEndDate,
+                WeekDay: [WeekDay], PricePolicy: [PricePolicy],RoomCount:[RoomCount],RoomType: RoomType, MinimumStayDayCount: MinimumStayDayCount,
+                EarlyBookerMargin: EarlyBookerMargin, LastMinuteMargin: LastMinuteMargin, BookingDate: BookingDate, PromotionID: hiddenPromotionID,
+                HasDiscount: HasDiscount, validForAllRoomTypes: validForAllRoomTypes, SecretDeal: SecretDeal
+            }
+           // alert("true")
+            $.ajax({
+                type: "Get",
+                url: "/NewPromotion/PromotionInsert",
+                data: json,
+                datatype: "JSON",
+                traditional: true,
+                success: function (res) {
+                    //alert(res)
+                    if(res=="Conflict")
+                    {
+                        document.getElementById('lblPromotionPeriodConflictWarning').style.display = "";
+                    }
+                    else if (res == "Success") {
+                        window.location.href = "/Promotions/Promotions";
+                    }
+
+                }
+            })
+        }
+       
+    }
+</script>
+
+<script>
+
+    var DateValidationStart = "Valid";
+    var DateValidationDiff = "Valid";
+    function CheckTodayDate() {
+
+        var StartDate = document.getElementById('datetimepickerStart').value
+
+        var jsonStart = { StartDate: StartDate }
+        if (StartDate != "") {
+            document.getElementById("lblrequired").style.display = "none";
+            // alert(StartDate)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckTodayDate",
+                data: jsonStart,
+                datatype: "json",
+                success: function (data) {
+                    //alert("TodayDate" + data)
+                    if (data >= 1) {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "";
+                        DateValidationStart = "Invalid"
+                    }
+                    else {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "none";
+                        DateValidationStart = "Valid"
+                    }
+                }
+            })
+        }
+    }
+    function CheckDate() {
+
+        var StartDate = document.getElementById('datetimepickerStart').value
+        var Enddate = document.getElementById('datetimepickerEnd').value
+        var json = { StartDate: StartDate, Enddate: Enddate }
+        if (StartDate != "" && Enddate != "") {
+            document.getElementById("lblrequired").style.display = "none";
+            document.getElementById("lblrequired1").style.display = "none";
+            // alert("hi")
+            // alert(json)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckDateDiff",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+                    //  alert("TodayDateDiff" + data)
+                    if (data >= 1) {
+                        document.getElementById("lblDateComparisionWarning").style.display = "";
+                        DateValidationDiff = "Invalid"
+                    }
+                    else {
+                        document.getElementById("lblDateComparisionWarning").style.display = "none";
+                        DateValidationDiff = "Valid"
+                    }
+
+                }
+            })
+        }
+    }
+    var Promotion24 = "Valid";
+
+    function CheckTodayDate24Promotion() {
+
+        var StartDate = document.getElementById('datetimepickerBookingDate').value
+
+        var jsonStart = { StartDate: StartDate }
+        if (StartDate != "") {
+            document.getElementById("lblTodayComparisionWarningBookingDate").style.display = "";
+            // alert(StartDate)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckTodayDate",
+                data: jsonStart,
+                datatype: "json",
+                success: function (data) {
+                    //alert("TodayDate" + data)
+                    if (data >= 1) {
+                      
+                        document.getElementById("lblrequiredBookingDate").style.display = "none";
+                        Promotion24 = "Invalid"
+                    }
+                    else {
+                        document.getElementById("lblTodayComparisionWarningBookingDate").style.display = "none";
+                        Promotion24 = "Valid"
+                    }
+                }
+            })
+        }
+    }
+
+</script>
+<script>
+    function ChangeSliderValue() {
+        //alert("hi")
+      var DiscountPercentage = document.getElementById('txtDiscountPercentage').value;
+     // alert(DiscountPercentage)
+        if (DiscountPercentage != "") {
+            if (DiscountPercentage < 5 || DiscountPercentage > 90) {
+                document.getElementById('lblDiscountPercentageWarning').style.display = "";
+            }
+            else {
+                document.getElementById('lblDiscountPercentageWarning').style.display = "none";
+            }
+
+
+            $("#slider").slider(
+            {
+                min: 0,
+                max: 100,
+                step: 1,
+                value: document.getElementById('txtDiscountPercentage').value,
+                slide: function (event, ui) {
+                    //alert(ui.value)
+                    document.getElementById('txtDiscountPercentage').value = ui.value;
+                },
+                stop: function (event, ui) {
+                    document.getElementById('txtDiscountPercentage').value = ui.value;
+                }
+            });
+
+            $("txtDiscountPercentage").blur(function (event) {
+                $("#slider").slider("option", "value", document.getElementById('txtDiscountPercentage').value);
+            });
+
+        }
+    }
+</script>
+
+<div class="col-md-12" style="text-align: center; color: black;" align="center">
+    <div class="row" id="divNewPromotion">
+      
+    </div>
+    <div class="row" id="divNewPromotionDescription">
+
+    </div>
+    <div id="divPromotionInfoContent" style="display:none">
+        <div style="    margin-top: 15px;" class="row PromotionCaption" id="divRowDiscountHeader" align="left">
+            <img id="imgDiscount" src="/Image/Percent.png" />
+            <label id="lbldiscount">@Resources.DiscountPercentage</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="rowDiscount">
+            <div id="slider" style="width:500px;float:left;font-size:18px;color:Gray;"><div style="float:left;padding:7px 3px 3px 3px;">0%</div><div style="float:right;padding:7px 3px 3px 3px;">100%</div></div>
+            <input id="txtDiscountPercentage" onkeyup="ChangeSliderValue()" class="k-textbox" type="text" style="float: left; height: 40px; font-size: 25px; width: 70px; text-align: right; margin-left: 10px;">
+            <label style="    text-align: left;float: left;margin-top: 11px;margin-left: 5px;" class="requiredfield" for="">*</label>
+
+            <label id="lblDiscountPercentageWarning" style="color: red; font-size: 12px; font-weight: 600; display: none; margin-top: 10px; "><img src="/Image/exclamation.gif" />@ViewBag.DiscountPercentValidation</label>
+         </div>
+
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowAccommodationDateHeader" align="left">
+            <img id="imgAccommodationDate" src="/Image/Date.png" />
+            <label id="lblAccommodationDate">@Resources.AccommodationDate</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowAccommodationDate" align="left">
+            <label id="lblAccommodationDate">@Resources.AccommodationStartDate</label> &nbsp;&nbsp;&nbsp;
+            <input type="text" id="datetimepickerStart"  placeholder="@Resources.DateFieldDescription" onblur="CheckTodayDate()" style=" width: 155px; height: 25px; " />&nbsp;&nbsp;
+            <span id="lblrequired" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+           
+            <label class="requiredfield" for="">*</label>&nbsp;&nbsp;
+            <label id="lblAccommodationDate">@Resources.AccommodationEndDate</label>&nbsp;&nbsp;
+            <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" onblur="CheckDate()" style=" width: 150px; height: 25px;" />&nbsp;&nbsp;
+            <span id="lblrequired1" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+            <label class="requiredfield" for="">*</label>
+            <br />
+            <br />
+            <span id="lblTodayComparisionWarning" style="color: red; font-size: 12px; font-weight: 600; display: none;"><img src="/Image/exclamation.gif" />@Resources.TodayComparisionWarning</span>
+            <br />
+            <br />
+            <label id="lblDateComparisionWarning" style="color: red; font-size: 12px; font-weight: 600;display:none;"><img src="/Image/exclamation.gif" />@Resources.DateComparisionWarning</label>
+
+            <div class="row" style="margin:0px;margin-top:10px;margin-left:15px; position: relative;display: flex;">
+                @foreach (var item in ViewBag.DaysDetails)
+                {
+                    <input type="checkbox" id="chkDay_@item.ID" name="chkDay" value="@item.ID" style="margin-left:7px;" checked>
+                    <label style="margin-right: 30px;">@item.Name</label>
+                }
+               <br /> <label id="lblDaySelectionWarning" style="color:red;font-size:medium;display:none;">@Resources.DaySelectionWarning</label>
+            </div>
+        </div>
+
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowPricePolicyHeader" align="left">
+            <img id="imgPricePolicy" src="/Image/PricePolicy.png" />
+            <label id="lblPricePolicy">@Resources.PricePolicy</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowPricePolicy" align="left">
+            @foreach (var item in ViewBag.PricePolicies)
+            {
+                <div class="row" style=" margin:0px;margin-top: 10px;">
+                    <input type="checkbox" id="chkPricePolicies" name="chkPricePolicies" value="@item.ID" checked>
+                    <label>@item.Name</label>
+                </div>
+
+            }
+            <label id="lblPricePolicySelectionWarning" style="color: red; font-size: medium; display: none;">@Resources.PricePolicySelectionWarning</label>
+        </div>
+
+
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowRoomHeader" align="left">
+            <img id="imgRoom" src="/Image/Room.png" />
+            <label id="lblPricePolicy">@Resources.Room</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowRoom" align="left">
+            @foreach (var item in ViewBag.HotelRooms)
+            {
+                <div class="row" style=" margin:0px;margin-top: 10px;">
+                    <input type="checkbox" id="chkRoomType'" name="chkRoomType" value="@item.RoomID" checked>
+                    <label>@item.RoomTypeName</label>
+                </div>
+
+            }
+            <label id="lblRoomSelectionWarning" style="color: red; font-size: medium; display: none;">@Resources.RoomSelectionWarning</label> 
+        </div>
+
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowDayCountHeader" align="left">
+            <img id="imgDayCount" src="/Image/DayCount.png" />
+            <label id="lblDayCount">@Resources.MinumumDayCount</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowDayCount" align="left">
+            <select id="ddlDayCount"></select>
+            <label class="requiredfield" for="">*</label>
+            <span id="lblrequiredDayCount" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+        </div>
+
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowEarlyBookerHeader" align="left">
+            <img id="imgEarlyBookerMargin" src="/Image/DealMargin.png" />
+            <label id="lblEarlyBookerDealMarginPeriod">@Resources.DealMarginPeriod</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowEarlyBooker" align="left">
+            <label id="lblEarlyBooker">@Resources.EarlyBookerMargin</label>
+            <input type="text" id="txtEarlyBookerMargin" class="k-textbox" />
+            <label class="requiredfield" for="">*</label>
+            <span id="lblrequiredEarlyBookerMargin" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+        </div>
+
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowLastMinuteHeader" align="left">
+            <img id="imgLastMinuteMargin" src="/Image/DealMargin.png" />
+            <label id="lblLastMinuteDealMarginPeriod">@Resources.DealMarginPeriod</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowLastMinuteMargin" align="left">
+            <label id="lblLastMinute">@Resources.EarlyBookerMargin</label>
+            <select id="ddlLastMinuteMargin"></select>
+            <label class="requiredfield" for="">*</label>
+            <span id="lblrequiredLastMinuteMargin" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+        </div>
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowBookingDateHeader" align="left">
+            <img id="imgBookingDate" src="/Image/BookingDate.png" />
+            <label id="lblBookingDate">@Resources.BookingDate</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowBookingDate" align="left">
+            <input type="text" id="datetimepickerBookingDate" placeholder="@Resources.DateFieldDescription" onblur="CheckTodayDate24Promotion()" style=" width: 150px; height: 25px;" />&nbsp;&nbsp;
+            <label class="requiredfield" for="">*</label>
+            <span id="lblrequiredBookingDate" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+            <span id="lblTodayComparisionWarningBookingDate" style="color: red; font-size: 12px; font-weight: 600; display: none;"><img src="/Image/exclamation.gif" />@Resources.TodayComparisionWarning</span>
+        </div>
+
+        <div style="margin-top: 15px;" class="row PromotionCaption" id="divRowSecretDealHeader" align="left">
+            <img style="margin-left: 6px;" id="imgSecretDeal" src="/Image/SecretDeal.png" />
+            <label style="margin-left: 7px;" id="lblSecretDeal">@Resources.SecretDeal</label>
+        </div>
+        <div style="margin-top: 15px; margin-left: 26px;" class="row" id="divRowSecretDeal" align="left">
+            <input type="checkbox" id="chkSecretDeal" name="chkSecretDeal" checked>
+            <label>@Resources.SecretDealText</label>
+        </div>
+
+        <div class="row" align="center">
+            <label id="lblPromotionPeriodConflictWarning" style="color: red; font-size: medium; display: none;">@Resources.PromotionPeriodConflictWarning</label> <br />
+            <button style="    font-size: 14px;font-weight: bold;" id="btnActivateDeal" class="k-button btn btn-info" onclick="SaveDeal()">
+                @Resources.ActivateDeal
+        </button>
+       </div>
+</div>
+    <input id="hiddenPromotionID" type="hidden" value="0" />
+    <input id="hiddenPromotionType" type="hidden" value="0" />
+</div>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

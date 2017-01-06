@@ -1,0 +1,95 @@
+﻿@using Resources
+@using ParameterColumnCaptions
+
+@{
+    ViewBag.Title = "Parameters";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h2 style="color:black">@Resources.Parameters</h2>
+
+<div style="text-align: right; margin-bottom: 4px;"><button class="k-button" onclick="clearFiter()">Clear Filter</button></div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.ParameterExt>()
+            .Name("Parameter")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+
+        })
+                        .Read(read => read.Action("_ReadParameters", "Parameter"))
+                    .Destroy(destroy => destroy.Action("Editing_Destroy", "Parameter"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Bound(p => p.ID).ClientTemplate("<a title='Click here to Edit Firm Details' href='/Firm/Edit/#=ID#'>#=ID#</a>").Width(120).Locked(true);
+                    columns.Bound(p => p.Code).Title(ParameterColumnCaptions.Code).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(250).Locked(true);
+                    columns.Bound(p => p.Value).Title(ParameterColumnCaptions.Value).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(200).Locked(true);
+                    columns.Bound(p => p.Description).Title(ParameterColumnCaptions.Description).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(320).Locked(true);
+                    columns.Bound(p => p.IsCommon).Title(ParameterColumnCaptions.IsCommon).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(150).Locked(true);
+                    columns.Bound(p => p.Date).Title(ParameterColumnCaptions.Date).HeaderHtmlAttributes(new { style = "white-space: normal" }).Width(150).Locked(true);
+                    
+
+
+                    columns.Command(command => command.Destroy().Text(Resources.Delete)).Width(170);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewUser").Text("NewRecord").Action("Create", "Users");
+                    tool.Excel();
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("Messages.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    function AddUser() {
+        location.href = "/Users/Create";
+    }
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+</script>
+
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

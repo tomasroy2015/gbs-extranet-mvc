@@ -1,0 +1,150 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("TB_TransferReservationPromotion")</h1>
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-4 col-sm-4">
+            <div class="col-md-3 col-sm-3 col-xs-3" style="padding:5px;">
+                <label> @MessageColumnCaptions.TB_TransferReservationPromotionCaption("ReservationID")</label>
+            </div>
+            <div class="col-md-9 col-sm-9 col-xs-9" style="padding: 5px;">
+                <input id="txtReservationID" type="text" class="form-control" style="width:100%" placeholder="@MessageColumnCaptions.TB_TransferReservationPromotionCaption("ReservationID")" />
+            </div>
+        </div>
+        <div class="col-md-5 col-sm-5">
+            <div class="col-md-4 col-sm-4 col-xs-4" style="padding:5px;">
+                <label> @MessageColumnCaptions.TB_TransferReservationPromotionCaption("TransferReservationID")</label>
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-8" style="padding: 5px;">
+                <input id="txtTransferReservationID" type="text" class="form-control" style="width:100%" placeholder="@MessageColumnCaptions.TB_TransferReservationPromotionCaption("TransferReservationID")" />
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="col-md-4 col-sm-4">
+            <div class="col-md-3 col-sm-3 col-xs-3" style="padding:5px;">
+                <label>@MessageColumnCaptions.TB_TransferReservationPromotionCaption("PromotionID")</label>
+            </div>
+            <div class="col-md-9 col-sm-9 col-xs-9" style="padding: 5px;">
+                <input id="drpPromotion" style="width: 100%;" />
+            </div>
+        </div>
+        <div class="col-md-4  col-sm-4">
+            <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+            <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $ReservationID = $("#txtReservationID").val();
+        $TransferReservationID = $("#txtTransferReservationID").val();
+        $PromotionText = $("#drpPromotion").data("kendoDropDownList").text();
+        $PromotionValue = $("#drpPromotion").val();
+
+        var grid = $("#TB_TransferReservationPromotion_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+
+
+        if ($ReservationID) {
+            $filter.push({ field: "ReservationID", operator: "equals", value: String($ReservationID) });
+        }
+
+        if ($TransferReservationID) {
+            $filter.push({ field: "TransferReservationID", operator: "equals", value: String($TransferReservationID) });
+        }
+
+        if ($PromotionValue) {
+            $filter.push({ field: "PromotionID", operator: "equals", value: String($PromotionValue) });
+        }
+    });
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_TransferReservationPromotion_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        document.getElementById('ChkFilterCommon').checked = false
+
+
+        var dropdownlistPart = $("#drpPromotion").data("kendoDropDownList");
+        dropdownlistPart.select("");
+    });
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_TransferReservationPromotionExt>()
+                .Name("TB_TransferReservationPromotion_Grid")
+        //.Events(events => events.Edit("onChange"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                                .Read(read => read.Action("_Read", "TB_TransferReservationPromotion", new { TableID = (int)ViewBag.TableID }))
+
+        )
+
+
+            .Columns(columns =>
+            {
+                columns.Bound(p => p.ID).Title("ID").Width(50).Locked(true);
+                columns.Bound(p => p.ReservationID).Title(MessageColumnCaptions.TB_TransferReservationPromotionCaption("ReservationID")).Width(350);
+                columns.Bound(p => p.TransferReservationID).Title(MessageColumnCaptions.TB_TransferReservationPromotionCaption("TransferReservationID")).Width(350);
+                columns.Bound(p => p.Promotion).Title(MessageColumnCaptions.TB_TransferReservationPromotionCaption("PromotionID")).Width(250);
+            })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_TransferReservationPromotion.xlsx")
+                .Filterable(true))
+
+)
+
+<script>
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPromotion",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPromotion").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Promotion",
+                    dataValueField: "PromotionID",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+</script>

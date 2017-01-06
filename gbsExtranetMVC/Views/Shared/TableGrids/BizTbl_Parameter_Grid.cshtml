@@ -1,0 +1,93 @@
+﻿
+@using Resources
+@using BankColumnCaption
+
+
+<h1 style="text-align:center;">BizTbl_Parameter</h1>
+
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.ParameterExt>()
+                .Name("BizTbl_ParameterExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            model.Field(p => p.Date).Editable(false);
+        })
+
+                .Create(update => update.Action("_Create", "Parameters"))
+                .Read(read => read.Action("_Read", "Parameters", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "Parameters"))
+                .Destroy(destroy => destroy.Action("_Destroy", "Parameters"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(50);
+                    columns.Bound(p => p.Code).Width(250);
+                    columns.Bound(p => p.Value).Width(200);
+                    columns.Bound(p => p.Description).Width(320);
+                    columns.Bound(p => p.IsCommon).ClientTemplate("<div style='text-align:center;'> #if(IsCommon){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>")
+                       .Width(120);
+                    columns.Bound(p => p.Date).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy HH:mm:ss') #").Width(150);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_ParameterExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#BizTbl_ParameterExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+

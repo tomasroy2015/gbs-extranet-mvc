@@ -1,0 +1,505 @@
+﻿@model gbsExtranetMVC.Models.Repositories.PropertyStatisticsExt
+@using Resources
+
+@{
+    ViewBag.Title = "PropertyStatistics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="color: black; text-align:center">@Resources.Statistics</h1>
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+    @@media (min-width: 1200px){
+     .container {
+        width: 650px;
+    }
+    }
+    .PageMessageDiv {
+        /*display: none;*/
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 99999999999;
+        font-family: Arial;
+        font-size: 20px;
+        margin: auto;
+        font-color: #E8E8E8;
+        background-image: url(/Image/blackTransparent.png);
+        background-repeat: repeat;
+    }
+</style>
+
+
+
+
+    <div class="row">
+        <div class="col-md-12" align="center">
+            <input type="button" value="@Resources.DailyHitCounts" id="btnDailyHitCounts" class="k-button btn btn-info" onclick="dailyStatistics()">&nbsp;
+            <input type="button" value="@Resources.MonthlyHitCounts" id="btnMonthlyHitCounts" class="k-button btn btn-info" onclick="MonthlyStatistics()">&nbsp;
+            <input type="button" value="@Resources.YearlyHitCounts" id="btnYearlyHitCounts" class="k-button btn btn-info" onclick="AnnualStatistics()">&nbsp;
+            </div>
+        </div>
+        <br />
+       <div id="dailydiv" class="jumbotron" style="border-radius: 8px; font-size: 15px; font-weight: 100; line-height: 1.142857; margin: 0px auto; float: none;">
+           <div class="row" align="center">
+               <div class="col-md-12" align="center" id="Dailystatistics" style=" margin: 0px auto; float: none; ">
+                   <label style=" margin-top: 6px; font-size: 16px;">@Resources.DateInterval</label>&nbsp;
+                  @* <input type="text" id="txtStartDate" placeholder="@Resources.DateFieldDescription" style=" margin-right: 10px;" value="@ViewBag.StartDate" onblur="CheckTodayDate()" />*@
+
+
+                   <input type="text" id="txtStartDate" value="@ViewBag.StartDate" placeholder="@Resources.DateFieldDescription" onblur="CheckTodayDate()" style=" width: 170px; height: 25px; font-size: 16px; " />&nbsp;&nbsp;
+                   <label id="lblTodayComparisionWarning" style="color: red; font-size: inherit; display: none; margin: 5px;">@Resources.TodayComparisionWarning</label>
+                   <span id="lblrequired" style="display: none; color: red; font-size: 14px; font-weight: 600; "><img src="/Image/exclamation.gif" />This field required</span>
+                   <label class="requiredfield" for="">*</label>&nbsp;&nbsp;
+                   @*<div class="col-md-6">
+                    <label style=" margin-top: 6px;">@Resources.DateInterval</label>
+                    <input type="text" id="txtStartDate" placeholder="@Resources.DateFieldDescription" style=" margin-right: 10px;" value="@ViewBag.StartDate" />
+                    <span id="lblrequired" style="display: none; color: red; font-size: 14px; font-weight: 600; "><img src="/Image/exclamation.gif" />This field required</span>
+                    <label class="requiredfield" for="">*</label>&nbsp;&nbsp;
+                </div>
+                <div class="col-md-6">
+                    <input id="txtEndDate" placeholder="@Resources.DateFieldDescription" style=" margin-right: 10px;" value="@ViewBag.EndDate" />
+                    <span id="lblrequired1" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />This field required</span>
+                    <label class="requiredfield" for="">*</label>&nbsp;&nbsp;
+                    <input type="button" id="btnShow" value="SHOW" class="k-button btn btn-info" onclick="GetdatewisedailyStatistics()" />&nbsp;
+                </div>*@
+
+                   <input type="text" id="txtEndDate" value="@ViewBag.EndDate" placeholder="@Resources.DateFieldDescription" onblur="CheckDateDifference()" style=" width: 170px; height: 25px; font-size: 16px;" />&nbsp;&nbsp;
+                   <label style="margin-top: 6px;" class="requiredfield" for="">*</label>
+                   <label id="lblDateComparisionWarning" style="color: red; font-size:inherit; display: none; margin: 5px; ">@Resources.DateComparisionWarning</label>
+                   
+                   <span id="lblrequired1" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.FillFieldsWarning</span>
+                   
+                   <input type="button" style="margin-top: 8px;" id="btnShow" value="@Resources.Show" class="k-button btn btn-info" onclick="GetdatewisedailyStatistics()" />&nbsp;
+               </div>
+              <br />
+               
+               <span id="lbldaterange" style="display: none; color: red; font-size: 14px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.DateComparisionWarning</span>
+           </div>
+
+    <div class="col-md-12" align="center" id="monthlystatistics" style="display:none">
+        <div class="col-md-6">
+            <label>@Resources.DateInterval</label>
+            <input type="text" id="txtStartDate" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+        </div>
+
+    </div>
+</div>
+          
+
+    <div class="col-md-12 container" id="loaddisplay" style="margin-top:20px" >
+
+    <table class="table table-responsive table-striped"  style="margin: 0px auto; float: none; font-size: 16px; color: black; ">
+        <tr style="text-align:center">
+            <th style="text-align:center">@Resources.Day</th>
+            <th style="text-align:center">@Resources.HitCountOverReservationcount</th>
+        </tr>
+
+        @foreach (var DailyStatistics in ViewBag.DailyStatistics)
+        {
+            {
+                <tr>
+                    <td style="height: 40px; color: Navy; text-align: left">
+                        <label>@DailyStatistics.Day</label>&nbsp;&nbsp;
+                        <label>@DailyStatistics.MonthName</label>&nbsp;&nbsp;
+                        
+                        <label>@DailyStatistics.DayName</label>
+                    </td>
+
+                    <td style="height: 40px; color: Navy; text-align: center">
+                        <label>@DailyStatistics.HitCount</label> /
+                        <label>@DailyStatistics.ReservationCount</label>
+                    </td>
+
+                </tr>
+
+            }
+        }
+    </table>
+</div>
+
+
+
+<div class="col-md-8" id="searchdisplay" style="display: none; margin: 0px auto; float: none; font-size: 16px; color: black;">
+    <table class="table table-responsive table-striped " style="margin: 0px auto; float: none; font-size: 16px; color: black;margin-top:20px;" id="datebystatistics"></table>
+
+</div>
+
+<div class="col-md-12" id="monthlydisplay" style="display:none">
+
+    <div align="center" style="margin-bottom:10px;">
+        <select id="drpyear" onchange="MonthlyStatistics()"></select>
+    </div>
+    <table class="col-md-5 responsive" style="margin: 0px auto; float: none; font-size: 16px; color: black; " id="dataofmonth">
+       
+        </table>
+       
+  
+    </div>
+<div class="col-md-8" id="yearlydisplay" style="margin: 0px auto; float: none; display: none;  ">
+
+    <table class="col-md-8 responsive" style="margin: 0px auto; float: none; font-size: 16px; color: black;">
+        <tr style="text-align:center">
+            <th style="text-align:center">@Resources.Year</th>
+            <th style="text-align:center">@Resources.HitCountOverReservationcount</th>
+        </tr>
+
+        @foreach (var yearlyPropertyStatistics in ViewBag.yearlyPropertyStatistics)
+        {
+            {
+                <tr>
+                    <td style="height: 40px; color: Navy; text-align: center">
+                        <label>@yearlyPropertyStatistics.Year</label>
+                    </td>
+
+                    <td style="height: 40px; color: Navy; text-align: center">
+                        <label>@yearlyPropertyStatistics.HitCount</label>
+                        <label>/</label>
+                        <label>@yearlyPropertyStatistics.ReservationCount</label>
+                    </td>
+
+                </tr>
+
+            }
+        }
+    </table>
+</div>
+<div id="ctl00_divMessage" class="PageMessageDiv" onclick="this.style.display='none'" style="display:none; width: 100%; height: 100%; ">
+    <table style="width:100%; height: 100%; " align="center">
+        <tbody>
+            <tr>
+                <td id="ctl00_cellPageMessage" align="center" valign="middle">
+                    <table id="MessageTable" align="center" class="PageMessage" style="background-color: white;">
+                        <tbody>
+                            <tr>
+                                <td width="10%"></td>
+                                <td align="right" width="90%" style="padding-top:0px;"><img src="/Image/close.png" border="0" onclick="errordiv()"></td>
+                            </tr>
+                            <tr><td valign="center" align="left"><img src="/Image/msgError.png" border="0"></td><td align="left" style="font-size: 15px;">@Resources.DateIntervalWarning</td></tr>
+                            <tr><td colspan="2" height="40" align="center"><input type="submit" value="@Resources.Close" style="font-size: 15px;" onclick="errordiv()" class="ButtonTab"></td></tr>
+                            <tr><td colspan="2"><br></td></tr>
+                        </tbody>
+                    </table>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+        <script>
+         
+            $(document).ready(function () {
+              
+              
+                var startyear = 2012;
+
+                var json = { startyear: startyear }
+                $.ajax({
+                    type: "GET",
+                    url: "/DropDownLists/GetYear",
+                    data: json,
+                    datatype: "json",
+                    success: function (data) {
+
+                        $("#drpyear").kendoDropDownList({
+
+                            filter: "contains",
+
+                            dataTextField: "year",
+                            dataValueField: "year",
+                            dataSource: data
+                        });
+
+                    }
+                })
+              
+        $("#txtStartDate").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#txtEndDate").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+       
+       
+
+        
+    });
+
+    function dailyStatistics()
+    {
+        $('#dailydiv').show();
+        $('#loaddisplay').show();
+        $('#searchdisplay').hide();
+        $('#yearlydisplay').hide();
+        $('#dataofmonth').hide();
+        $('#monthlydisplay').hide();
+        
+        
+    }
+
+    function GetdatewisedailyStatistics() {
+        var count = 0;
+        var HitCountPeriodID = 3;
+        var StartDate = document.getElementById('txtStartDate').value;
+        if (StartDate == "") {
+            document.getElementById('lblrequired').style.display = '';
+        }
+        else
+        {
+            document.getElementById('lblrequired').style.display = 'none';
+        }
+        
+        var EndDate = document.getElementById('txtEndDate').value;
+        if (EndDate == "") {
+            //document.getElementById('lblrequired1').style.display = '';
+        }
+        else {
+            //document.getElementById('lblrequired1').style.display = 'none';
+        }
+       // var parts = StartDate.split("//");
+       // alert(parts[0])
+       // alert(StartDate)
+       //alert(EndDate)
+       // if (StartDate > EndDate) {
+       //     document.getElementById('lbldaterange').style.display = '';
+       // }
+       // else {
+       //     document.getElementById('lbldaterange').style.display = 'none';
+       // }
+        if (StartDate != "" && EndDate != "" ) {
+      //alert("if")
+            var json = { StartDate: StartDate, Enddate: EndDate }
+      
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckDateDiff",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+                    
+                    if(data>=-30)
+                    {
+                      
+
+                        var json = { HitCountPeriodID: HitCountPeriodID, StartDate: StartDate, EndDate: EndDate }
+                        $.ajax({
+                            type: "GET",
+                            url: "/PropertyStatistics/DailyPropertyStatistics",
+                            data: json,
+                            datatype: "json",
+                            success: function (data) {
+                                $('#loaddisplay').hide();
+                                $('#yearlydisplay').hide();
+                                $('#monthlydisplay').hide();
+                                $('#dailydiv').show();
+                                $('#datebystatistics').empty();
+                               // $('#searchdisplay').clear();
+                                
+                                $.each(data, function (key, val) {
+                                   
+                                    if (count == 0) {
+                                        $("#datebystatistics").append(
+                                        '<tr style="text-align: center">' +
+                                                              '<th style="text-align: center">@Resources.Day</th>' +
+                                                              '<th style="text-align: center">@Resources.HitCountOverReservationcount</th>' +
+                                                               '</tr>')
+                                    }
+                                    $("#datebystatistics").append(
+
+                                                        '<tr style="text-align: center">' +
+                                                        '<td style="height: 40px; color: Navy; text-align: left">' +
+                                                      '<label>' + val.Day + '</label>&nbsp;&nbsp;' +
+                                                      '<label>' + val.MonthName + '</label>&nbsp;&nbsp;' +
+                                                      '<label>'+val.DayName+'</label>'+
+                                                       '</td>'+
+
+                                                        '<td style="height: 40px; color: Navy; text-align: center">' +
+                                            '<label>'+val.HitCount+'</label>'+
+                                            '<label>/</label>'+
+                                            '<label>'+val.ReservationCount+'</label>'+
+                                        '</td>'+
+                                            '</tr>'
+                           
+                                        )
+                                    count = +1;
+                                })
+                                $('#searchdisplay').show();
+                            }
+
+                        })
+                    }
+                    else  {
+                        
+                        document.getElementById('ctl00_divMessage').style.display = '';
+                    }
+                }
+            })
+       
+         
+        }
+    }
+
+    function AnnualStatistics() {
+
+        $('#dailydiv').hide();
+        $('#loaddisplay').hide();
+        $('#searchdisplay').hide();
+        $('#yearlydisplay').show();
+        $('#monthlydisplay').hide();
+      
+
+    }
+
+
+    var DateValidationToday = "Valid";
+
+    var DateValidationDiff = "Valid";
+
+    function CheckTodayDate() {
+
+        var StartDate = document.getElementById('txtStartDate').value
+
+        var jsonStart = { StartDate: StartDate }
+        if (StartDate != "") {
+            // alert(StartDate)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckTodayDate",
+                data: jsonStart,
+                datatype: "json",
+                success: function (data) {
+                    //alert("TodayDate" + data)
+                    if (data >= 1) {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "";
+                        DateValidationToday = "Invalid"
+                    }
+                    else {
+                        document.getElementById("lblTodayComparisionWarning").style.display = "none";
+                        DateValidationToday = "Valid"
+                    }
+                }
+            })
+        }
+    }
+    var enddate90 = '@ViewBag.EndDate90';
+    function CheckDateDifference() {
+
+        var StartDate = document.getElementById('txtStartDate').value
+        var Enddate = document.getElementById('txtEndDate').value
+        var json = { StartDate: StartDate, Enddate: Enddate }
+        if (StartDate != "" && Enddate != "") {
+            // alert("hi")
+            // alert(json)
+            $.ajax({
+                type: "GET",
+                url: "/RoomRateAndAvailability/CheckDateDiff",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+                    //alert("TodayDateDiff" + data)
+                    if (data >= 1) {
+                        document.getElementById("lblDateComparisionWarning").style.display = "";
+                        DateValidationDiff = "Invalid"
+                    }
+                    else {
+                        if (data < -90) {
+                            document.getElementById('datetimepickerEnd').value = enddate90;
+                        }
+                        document.getElementById("lblDateComparisionWarning").style.display = "none";
+                        DateValidationDiff = "Valid"
+                    }
+
+                }
+            })
+        }
+    }
+    function MonthlyStatistics() {
+        
+      
+        var Year = document.getElementById('drpyear').value;
+  
+        var json = { Year: Year }
+        $.ajax({
+            type: "GET",
+            url: "/PropertyStatistics/MonthlyPropertyStatistics",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                $('#dailydiv').hide();
+                $('#loaddisplay').hide();
+                $('#searchdisplay').hide();
+                $('#yearlydisplay').hide();
+                $('#dataofmonth').empty();
+                var count = 0;
+           
+                $.each(data, function (key, val) {
+                    if (count == 0) {
+                        $("#dataofmonth").append(
+                             '<tr style="text-align: center">' +
+                          '<th style="text-align: center">@Resources.Month</th>' +
+                         '<th style="text-align: center">@Resources.HitCountOverReservationcount</th>' +
+                           '</tr>'
+                             )
+                    }
+                    $("#dataofmonth").append(
+                                            '<tr>'+
+                                            '<td style="height: 40px; color: Navy; text-align: center">' +
+                                          '<label>' + val.MonthName + '</label>' +
+                                           '</td>'+
+                                          '<td style="height: 40px; color: Navy; text-align: center">' +
+                                         '<label>'+val.HitCount+'</label>'+
+                                          '<label>/</label>'+
+                                       '<label>'+val.ReservationCount+'</label>'+
+                                     '</td>'+
+                                '</tr>'
+                        )
+                    count = +1;
+                })
+                $('#dataofmonth').show();
+                $('#monthlydisplay').show();
+               
+            }
+
+        })
+    }
+
+        </script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

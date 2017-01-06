@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                    .Name("BusinessPartnerPax")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                            .DataTextField("TransferPaxName")
+                            .DataValueField("TransferPaxID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetBusinessPartnerPax", "DropDownLists");
+        });
+    })
+)

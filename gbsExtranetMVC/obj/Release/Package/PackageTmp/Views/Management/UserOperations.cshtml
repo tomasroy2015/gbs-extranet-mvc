@@ -1,0 +1,542 @@
+﻿@using Resources
+@using UserOperationscolumnCaption
+@using MessageColumnCaptions
+@{
+    ViewBag.Title = "UserOperations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@*<h1 style="text-align:center;">@MessageColumnCaptions.GetPageTitle("AdminUserOperations.aspx")</h1>*@
+<h1 style="text-align:center;">@Resources.UserOperations</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@UserOperationscolumnCaption.dgUserName</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    <input id="txtname" type="text" class="k-textbox" style="width:100%" />
+                </div>
+               
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@UserOperationscolumnCaption.dgUserSurname</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                    <input id="txtsurname" type="text" class="k-textbox" style="width:100%" />
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="col-md-12" style="margin-top: 50px;">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@UserOperationscolumnCaption.dgUserUserName</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    <input id="txtusername" type="text" class="k-textbox" style="width:100%" />
+                </div>
+              
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@UserOperationscolumnCaption.dgUserFirmName</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                    <input id="drpfirm" style="width: 100%;" />
+                </div>
+            </div>
+            
+
+        </div>
+
+        <div class="col-md-12" style="margin-top: 50px;">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@UserOperationscolumnCaption.dgUserCountryName</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    <input id="drpcountry" style="width: 100%;" onchange="getregionbycountry()" />
+                </div>
+
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@Resources.Region</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                    <input id="drpregion" style="width: 100%;"  />
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-2" style="padding:0px;">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                    </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;padding-left: 15px;">
+                    <button class="k-button btn btn-info" id="btnClearFilter" style="padding:6px;" onclick="clearFiter()">@Resources.RemoveFilter</button>
+                </div>
+                </div>
+
+        </div>
+
+        <div class="col-md-12" style="margin-top: 50px;">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@Resources.SecurityGroup</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    <input id="drpAuthority" style="width: 100%;" />
+                </div>
+
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@UserOperationscolumnCaption.dgUserStatusName</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                    <input id="drpstatus" style="width: 100%;" />
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-12" style="margin-top: 50px;">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@Resources.ActiveStatus</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8">
+                    @*<input id="drpactivitystatus" style="width: 100%;" />*@
+                    <select id="drpactivitystatus" style="width:100%">
+                        <option value="true">@Resources.Active</option>
+                        <option value="false">@Resources.Passive</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 col-xs-4" style="padding:0px;">
+                    <label>@Resources.Locked</label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                    <input type="checkbox" id="chkactive" style="text-align: left;"/>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+    
+</div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.UsersOperationsExt>()
+                        .Name("UserOperations_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+
+             
+            .Read(read => read.Action("_Read", "UserOperations"))
+            //.Destroy(destroy => destroy.Action("_Destroy","UserOperations"))
+            .Update(update => update.Action("_Update","UserOperations"))
+            
+
+        )
+       
+        .Columns(columns =>                                                                 
+        {
+            columns.Bound("").Title(Resources.Operation).Sortable(false).Width(150).ClientTemplate("<div style='text-align:center;'><a href='/UserOperations/UserOperationsEdit?UserID=#=EncryptID#'><img title='Update' src='/Image/update.png' style='width:30px;cursor:pointer;' alt='Authorization'/></a>##<a href='/UserOperations/UserRole?ID=#=EncryptID#&FirmID=#=EncryptFirmID#'><img title='Authorization' src='/Image/user.png' style='width:30px;cursor:pointer;' alt='Authorization'/></a><img title='Delete' onclick='Deleteuser(#=ID#)' src='/Image/delete.png' style='width:30px;cursor:pointer;' alt='delete'> </div>").Locked(true);
+           // columns.Bound("").ClientTemplate("<a title='Click here to Edit Firm Details' style='text-decoration:underline;' href='/Management/UserOperationsEdit/#=ID#'>Edit</a>").Width(100).Locked(true);
+            //columns.Bound(p => p.ID).ClientTemplate("<a style='text-decoration:underline;' href='/Management/UserOperationsEdit?UserID=#=EncryptID#'>#=ID#</a>").Width(80).Locked(true);
+            columns.Bound(p => p.ID).Width(80).Locked(true); ;
+            columns.Bound(p => p.Title).Title(UserOperationscolumnCaption.dgUserSalutationName).Width(80).Locked(true);
+            columns.Bound(p => p.Name).Title(UserOperationscolumnCaption.dgUserName).Width(120);
+            columns.Bound(p => p.SurName).Title(UserOperationscolumnCaption.dgUserSurname).Width(120);
+            columns.Bound(p => p.UserName).Title(UserOperationscolumnCaption.dgUserUserName).Width(150);
+            columns.Bound(p => p.FirmName).Title(UserOperationscolumnCaption.dgUserFirmName).Width(150);
+            columns.Bound(p => p.Country).Title(UserOperationscolumnCaption.dgUserCountryName).Width(100);
+            columns.Bound(p => p.City).Title(UserOperationscolumnCaption.dgUserCityName).Width(100);
+            columns.Bound(p => p.Address).Title(UserOperationscolumnCaption.dgUserAddress).Width(100);
+            columns.Bound(p => p.Email).Title(UserOperationscolumnCaption.dgUserEmail).Width(150);
+            columns.Bound(p => p.Phone).Title(UserOperationscolumnCaption.dgUserPhone).Width(100);
+            columns.Bound(p => p.PostalCode).Title(UserOperationscolumnCaption.dgUserPostCode).Width(100);
+            columns.Bound(p => p.Status).Title(UserOperationscolumnCaption.dgUserStatusName).Width(100);
+           // columns.Bound(p => p.Active).Title(UserOperationscolumnCaption.dgUserAktif).Width(100);
+            columns.Bound(p => p.Active).Title(UserOperationscolumnCaption.dgUserAktif)
+            .ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(100);
+            columns.Bound(p => p.CreatedDate).Title(UserOperationscolumnCaption.dgUserCreateDateTime).Width(100);
+            columns.Bound(p => p.UpdatedDate).Title(UserOperationscolumnCaption.dgUserOpDateTime).Width(100);
+
+
+
+            columns.Command(
+
+                         command =>
+                         {
+                             // command.Edit();
+                             //  command.Destroy();
+                         });
+        })
+        .ToolBar(tool =>
+        {
+            //tool.Custom().Name("cmdAddNewRecord")
+            //       .Text(Resources.NewRecord)
+            //       .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+            tool.Excel();
+        })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("UserOperations.xlsx")
+                .Filterable(true))
+
+)
+<div align="center" style=" margin-top: 20px;">
+    <a title="Click here to create user Details" style="text-decoration:underline;" href="/UserOperations/UserOperationsEdit?UserID=">
+        <input type="button" value="@Resources.NewRecord" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;">
+    </a>
+    <br>
+
+</div>
+<script>
+
+    $(document).ready(function () {
+        $("#drpactivitystatus").kendoDropDownList({
+            optionLabel: "@Resources.All"
+        })
+    })
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetFirmDropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpfirm").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "FirmName",
+                    dataValueField: "FirmID ",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+
+            }
+        })
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetCountries",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpcountry").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "Country",
+                    dataValueField: "CountryID ",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+
+            }
+        })
+        var CountryID=69;
+        var json = {CountryID:CountryID}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegiondrodown_Region",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpregion").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+
+                });
+
+            }
+        })
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetAuthority",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpAuthority").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "Authority",
+                    dataValueField: "AuthorityID ",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+
+            }
+        })
+
+        //var json = {}
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/DropDownLists/ReadFirmRequestStatus",
+        //    data: json,
+        //    datatype: "json",
+        //    success: function (data) {
+
+        //        $("#drpstatus").kendoDropDownList({
+        //            filter: "contains",
+                   
+                    
+        //            dataTextField: "RequestStatus",
+        //            dataValueField: "ID",
+        //            dataSource: data,
+        //            optionLabel: "All..."
+        //            //value:1
+        //        });
+
+        //    }
+        //})
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetTypeStatus",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpstatus").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "StatusName",
+                    dataValueField: "StatusID ",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+                });
+
+            }
+        })
+
+
+    })
+
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+
+        $activitystatusID = $("#drpactivitystatus").val();
+        
+
+        if ($activitystatusID) {
+            $filter.push({ field: "Active", operator: "eq", value: $activitystatusID });
+        }
+       
+       
+        $Status = $("#drpstatus").val();
+       
+        //alert($Statusid)
+        if ($Status) {
+            $filter.push({ field: "StatusID", operator: "equals", value: $Status });
+        }
+       
+        //alert($Statusid)
+        //$activitystatus = "false";
+        //if ($activitystatusID == 1) {
+        //    $activitystatus = "true";
+        //}
+        //alert($activitystatus)
+
+        //if ($activitystatusID != 1) {
+        //    $filter.push({ field: "Active", operator: "eq", value: $activitystatus });
+        //}
+
+        $country = $("#drpcountry").data("kendoDropDownList").text();
+        $countryid = $("#drpcountry").val();
+
+        if ($countryid) {
+            $filter.push({ field: "CountryID", operator: "equals", value: $countryid });
+        }
+
+        $firm = $("#drpfirm").data("kendoDropDownList").text();
+        $firmid = $("#drpfirm").val();
+
+       
+        if ($firmid) {
+            $filter.push({ field: "FirmID", operator: "equals", value: $firmid });
+        }
+       
+        $Region = $("#drpregion").data("kendoDropDownList").text();
+        $RegionID = $("#drpregion").val();
+
+        if ($RegionID) {
+            $filter.push({ field: "RegionID", operator: "equals", value: $RegionID });
+        }
+
+        $AuthorityID = $("#drpAuthority").val();
+        
+        if ($AuthorityID) {
+            $filter.push({ field: "SecurityGroupID", operator: "equals", value: $AuthorityID });
+        }
+
+        $Name = $("#txtname").val();
+        if ($Name != '') {
+            $filter.push({ field: "Name", operator: "contains", value: $Name });
+        }
+
+        $surname = $("#txtsurname").val();
+        if ($surname != '') {
+            $filter.push({ field: "SurName", operator: "contains", value: $surname });
+        }
+        $username = $("#txtusername").val();
+        if ($username != '') {
+            $filter.push({ field: "UserName", operator: "contains", value: $username });
+        }
+
+
+        $Locked = "false";
+        if ($('#chkactive').prop('checked')) {
+            $Locked = "true";
+        }
+
+        if ($Locked == "true") {
+            $filter.push({ field: "Locked", operator: "eq", value: $Locked });
+        }
+
+
+        var grid = $("#UserOperations_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#UserOperations_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        $("#txtsurname").val("");
+        $("#txtname").val("");
+        $("#txtusername").val("");
+        document.getElementById('chkactive').checked = false;
+        var dropdownlist = $("#drpfirm").data("kendoDropDownList");
+        var dropdownlist1 = $("#drpcountry").data("kendoDropDownList");
+        var dropdownlist2 = $("#drpregion").data("kendoDropDownList");
+        var dropdownlist3 = $("#drpAuthority").data("kendoDropDownList");
+        var dropdownlist3 = $("#drpactivitystatus").data("kendoDropDownList");
+        dropdownlist.select("");
+        dropdownlist1.select("");
+        dropdownlist2.select("");
+        dropdownlist3.select("");
+        dropdownlist4.select("");
+
+
+
+    });
+
+    function getregionbycountry()
+    {
+        var CountryID  = $("#drpcountry").val(); 
+      
+        var json = { CountryID: CountryID }
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRegiondrodown_Region",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpregion").kendoDropDownList({
+
+                    filter: "contains",
+
+                    dataTextField: "Name",
+                    dataValueField: "ID",
+                    dataSource: data,
+                    optionLabel: "@Resources.All"
+
+                });
+
+            }
+        })
+    }
+    function Deleteuser(id) {
+       
+        var json = { UserID: id }
+        $.ajax({
+            type: "GET",
+            url: "/UserOperations/DeleteUserFunc",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+            }
+        })
+    }
+</script>
+
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+

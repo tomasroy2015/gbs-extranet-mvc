@@ -1,0 +1,249 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelReservationHistory")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-5 col-sm-5">
+                <div class="col-md-4 col-sm-4 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelReservationHistory("ReservationID")</label>
+                </div>
+                <div class="col-md-6 col-sm-6 " style="padding: 8px;">
+                    <input id="txtreservationid" type="text" class="form-control" style="width:100%" />
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.TB_HotelReservationHistory("HotelID")</label>
+                </div>
+                <div class="col-md-8 col-sm-8 " style="padding: 8px;">
+                    <input style="width:100%" id="drphotels" />
+
+                </div>
+            </div>
+         
+            
+        </div>
+
+        <div class="col-md-12 ">
+
+            <div class="col-md-4  col-sm-5">
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.TB_HotelReservationHistory("LogDateTime") (@Resources.FilterLowerLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-5">
+
+                <div class="col-md-5  col-sm-5" style="padding: 5px;">
+                    <label>@MessageColumnCaptions.TB_HotelReservationHistory("LogDateTime") (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-7  col-sm-7" style="padding: 5px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%; height:25px;" />
+                </div>
+
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+        $Reservationid = $("#txtreservationid").val();
+       
+        $HotelText = $("#drphotels").data("kendoDropDownList").text();
+        $Hotelid = $("#drphotels").val();
+        if ($Hotelid) {
+            $filter.push({ field: "Hotel", operator: "contains", value: String($HotelText) });
+        }
+        if ($Reservationid) {
+            $filter.push({ field: "ReservationID", operator: "equals", value: $Reservationid });
+        }
+
+       
+
+        if ($StartDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "LogDateTime", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+
+        var grid = $("#TB_HotelReservationHistory_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotels",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+                $("#drphotels").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    optionLabel: AllSelectText,
+                    dataValueField: "ID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelReservationHistory_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+
+        $("#txtreservationid").val('');
+      
+
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+
+        var dropdownlistPart = $("#drphotels").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+
+    });
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelReservationHistoryExt>()
+                            .Name("TB_HotelReservationHistory_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+
+           .Read(read => read.Action("_Read", "TB_HotelReservationHistory", new { TableID = (int)ViewBag.TableID }))
+
+        )
+
+                .Columns(columns =>
+                {
+
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.HotelReservationID).Width(200).Title(MessageColumnCaptions.TB_HotelReservationHistory("HotelReservationID"));
+                    columns.Bound(p => p.ReservationID).Width(200).Title(MessageColumnCaptions.TB_HotelReservationHistory("ReservationID"));
+                    columns.Bound(p => p.Hotel).Width(200).Title(MessageColumnCaptions.TB_HotelReservationHistory("HotelID"));
+                    columns.Bound(p => p.HotelRoomID).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("HotelRoomID"));
+                    columns.Bound(p => p.HotelAccommodation).Width(200).Title(MessageColumnCaptions.TB_HotelReservationHistory("HotelAccommodationTypeID"));
+                    columns.Bound(p => p.GuestFullName).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("GuestFullName"));
+                    columns.Bound(p => p.PeopleCount).Width(200).Title(MessageColumnCaptions.TB_HotelReservationHistory("PeopleCount"));
+                    columns.Bound(p => p.CheckInDate).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("CheckInDate"));
+                    columns.Bound(p => p.CheckOutDate).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("CheckOutDate"));
+                    columns.Bound(p => p.NightCount).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("NightCount"));
+                    columns.Bound(p => p.HotelCancelPolicyID).Width(200).Title(MessageColumnCaptions.TB_HotelReservationHistory("HotelCancelPolicyID"));
+                    columns.Bound(p => p.PricePolicy).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("PricePolicyTypeID"));
+                    columns.Bound(p => p.NonRefundable).ClientTemplate("<div style='text-align:center;'> #if(NonRefundable){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("NonRefundable"));
+                    columns.Bound(p => p.SingleRate).ClientTemplate("<div style='text-align:center;'> #if(SingleRate){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("SingleRate"));
+                    columns.Bound(p => p.DoubleRate).ClientTemplate("<div style='text-align:center;'> #if(DoubleRate){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("DoubleRate"));
+                    columns.Bound(p => p.Amount).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("Amount"));
+                    columns.Bound(p => p.PromotionDiscountPercentage).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("PromotionDiscountPercentage"));
+                    columns.Bound(p => p.PayableAmount).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("PayableAmount"));
+                    columns.Bound(p => p.Currency).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("CurrencyID"));
+                    columns.Bound(p => p.BedOptionNo).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("BedOptionNo"));
+                    columns.Bound(p => p.EstimatedArrivalTime).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("EstimatedArrivalTime"));
+                    columns.Bound(p => p.TravellerType).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("TravellerTypeID"));
+                    columns.Bound(p => p.CancelDateTime).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("CancelDateTime"));
+                    columns.Bound(p => p.Status).Width(150).Title(MessageColumnCaptions.TB_HotelReservationHistory("StatusID"));
+                    columns.Bound(p => p.ReservationOperation).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("ReservationOperationID"));
+                    columns.Bound(p => p.Active).Width(150).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_HotelReservationHistory("Active")); ;
+                    columns.Bound(p => p.LogDateTime).Width(150).Title(MessageColumnCaptions.TB_HotelReservationHistory("LogDateTime"));
+                    columns.Bound(p => p.Loguser).Width(250).Title(MessageColumnCaptions.TB_HotelReservationHistory("LogUserID"));
+
+                })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                        .FileName("TB_HotelReservation.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelPromotionHistory_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

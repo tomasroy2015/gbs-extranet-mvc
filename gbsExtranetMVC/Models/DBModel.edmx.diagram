@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="fbd11c47787b47a985bf2518659b40be" Name="Diagram1" ZoomLevel="25">
+        <EntityTypeShape EntityType="DBModel.BizTbl_Message" Width="1.5" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeSalutation" Width="1.5" PointX="7.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DBModel.TB_Country" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DBModel.TB_HitCount" Width="1.5" PointX="7.375" PointY="5.75" />
+        <EntityTypeShape EntityType="DBModel.tblAuditLogs" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_MailQueue" Width="1.5" PointX="5.625" PointY="12.125" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_MailTemplate" Width="1.5" PointX="3.375" PointY="9.25" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_Parameter" Width="1.5" PointX="8.375" PointY="8.75" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_MailQueue_BizTbl_MailTemplate" />
+        <EntityTypeShape EntityType="DBModel.TB_Bank" Width="1.5" PointX="3" PointY="4" />
+        <AssociationConnector Association="DBModel.FK_TB_Bank_TB_Country" />
+        <EntityTypeShape EntityType="DBModel.TB_Region" Width="1.5" PointX="3" PointY="19.875" />
+        <AssociationConnector Association="DBModel.FK_TB_Region_TB_Country" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_SecurityGroupRight" Width="1.5" PointX="5.375" PointY="8.75" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_Culture" Width="1.5" PointX="10.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_Page" Width="1.5" PointX="13.25" PointY="6" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_PageControl" Width="1.5" PointX="15.5" PointY="9.625" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_Security" Width="1.5" PointX="13.25" PointY="18" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_SecurityGroup" Width="1.5" PointX="13.25" PointY="13.125" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_User" Width="1.5" PointX="11" PointY="8.125" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_Culture_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_MailQueue_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_MailTemplate_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_Message_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_Page_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_PageControl_BizTbl_Page" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_PageControl_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_Parameter_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_Security_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_SecurityGroupRight_BizTbl_Security" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_SecurityGroup_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_SecurityGroupRight_BizTbl_SecurityGroup" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_SecurityGroupRight_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_TB_Country" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_TB_Region1" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_TB_TypeSalutation" />
+        <AssociationConnector Association="DBModel.FK_TB_Bank_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Country_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Region_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Salutation_BizTbl_User" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_Error" Width="1.5" PointX="10.375" PointY="4.75" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_Table" Width="1.5" PointX="13.25" PointY="22.875" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_TableColumn" Width="1.5" PointX="18.5" PointY="20.375" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_TableSecurityGroupRight" Width="1.5" PointX="18.5" PointY="16.5" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_UserHistory" Width="1.5" PointX="16" PointY="17.25" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_TableSecurityGroupRight_BizTbl_SecurityGroup" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_Table_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_TableFieldCaption_BizTbl_Table" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_TableSecurityGroupRight_BizTbl_Table" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_TableFieldCaption_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_TableSecurityGroupRight_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserHistory_TB_City" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserHistory_TB_Country" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserHistory_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserHistory_TB_TypeSalutation" />
+        <EntityTypeShape EntityType="DBModel.TB_FAQ" Width="1.5" PointX="13.25" PointY="66.25" />
+        <EntityTypeShape EntityType="DBModel.TB_Firm" Width="1.5" PointX="18.25" PointY="6" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeDeposit" Width="1.5" PointX="13.25" PointY="61.25" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeFirmRequest" Width="1.5" PointX="13.25" PointY="51" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeFirmRequestStatus" Width="1.5" PointX="13.25" PointY="36.875" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeFreebie" Width="1.5" PointX="13.25" PointY="45.5" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeHotel" Width="1.5" PointX="13.25" PointY="56.125" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeHotelAccommodation" Width="1.5" PointX="13.25" PointY="73.375" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeHotelBudget" Width="1.5" PointX="13.25" PointY="28.5" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeHotelChain" Width="1.5" PointX="21.25" PointY="18.625" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeHotelClass" Width="1.5" PointX="13.25" PointY="31.625" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_FAQ_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Firm_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Firm_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeDeposit_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeFirmRequest_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeFirmRequestStatus_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeFreebie_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotel_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotelAccommodation_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotelBudget_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotelChain_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotelClass_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserHistory_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_Firm_TB_Country" />
+        <AssociationConnector Association="DBModel.FK_TB_Firm_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_TB_Firm_TB_Region1" />
+        <AssociationConnector Association="DBModel.FK_TB_Firm_TB_TypeSalutation" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotelChain_TB_Region" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelPromotionFreebie" Width="1.5" PointX="15.5" PointY="30.25" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelPromotionHistory" Width="1.5" PointX="13.25" PointY="0.75" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelRate" Width="1.5" PointX="15.5" PointY="44.5" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelHotelRateHistory_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPricePolicy_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionFreebie_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionFreebie_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionHistory_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionHistory_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionHistory_BizTbl_User2" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionFreebie_TB_TypeFreebie" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRate_TB_TypeHotelAccommodation" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeHotelSearchSort" Width="1.5" PointX="13.25" PointY="90.625" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeInvoiceStatus" Width="1.5" PointX="13.25" PointY="80.5" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeMessageStatus" Width="1.5" PointX="13.25" PointY="106.875" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeMessageSubject" Width="1.5" PointX="13.25" PointY="85.5" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeMonth" Width="1.5" PointX="13.25" PointY="111.5" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeOperation" Width="1.5" PointX="13.25" PointY="96" />
+        <EntityTypeShape EntityType="DBModel.TB_TypePenaltyRate" Width="1.5" PointX="13.25" PointY="101.25" />
+        <EntityTypeShape EntityType="DBModel.TB_TypePricePolicy" Width="1.5" PointX="13.25" PointY="116.5" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotelSearchSort_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeInvoiceStatus_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeMessageStatus_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeMessageSubject_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeMonth_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeOperation_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypePenaltyRate_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypePricePolicy_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPrice_TB_TypePricePolicy" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeReservationOperation" Width="1.5" PointX="13.25" PointY="121.875" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReservationOperation_BizTbl_User" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeRegion" Width="1.5" PointX="13.25" PointY="128.25" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeRegion_BizTbl_User" />
+        <EntityTypeShape EntityType="DBModel.TB_Photo" Width="1.5" PointX="13.25" PointY="133.875" />
+        <AssociationConnector Association="DBModel.FK_TB_Photo_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Photo_BizTbl_User1" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeStatus" Width="1.5" PointX="13.25" PointY="139" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_User_TB_TypeStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeStatus_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserHistory_TB_TypeStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_Firm_TB_TypeStatus" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_UserSession" Width="1.5" PointX="21.25" PointY="11.5" />
+        <AssociationConnector Association="DBModel.FK_TB_UserSession_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_UserSession_TB_Country" />
+        <EntityTypeShape EntityType="DBModel.TB_FirmRequest" Width="1.5" PointX="20.5" PointY="28.625" />
+        <AssociationConnector Association="DBModel.FK_TB_FirmRequest_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_FirmRequest_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_FirmRequest_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_FirmRequest_TB_TypeFirmRequest" />
+        <AssociationConnector Association="DBModel.FK_TB_FirmRequest_TB_TypeFirmRequestStatus" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelPromotion" Width="1.5" PointX="13.25" PointY="145.125" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelPromotionRoom" Width="1.5" PointX="15.5" PointY="78.125" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelRegion" Width="1.5" PointX="16.25" PointY="26" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotion_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotion_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionRoom_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionRoom_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRegion_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionFreebie_TB_HotelPromotion" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionRoom_TB_HotelPromotion" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRegion_TB_Region" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeReservationStatus" Width="1.5" PointX="13.25" PointY="188.75" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeReview" Width="1.5" PointX="13.25" PointY="199" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeReviewEvaluation" Width="1.5" PointX="13.25" PointY="183.375" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeReviewScale" Width="1.5" PointX="13.25" PointY="204.25" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeReviewStatus" Width="1.5" PointX="13.25" PointY="152.75" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeRoom" Width="1.5" PointX="13.25" PointY="157.75" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeSmoking" Width="1.5" PointX="13.25" PointY="167.875" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeSubRegion" Width="1.5" PointX="13.25" PointY="162.75" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeTourFrequency" Width="1.5" PointX="13.25" PointY="172.875" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeTraveller" Width="1.5" PointX="13.25" PointY="194" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeVehicle" Width="1.5" PointX="13.25" PointY="209.25" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeView" Width="1.5" PointX="13.25" PointY="178.125" />
+        <EntityTypeShape EntityType="DBModel.TB_Unit" Width="1.5" PointX="13.25" PointY="214.375" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeFirmReviewStatus_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReservationStatus_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReview_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReviewEvaluation_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReviewScale_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeRoom_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeSmoking_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeSubRegion_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeTourFrequency_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeTraveler_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeVehicle_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeView_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Unit_BizTbl_User" />
+        <EntityTypeShape EntityType="DBModel.TB_Attribute" Width="1.5" PointX="15.5" PointY="111.875" />
+        <EntityTypeShape EntityType="DBModel.TB_AttributeHeader" Width="1.5" PointX="13.25" PointY="220.25" />
+        <AssociationConnector Association="DBModel.FK_TB_Attribute_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_AttributeHeader_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Attribute_TB_Attribute1" />
+        <AssociationConnector Association="DBModel.FK_TB_Attribute_TB_AttributeHeader" />
+        <AssociationConnector Association="DBModel.FK_TB_Attribute_TB_Unit" />
+        <EntityTypeShape EntityType="DBModel.TB_Transfer" Width="1.5" PointX="23.25" PointY="23.125" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_BizTbl_User2" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_Region1" />
+        <EntityTypeShape EntityType="DBModel.TB_EmailList" Width="1.5" PointX="0.75" PointY="9" />
+        <EntityTypeShape EntityType="DBModel.TB_ExchangeRate" Width="1.5" PointX="13.625" PointY="226" />
+        <AssociationConnector Association="DBModel.FK_TB_ExchangeRate_BizTbl_User" />
+        <EntityTypeShape EntityType="DBModel.TB_Part" Width="1.5" PointX="5.125" PointY="103.125" />
+        <EntityTypeShape EntityType="DBModel.TB_Period" Width="1.5" PointX="13.25" PointY="229.75" />
+        <AssociationConnector Association="DBModel.FK_TB_Period_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Attribute_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_HitCount_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_Part_TB_Photo" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeFirmRequest_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_TypePenaltyRate_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReservationOperation_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReservationStatus_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeReview_TB_Part" />
+        <EntityTypeShape EntityType="DBModel.TB_TransferPeriod" Width="1.5" PointX="13.25" PointY="233.625" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferPeriod_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_TransferPeriod" />
+        <EntityTypeShape EntityType="DBModel.TB_Message" Width="1.5" PointX="15.5" PointY="53.625" />
+        <AssociationConnector Association="DBModel.FK_TB_Message_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Message_TB_Country" />
+        <AssociationConnector Association="DBModel.FK_TB_Message_TB_TypeMessageStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_Message_TB_TypeMessageSubject" />
+        <AssociationConnector Association="DBModel.FK_TB_Message_TB_TypeSalutation" />
+        <EntityTypeShape EntityType="DBModel.TB_Currency" Width="1.5" PointX="0.75" PointY="111.75" />
+        <EntityTypeShape EntityType="DBModel.TB_Date" Width="1.5" PointX="12.625" PointY="135.75" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeCurrency_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Bank_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Country_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_ExchangeRate_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelHotelRateHistory_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPricePolicy_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_Currency3" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeHotelBudget_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_ExchangeRate_TB_Date" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelHotelRateHistory_TB_Date" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPricePolicy_TB_Date" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_TB_Date" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelRoom" Width="1.5" PointX="15.5" PointY="90.75" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelRoomAttribute" Width="1.5" PointX="17.75" PointY="63.125" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelRoomBed" Width="1.5" PointX="17.75" PointY="52.75" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoomAttribute_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoomBed_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoomAttribute_TB_Attribute" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionRoom_TB_HotelRoom" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelHotelRateHistory_TB_HotelRoom" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPricePolicy_TB_HotelRoom" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_TB_HotelRoom" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_TB_HotelRoom" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_TB_HotelRoom2" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_TB_TypeRoom" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_TB_TypeSmoking" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_TB_TypeView" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoomAttribute_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoomBed_TB_HotelRoom" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeAttribute" Width="1.5" PointX="13.625" PointY="237.625" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeBed" Width="1.5" PointX="13.625" PointY="243" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeBusinessPartner" Width="1.5" PointX="13.625" PointY="248.25" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeCancel" Width="1.5" PointX="18.625" PointY="56.875" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeCreditCard" Width="1.5" PointX="13.625" PointY="258.5" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeData" Width="1.5" PointX="0.75" PointY="12.75" />
+        <EntityTypeShape EntityType="DBModel.TB_TypeDay" Width="1.5" PointX="13.625" PointY="253.25" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeAttribute_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeBed_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeBusinessPartner_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeCancel_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeCreditCard_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeDay_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Attribute_TB_TypeAttribute" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoomBed_TB_TypeBed" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeCancel_TB_Part" />
+        <EntityTypeShape EntityType="DBModel.TB_BusinessPartnerPax" Width="1.5" PointX="13.25" PointY="265.875" />
+        <EntityTypeShape EntityType="DBModel.TB_BusinessPartnerRegion" Width="1.5" PointX="21.25" PointY="15.375" />
+        <EntityTypeShape EntityType="DBModel.TB_ChannelManager" Width="1.5" PointX="13.25" PointY="262.5" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerPax_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerRegion_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TypeChannelManager_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerPax_TB_TransferPax" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerRegion_TB_Region" />
+        <EntityTypeShape EntityType="DBModel.TB_Tour" Width="1.5" PointX="18.5" PointY="103.75" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_TourRoute_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_TypeDeposit" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_TypeTourFrequency" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_Unit" />
+        <EntityTypeShape EntityType="DBModel.TB_BusinessPartnerCancelPolicy" Width="1.5" PointX="20.875" PointY="55.5" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerCancelPolicy_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerCancelPolicy_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerCancelPolicy_TB_TypeCancel" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerCancelPolicy_TB_TypePenaltyRate" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_BusinessPartnerCancelPolicy" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelCancelPolicy" Width="1.5" PointX="24.25" PointY="58.625" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelComission" Width="1.5" PointX="13.625" PointY="270.25" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelCreditCard" Width="1.5" PointX="16.25" PointY="133.75" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelMinumumAccommodation" Width="1.5" PointX="13.625" PointY="273.625" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelCancelPolicy_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelComission_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelCreditCard_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelMinumumAccommodation_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelCancelPolicy_TB_TypeCancel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelCancelPolicy_TB_TypePenaltyRate" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelCreditCard_TB_TypeCreditCard" />
+        <EntityTypeShape EntityType="DBModel.TB_BusinessPartner" Width="1.5" PointX="21.5" PointY="117.75" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Country" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Currency3" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Currency4" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Currency5" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_Region1" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeBusinessPartner" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeBusinessPartnerStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeDeposit" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeDeposit1" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeDeposit2" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeSalutation" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeSalutation1" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartner_TB_TypeSalutation2" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerCancelPolicy_TB_BusinessPartner" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerPax_TB_BusinessPartner" />
+        <AssociationConnector Association="DBModel.FK_TB_BusinessPartnerRegion_TB_BusinessPartner" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_BusinessPartner" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_BusinessPartner" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferPeriod_TB_BusinessPartner" />
+        <EntityTypeShape EntityType="DBModel.TB_Deal" Width="1.5" PointX="24.125" PointY="64.375" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_BusinessPartner" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_BusinessPartnerCancelPolicy" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_TypeDeposit" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelAvailability" Width="1.5" PointX="17.75" PointY="71.375" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAvailabilityPolicy_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAvailabilityPolicy_TB_Date" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAvailabilityPolicy_TB_HotelRoom" />
+        <EntityTypeShape EntityType="DBModel.TB_TourRegion" Width="1.5" PointX="21.75" PointY="60.875" />
+        <AssociationConnector Association="DBModel.FK_TB_TourRegion_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TourRegion_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_TB_TourRegion_TB_Tour" />
+        <EntityTypeShape EntityType="DBModel.TB_TourAttribute" Width="1.5" PointX="20.75" PointY="65.125" />
+        <AssociationConnector Association="DBModel.FK_TB_TourAttribute_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_TourAttribute_TB_Attribute" />
+        <AssociationConnector Association="DBModel.FK_TB_TourAttribute_TB_Tour" />
+        <EntityTypeShape EntityType="DBModel.TB_Promotion" Width="1.5" PointX="20.25" PointY="44.875" />
+        <AssociationConnector Association="DBModel.FK_TB_TypePromotion_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotion_TB_Promotion" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionHistory_TB_Promotion" />
+        <AssociationConnector Association="DBModel.FK_TB_Promotion_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_Promotion_TB_Region" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelAttribute" Width="1.5" PointX="20.75" PointY="112.625" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAttribute_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAttribute_TB_Attribute" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAttribute_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAttribute_TB_Unit" />
+        <EntityTypeShape EntityType="DBModel.TB_Hotel" Width="1.5" PointX="24.5" PointY="122.75" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_BizTbl_Culture" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_ChannelManager" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Country" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Country1" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Region" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Region1" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Region2" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_Region3" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_TypeHotel" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_TypeHotelAccommodation" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_TypeHotelChain" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_TypeHotelClass" />
+        <AssociationConnector Association="DBModel.FK_TB_Hotel_TB_TypeHotelStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelAttribute_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelCancelPolicy_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelComission_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelCreditCard_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelMinumumAccommodation_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotion_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelPromotionHistory_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRegion_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelRoom_TB_Hotel" />
+        <EntityTypeShape EntityType="DBModel.TB_Invoice" Width="1.5" PointX="24.5" PointY="113.25" />
+        <AssociationConnector Association="DBModel.FK_TB_Invoice_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Invoice_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Invoice_TB_Invoice" />
+        <AssociationConnector Association="DBModel.FK_TB_Invoice_TB_Period" />
+        <AssociationConnector Association="DBModel.FK_TB_Invoice_TB_TypeInvoiceStatus" />
+        <EntityTypeShape EntityType="DBModel.TB_ReservationReview" Width="1.5" PointX="15.5" PointY="101.875" />
+        <AssociationConnector Association="DBModel.FK_TB_ReservationReview_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_ReservationReview_TB_TypeReviewStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_ReservationReview_TB_TypeTraveller" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_UserOperation" Width="1.5" PointX="23.5" PointY="53.875" />
+        <AssociationConnector Association="DBModel.FK_TB_UserOperation_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserOperation_TB_UserSession" />
+        <AssociationConnector Association="DBModel.FK_TB_UserOperation_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_UserOperation_TB_TypeOperation" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelReservation" Width="1.5" PointX="26.75" PointY="99.125" />
+        <EntityTypeShape EntityType="DBModel.TB_Reservation" Width="1.5" PointX="27.5" PointY="119.625" />
+        <EntityTypeShape EntityType="DBModel.TB_ReservationStatusHistory" Width="1.5" PointX="29.75" PointY="99.75" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_BizTbl_Culture" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_BizTbl_User2" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_User" />
+        <AssociationConnector Association="DBModel.FK_TB_ReservationStatusHistory_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_UserSession" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Country" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Currency3" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_FirmRequest_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_Hotel" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_HotelCancelPolicy" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_HotelRoom" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_TypeHotelAccommodation" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_TypePricePolicy" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_TypeReservationOperation" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_TypeReservationStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservation_TB_TypeTraveler" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Part" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Reservation1" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_Reservation2" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_TypeCreditCard" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_TypeReservationOperation" />
+        <AssociationConnector Association="DBModel.FK_TB_Reservation_TB_TypeSalutation" />
+        <AssociationConnector Association="DBModel.FK_TB_ReservationHistory_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_ReservationReview_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_ReservationStatusHistory_TB_TypeReservationStatus" />
+        <EntityTypeShape EntityType="DBModel.BizTbl_UserRight" Width="1.5" PointX="23.5" PointY="18.875" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserRight_BizTbl_SecurityGroup" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserRight_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_BizTbl_UserRight_BizTbl_User1" />
+        <EntityTypeShape EntityType="DBModel.TB_LatestNews" Width="1.5" PointX="15.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DBModel.TB_DealReservation" Width="1.5" PointX="32.75" PointY="92.5" />
+        <EntityTypeShape EntityType="DBModel.TB_HotelReservationRate" Width="1.5" PointX="29" PointY="71.75" />
+        <EntityTypeShape EntityType="DBModel.TB_TourReservation" Width="1.5" PointX="35.75" PointY="89.25" />
+        <EntityTypeShape EntityType="DBModel.TB_TransferReservation" Width="1.5" PointX="29.75" PointY="104.375" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_BizTbl_User1" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_BizTbl_User" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_BusinessPartnerCancelPolicy" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_BusinessPartnerCancelPolicy" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_TypeCancel" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_Currency3" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_Currency4" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_Currency3" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_Currency4" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_Currency" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_Currency1" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_Currency2" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_Currency3" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_Currency4" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_TB_Date1" />
+        <AssociationConnector Association="DBModel.FK_TB_Deal_TB_DealReservation" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_TypeDeposit" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_TypeReservationOperation" />
+        <AssociationConnector Association="DBModel.FK_TB_DealReservation_TB_TypeReservationStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_Firm" />
+        <AssociationConnector Association="DBModel.FK_TB_HotelReservationRate_TB_HotelReservationRate" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_Reservation" />
+        <AssociationConnector Association="DBModel.FK_TB_Tour_TB_TourReservation" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_TypeDeposit" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_TypeReservationOperation" />
+        <AssociationConnector Association="DBModel.FK_TB_TourReservation_TB_TypeReservationStatus" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_TransferReservation" />
+        <AssociationConnector Association="DBModel.FK_TB_Transfer_TB_TypeVehicle" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_TypeDeposit" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_TypeReservationOperation" />
+        <AssociationConnector Association="DBModel.FK_TB_TransferReservation_TB_TypeReservationStatus" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

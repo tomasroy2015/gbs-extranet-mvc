@@ -1,0 +1,222 @@
+﻿
+
+@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_TableSecurityGroupRight")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm4">
+                <div class="col-md-2 col-sm-2 " style="padding: 8px;">
+                    <label>@Resources.Tables</label>
+                </div>
+                <div class="col-md-10 col-sm-10" >
+                    <input id="drpTable" style="width: 100%;" />
+
+                </div>
+            </div>
+            <div class="col-md-4 col-sm4">
+                <div class="col-md-2 col-sm-2 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.BizTbl_TableSecurityGroupRightCaption("SecurityGroupID")</label>
+                </div>
+                <div class="col-md-6 col-sm-6 ">
+                    <input id="drpSecurityGroup" style="width: 100%;" />
+
+                </div>
+                <div class="col-md-3 col-sm-3 " style="padding: 8px;">
+                    <label>@MessageColumnCaptions.BizTbl_TableSecurityGroupRightCaption("CanUpdate")</label>
+                </div>
+                <div class="col-md-1 col-sm-1 " style="padding: 8px;">
+                    <input type="checkbox" id="chkStatus" />
+
+                </div>
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">Clear Filter</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_TableSecurityGroupRightExt>()
+                .Name("BizTbl_TableSecurityGroupRightExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Create(update => update.Action("_Create", "BizTbl_TableSecurityGroupRight"))
+                .Read(read => read.Action("_Read", "BizTbl_TableSecurityGroupRight", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "BizTbl_TableSecurityGroupRight"))
+                .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_TableSecurityGroupRight"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.Table).Title(Resources.Tables).EditorTemplateName("ddlTables").Width(350);
+                    columns.Bound(p => p.Role).Title(MessageColumnCaptions.BizTbl_TableSecurityGroupRightCaption("SecurityGroupID")).EditorTemplateName("ddlSecurityGroup").Width(350);
+                    columns.Bound(p => p.EditableStatus).Title(MessageColumnCaptions.BizTbl_TableSecurityGroupRightCaption("CanUpdate")).Width(150).
+                    ClientTemplate("<div style='text-align:center;'> #if(EditableStatus){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>");
+                    
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_TableSecurityGroupRightExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#BizTbl_TableSecurityGroupRightExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+
+<script>
+
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+
+        $TableText = $("#drpTable").data("kendoDropDownList").text();
+        $TableValue = $("#drpTable").val();
+        $SecurityGroupText = $("#drpSecurityGroup").data("kendoDropDownList").text();
+        $SecurityGroupValue = $("#drpSecurityGroup").val();
+        $Status = "false";
+        if ($('#chkStatus').prop('checked')) {
+            $Status = "true";
+        }
+        if ($Status == "true") {
+            //alert($SentStatus)
+            $filter.push({ field: "EditableStatus", operator: "eq", value: $Status });
+        }
+        if ($TableValue) {
+            $filter.push({ field: "Table", operator: "contains", value: $TableText });
+        }
+        if ($SecurityGroupValue) {
+            $filter.push({ field: "Role", operator: "contains", value: $SecurityGroupText });
+        }
+        var grid = $("#BizTbl_TableSecurityGroupRightExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+        $(document).ready(function () {
+            var json = {}
+            $.ajax({
+                type: "GET",
+                url: "/BizTbl_TableColumn/_ReadPart",
+                data: json,
+                datatype: "json",
+                success: function (data) {
+
+                    $("#drpTable").kendoDropDownList({
+                        filter: "contains",
+                        Name: "TableID",
+                        optionLabel: AllSelectText,
+                        dataTextField: "Name",
+                        dataValueField: "ID ",
+                        // dataValueField: "Name",
+                        dataSource: data
+                    });
+
+                }
+            })
+        });
+
+
+    var json = {}
+    $.ajax({
+        type: "GET",
+        url: "/BizTbl_TableSecurityGroupRight/_ReadSecurityGroup",
+        data: json,
+        datatype: "json",
+        success: function (data) {
+
+            $("#drpSecurityGroup").kendoDropDownList({
+                filter: "contains",
+                Name: "TableID",
+                optionLabel: AllSelectText,
+                dataTextField: "Name",
+                dataValueField: "ID ",
+                // dataValueField: "Name",
+                dataSource: data
+            });
+
+        }
+    })
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_TableSecurityGroupRightExt_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+
+        var dropdownlistPart = $("#drpTable").data("kendoDropDownList");
+        dropdownlistPart.select("");
+
+        var dropdownlistPart1 = $("#drpSecurityGroup").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+        document.getElementById('chkStatus').checked = false;
+    });
+</script>

@@ -1,0 +1,14 @@
+﻿@(Html.Kendo().DropDownList()
+                   .Name("AttributeTypeID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+               .DataTextField("AttributeType")
+           .DataValueField("AttributeTypeID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetAttributeType", "DropDownLists");
+        });
+    })
+)

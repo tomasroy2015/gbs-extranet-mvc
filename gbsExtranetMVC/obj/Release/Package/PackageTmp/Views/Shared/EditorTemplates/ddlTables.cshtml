@@ -1,0 +1,15 @@
+﻿
+@(Html.Kendo().DropDownList()
+                .Name("TableID")
+            .OptionLabel("-- Select --")
+            .HtmlAttributes(new { style = "width:100%" })
+                        .DataTextField("Table")
+                    .DataValueField("TableID")
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetTables", "DropDownLists");
+        });
+    })
+)

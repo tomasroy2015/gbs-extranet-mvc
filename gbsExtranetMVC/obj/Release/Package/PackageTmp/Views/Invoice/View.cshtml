@@ -1,0 +1,152 @@
+﻿@model gbsExtranetMVC.Models.Repositories.InvoiceExt
+@using Resources
+@using UserMessagesColumnCaption
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="color: black; text-align:center">@Resources.ViewInvoiceDetails</h1>
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+</style>
+
+
+<div id="content" class="span10">
+    @using (Html.BeginForm("View", "Invoice", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.ID)
+        <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+               
+                <table class="table" style="width: 40%;">
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.Firm, Resources.Firm)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.Firm, new { @id = "Firm" })
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.Period, Resources.Period)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.Period, new { @id = "Period" })
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="border-top: none;">
+                            @Html.LabelFor(m => m.ID, Resources.InvoiceID)
+                        </th>
+                        <td style="border-top: none;">
+                            @Html.DisplayFor(m => m.ID, new { @id = "ID" })
+
+                        </td>
+                    </tr>
+
+                </table>
+                  
+                    <table class="table table-responsive table-bordered table-striped" style="width: 100%;">
+
+                        <tr>
+
+                            <th>
+                                @Html.LabelFor(m => m.ReservationID, Resources.ReservationID)
+                            </th>
+                            <th>
+                                @Html.LabelFor(m => m.Name, Resources.Reserver)
+                            </th>
+                            <th>
+                                @Html.LabelFor(m => m.CheckInDate, Resources.CheckInDate)
+                            </th>
+                            <th>
+                                @Html.LabelFor(m => m.CheckOutDate, Resources.CheckOutDate)
+                            </th>
+                            <th>
+                                @Html.LabelFor(m => m.ReservationAmount, Resources.Amount)
+                            </th>
+                            <th>
+                                @Html.LabelFor(m => m.ComissionRate, 238)
+                            </th>
+                            <th>
+                                @Html.LabelFor(m => m.ComissionAmount,280)
+                            </th>
+
+                        </tr>
+
+
+                        <tr>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationID)
+                                @Html.HiddenFor(m => m.ReservationID, new { @id = "ReservationID" })
+                            </td>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.Name)
+                                @Html.HiddenFor(m => m.Name, new { @id = "Name" })
+                            </td>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.CheckInDate)
+                                @Html.HiddenFor(m => m.CheckInDate, new { @id = "CheckInDate" })
+                            </td>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.CheckOutDate)
+                                @Html.HiddenFor(m => m.CheckOutDate, new { @id = "CheckOutDate" })
+                            </td>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ReservationAmount)
+                                @Html.HiddenFor(m => m.ReservationAmount, new { @id = "ReservationAmount" })
+                            </td>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ComissionRate)
+                                @Html.HiddenFor(m => m.ComissionRate, new { @id = "ComissionRate" })
+                            </td>
+                            <td style="border-top: none;">
+                                @Html.DisplayFor(m => m.ComissionAmount)
+                                @Html.HiddenFor(m => m.ComissionAmount, new { @id = "ComissionAmount" })
+                            </td>
+                        </tr>
+                    </table>
+
+               
+            </div>
+        </div>
+    
+}
+    <div align="center">       
+        
+        <a style='text-decoration:underline;' href='/Maintenance/Invoice'>
+            <input type="button" value="@Resources.Cancel" onclick="CancelPropertyOpeartion()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        </a>        
+        <br />
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.UpdatedSuccess</label>
+    </div>
+</div>
+  
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>

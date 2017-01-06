@@ -1,0 +1,667 @@
+﻿@model gbsExtranetMVC.Models.Repositories.FirmOperationsExt
+@using Resources
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link href="~/CSS/273a2ab1caefa644826a63c1e305fdc1347cb81f.css" rel="stylesheet" />*@
+<link href="~/CSS/jquery-ui-theme.css" rel="stylesheet" />
+<script src="~/Scripts/common.js"></script>
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
+
+<h2 style="color: black; text-align: center;">@Resources.FirmInfo</h2>
+
+<style>
+    .tblUsers {
+        text-align: left;
+    }
+
+        .tblUsers th, td {
+            padding-top: 10px;
+        }
+
+        .tblUsers td {
+            padding-left: 15px;
+        }
+</style>
+<div id="content" class="span10">
+    @using (Html.BeginForm("UserOperationsEdit", "Management", FormMethod.Post))
+    {
+        @Html.HiddenFor(u => u.ID)
+        <div id="qms-detail-table-wrapper" class="center">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.ID, Resources.FirmID)
+                        </th>
+                        <td>
+                            @Html.DisplayFor(m => m.ID)
+                            @Html.HiddenFor(m => m.ID, new { @id = "txtUserCode" })
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.Firm, Resources.FirmName)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Firm, new { @class = "k-textbox", @id = "txtFirm", @name = "txtFirm" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblFirmNameWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Firm)
+
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Country, Resources.Country) 
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.CountryID)
+                                .Name("Country")
+                                .OptionLabel(Resources.SelectCountry)
+                                .BindTo((SelectList)ViewBag.Countries)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbCountry", @name = "drbCountry" })
+
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblCountryWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Country)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Region, Resources.Region)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Region, new { @class = "k-textbox", @autocomplete = "off", @id = "txtDestinationSearch", @name = "ss" })
+                            @Html.HiddenFor(m => m.RegionID, new { @class = "k-textbox", @id = "hdnRegionID" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblRegionWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Region)
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Address, Resources.Address)
+
+                        </th>
+                        <td>
+                            @Html.TextAreaFor(m => m.Address, new { @style = "width: 200px;", @class = "k-textbox", @id = "txtAddress", @name = "txtAddress" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblAddressWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Address)
+                            </div>
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.Phone, Resources.Phone)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Phone, new { @class = "k-textbox", @id = "txtPhone", @name = "txtPhone" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblPhoneWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Phone)
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Fax, Resources.Fax)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Fax, new { @class = "k-textbox", @id = "txtFax", @name = "txtFax" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblFaxWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Fax)
+
+                            </div>
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.Postal_code, Resources.Postcode)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Postal_code, new { @class = "k-textbox", @id = "txtPostcode", @name = "txtPostcode" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblPostcodeWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Postal_code)
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Email, Resources.Email)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "k-textbox", @id = "txtEmail", @name = "txtEmail" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.Tax_Office, Resources.TaxDepartment)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Tax_Office, new { @class = "k-textbox", @id = "txtTax_Office", @name = "txtTax_Office" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Tax_Office)
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Tax_ID, Resources.TaxNo)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Tax_ID, new { @class = "k-textbox", @id = "txtTax_ID", @name = "txtTax_ID" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Tax_ID)
+                            </div>
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.Executive_Title, Resources.ContactPersonSalutation)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.Executive_TitleID)
+                                .Name("Firm")
+                                .OptionLabel(Resources.SelectSalutation)
+                                .BindTo((SelectList)ViewBag.Salutation)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbExecutive_Title", @name = "drbExecutive_Title" })
+
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblExecutive_TitleIDWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Executive_Title)
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Executive_Name, Resources.ContactPersonName)
+
+                        </th>
+                        <td>
+
+                            @Html.TextBoxFor(m => m.Executive_Name, new { @class = "k-textbox", @id = "txtExecutive_Name", @name = "txtExecutive_Name" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblContactPersonNameWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Executive_Name)
+
+                            </div>
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.Executive_Surname, Resources.ContactPersonSurname)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Executive_Surname, new { @class = "k-textbox", @id = "txtExecutive_Surnamee", @name = "txtExecutive_Surname" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblContactPersonSurnameWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Executive_Surname)
+                            </div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Executive_Position, Resources.ContactPersonPosition)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Executive_Position, new { @class = "k-textbox", @id = "txtExecutive_Position", @name = "txtExecutive_Position" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Executive_Position)
+                            </div>
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.Executive_Phone, Resources.ContactPersonPhone)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Executive_Phone, new { @class = "k-textbox", @id = "txtExecutive_Phone", @name = "txtExecutive_Phone" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblContactPersonPhoneWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Executive_Phone)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Executive_Email, Resources.ContactPersonEmail)
+
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(m => m.Executive_Email, new { @class = "k-textbox", @id = "txtExecutive_Email", @name = "txtExecutive_Email" })
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblContactPersonEmailWarning" style="display: none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Executive_Email)
+                            </div>
+                        </td>
+                        <th>
+                            @Html.LabelFor(m => m.Status, Resources.Status)
+
+                        </th>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.StatusID)
+                                .Name("Firm")
+                                .OptionLabel(Resources.SelectStatus)
+                                .BindTo((SelectList)ViewBag.Status)
+                                .HtmlAttributes(new { @style = "width: 200px;", @id = "drbStatus", @name = "drbStatus" })
+
+                            )
+                            @Html.Label("*", new { @class = "requiredfield" })
+                            <div class="col-md-12" style="margin-top:5px">
+                                <span id="lblStatusWarning" style="display:none; color: red; font-size: 12px; font-weight: 600;"><img src="/Image/exclamation.gif" />@Resources.RequiredFieldListWarning</span>
+                            </div>
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Status)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.Active, Resources.Active)
+
+                        </th>
+                        <td>
+                            @Html.CheckBoxFor(m => m.Active, new { @checked = "checked", @id = "chkActive", @name = "chkActive" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.Active)
+                            </div>
+                        </td>
+
+                        <th>
+                            @Html.LabelFor(m => m.IPaddress, Resources.IPAddress)
+
+                        </th>
+                        <td>
+                            @*@Html.TextBoxFor(m => m.IPaddress, new { @class = "k-textbox", @id = "txtIPAddress", @name = "txtIPAddress" })*@
+                            @Html.DisplayFor(m => m.IPaddress)
+                            @Html.HiddenFor(m => m.IPaddress, new { @id = "txtIPAddress" })
+                            <div>
+                                @Html.ValidationMessageFor(m => m.IPaddress)
+
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                </table>
+
+            </div>
+        </div>
+    }
+    <div align="center">
+        <input type="button" value="@Resources.Save" onclick="InsertFirmOperations()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        <a title='Click here to Edit Firm Details' style='text-decoration:underline;' href='/Management/FirmOperations'>
+            <input type="button" value="@Resources.Cancel" onclick="CancelPropertyOpeartion()" class="k-button" style="width:200px; height:50px; background-color:#0062D9; color:white; font-weight:bold;" />
+        </a>
+        <br />
+        <label id="lblSuccess" style="color:green;font-size:medium;display:none;">@Resources.InsertedSuccessFully</label>
+        <label id="lblFailure" style="color:red;font-size:medium;display:none;">@Resources.FillFieldsWarningAbove</label>
+    </div>
+</div>
+
+<script>
+    function InsertFirmOperations() {
+      //    alert("hi")
+     
+        var Firm = document.getElementById('txtFirm').value;
+       //  alert(Firm)
+        var Country = document.getElementById('drbCountry').value;
+     //     alert(Country);
+        var Region = document.getElementById('hdnRegionID').value;
+      //  alert(Region);
+        var Address = document.getElementById('txtAddress').value;
+     //    alert(Address);
+        var Phone = document.getElementById('txtPhone').value;
+     //    alert(Phone);
+        var Fax = document.getElementById('txtFax').value;
+     //    alert(Fax);
+        var Postcode = document.getElementById('txtPostcode').value;
+     //     alert(Postcode);
+        var Email = document.getElementById('txtEmail').value;
+     //     alert(Email);
+        var TaxOffice = document.getElementById('txtTax_Office').value;
+     //     alert(TaxOffice);
+        var TaxID = document.getElementById('txtTax_ID').value;
+     //     alert(TaxID);
+        var ExecutiveTitle = document.getElementById('drbExecutive_Title').value;
+     //     alert(ExecutiveTitle);
+        var ExecutiveName = document.getElementById('txtExecutive_Name').value;
+     //     alert(ExecutiveName);
+        var ExecutiveSurname = document.getElementById('txtExecutive_Surnamee').value;
+    //      alert(ExecutiveSurname);
+        var ExecutivePosition = document.getElementById('txtExecutive_Position').value;
+     //     alert(ExecutivePosition);
+        var ExecutivePhone = document.getElementById('txtExecutive_Phone').value;
+     //    alert(ExecutivePhone);
+        var ExecutiveEmail = document.getElementById('txtExecutive_Email').value;
+     //    alert(ExecutiveEmail);
+        var Active = document.getElementById('chkActive').checked;
+     //   alert(Active);
+        var Status = document.getElementById('drbStatus').value;
+     //   alert(Status);
+        var IPAddress = document.getElementById('txtIPAddress').value;
+    //     alert(IPAddress);
+
+         if (Firm == "")
+        {
+           
+            document.getElementById('lblFirmNameWarning').style.display = "";
+        }
+        else
+        {
+           
+            document.getElementById('lblFirmNameWarning').style.display = "none";
+        } 
+
+         if (Country == "" && Country==0) {
+            document.getElementById('lblCountryWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblCountryWarning').style.display = "none";
+        } 
+
+        if (Region == "") {
+            document.getElementById('lblRegionWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblRegionWarning').style.display = "none";
+        } 
+
+        if (Address == "") {
+            document.getElementById('lblAddressWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblAddressWarning').style.display = "none";
+        }
+        if (Phone == "") {
+            document.getElementById('lblPhoneWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblPhoneWarning').style.display = "none";
+        }
+
+        if (Fax == "") {
+            document.getElementById('lblFaxWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblFaxWarning').style.display = "none";
+        }
+
+        if (Postcode == "") {
+            document.getElementById('lblPostcodeWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblPostcodeWarning').style.display = "none";
+        }
+
+        if (Postcode == "") {
+            document.getElementById('lblPostcodeWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblPostcodeWarning').style.display = "none";
+        }
+
+        if (ExecutiveTitle == "") {
+            document.getElementById('lblExecutive_TitleIDWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblExecutive_TitleIDWarning').style.display = "none";
+        }
+
+        if (ExecutiveName == "") {
+            document.getElementById('lblContactPersonNameWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblContactPersonNameWarning').style.display = "none";
+        }
+
+        if (ExecutiveSurname == "") {
+            document.getElementById('lblContactPersonSurnameWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblContactPersonSurnameWarning').style.display = "none";
+        }
+
+        if (ExecutivePhone == "") {
+            document.getElementById('lblContactPersonPhoneWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblContactPersonPhoneWarning').style.display = "none";
+        }
+
+        if (ExecutiveEmail == "") {
+            document.getElementById('lblContactPersonEmailWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblContactPersonEmailWarning').style.display = "none";
+        }
+        if (Status == "") {
+            document.getElementById('lblStatusWarning').style.display = "";
+        }
+        else {
+            document.getElementById('lblStatusWarning').style.display = "none";
+        }
+
+        //   alert(IPAddress);
+        //   alert("Success");
+        if (Firm != "" && Country != "" && Region != "" && Address != "" && Phone != "" && Postcode != "" && ExecutiveTitle != "" && ExecutiveName != "" &&
+             ExecutiveSurname != "" && ExecutivePhone != "" && ExecutiveEmail != "" && Status != "" && Fax != "")
+        {
+            //alert('ok');
+            var json = {
+                Firm: Firm, Country: Country, Region: Region, Address: Address, Phone: Phone, Fax: Fax, Postcode: Postcode,
+                Email: Email, TaxOffice: TaxOffice, TaxID: TaxID, ExecutiveTitle: ExecutiveTitle, ExecutiveName: ExecutiveName, ExecutiveSurname: ExecutiveSurname,
+                ExecutivePosition: ExecutivePosition, ExecutivePhone: ExecutivePhone, ExecutiveEmail: ExecutiveEmail, Active: Active, Status: Status, IPAddress: IPAddress
+            }
+            $.ajax({
+                type: "Get",
+                url: "/FirmOperations/InsertFirmOperations",
+                data: json,
+                datatype: "JSON",
+                success: function (res) {
+                    if (res != 0) {
+                        document.getElementById("lblSuccess").style.display = "";
+                        document.getElementById('lblFailure').style.display = "none";
+                        //alert(res);
+                    }
+                }
+            })
+
+        }
+        else
+        {
+            document.getElementById('lblFailure').style.display = "";
+            document.getElementById("lblSuccess").style.display = "none";
+        }
+
+         
+    }
+
+</script>
+
+
+
+<script>
+    $(function () {
+
+        //     alert('Hi')
+
+        $("#txtDestinationSearch").autocomplete({
+
+            source: function (request, response) {
+
+                //var Keyword = document.getElementById('divDestinationSearchvalue').value;
+
+                var json = { Keyword: request.term, CountryID: "" }
+                $.ajaxSetup({ cache: false });
+                $.ajax({
+                    type: "Get",
+                    url: "/FirmOperations/GetDestinationSearchResult",
+                    data: json,
+                    datatype: "json",
+                    success: function (data) {
+
+                        //document.getElementById('hdnDestinationSearchID').value = '';
+                        //document.getElementById('hdnDestinationSearchType').value = '';
+                        //document.getElementById('hdnDestinationName').value = '';
+                        //document.getElementById('hdnRegionID').value = '';
+                        //document.getElementById('hdnRegionName').value = '';
+                        //document.getElementById('hdnHotelID').value = '';
+                        //document.getElementById('hdnHotelName').value = '';
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.Name + (item.ParentName == '' ? '' : ', ' + item.ParentName) + (item.SecondParentName == '' ? '' : ', ' + item.SecondParentName) + ', ' + item.CountryName,
+                                key: item.ID,
+                                DestinationSearchType: item.DestinationSearchType,
+                                DisplayName: item.DisplayName,
+                                CountryName: item.CountryName,
+                                Name: item.Name,
+                                ParentName: item.ParentName,
+                                SecondParentName: item.SecondParentName,
+                                RegionID: item.RegionID,
+                                RegionName: item.RegionName,
+                                HotelID: item.HotelID,
+                                HotelName: item.HotelName,
+                                DestinationSearchTypeImagePath: item.DestinationSearchTypeImagePath
+                            }
+                        }))
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //alert(textStatus);
+                    }
+                });
+            },
+            open: function () {
+                $(this).autocomplete('widget').css('z-index', 9999);
+                return false;
+            },
+            select: function (event, ui) {
+
+                //document.getElementById('hdnDestinationSearchID').value = ui.item.key;
+                //document.getElementById('hdnDestinationSearchType').value = ui.item.DestinationSearchType;
+                //document.getElementById('hdnDestinationName').value = ui.item.Name;
+                document.getElementById('txtDestinationSearch').value = ui.item.label;
+                document.getElementById('hdnRegionID').value = ui.item.RegionID;
+                //document.getElementById('hdnRegionName').value = ui.item.RegionName;
+                //document.getElementById('hdnHotelID').value = ui.item.HotelID;
+                //document.getElementById('hdnHotelName').value = ui.item.HotelName;
+
+            },
+            minLength: 3,
+            html: true,
+            autoFocus: false,
+            messages: {
+                noResults: '',
+                results: function () { }
+            }
+        })
+        .data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .data("ui-autocomplete-item", item)
+            .append('<a>' +
+            '<table class="SearchAutoComplete" border="0" cellpadding="0" cellspacing="0">' +
+            '<tr>' +
+            '<td align="left" width="200px">' + '<b>' + item.Name + '</b>' + (item.ParentName == '' ? '' : ', ' + item.ParentName) + (item.SecondParentName == '' ? '' : ', ' + item.SecondParentName) + ', ' + item.CountryName + '</td>' +
+            '<td align="right"><div style="color:navy;font-style:italic;float:right;"><div><img src=\'' + item.DestinationSearchTypeImagePath + '\'></div></td></tr></table></a>')
+            .appendTo(ul);
+        };
+    });
+</script>
+
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+

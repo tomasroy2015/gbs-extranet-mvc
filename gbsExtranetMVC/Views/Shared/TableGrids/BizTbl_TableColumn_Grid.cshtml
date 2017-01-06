@@ -1,0 +1,167 @@
+﻿
+@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_TableColumn")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 col-sm4">
+               
+                <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                    <input id="drpPart" style="width: 100%;" />
+
+                </div>
+            </div>
+            <div class="col-md-4  col-sm-4" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+            @(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_TableColumnExt>()
+                .Name("BizTbl_TableColumnExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+                .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Create(update => update.Action("_Create", "BizTbl_TableColumn"))
+                .Read(read => read.Action("_Read", "BizTbl_TableColumn", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "BizTbl_TableColumn"))
+                .Destroy(destroy => destroy.Action("_Destroy", "BizTbl_TableColumn"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(80).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.Table).Title(Resources.Tables).EditorTemplateName("ddlTables").Width(250).Locked(true);
+                    columns.Bound(p => p.Name).Title(MessageColumnCaptions.BizTbl_TableColumnCaption("Name")).Width(150).Locked(true);
+                    columns.Bound(p => p.Caption).Title(MessageColumnCaptions.BizTbl_TableColumnCaption("Caption_en")).Width(200);
+                    columns.Bound(p => p.Description).Title(MessageColumnCaptions.BizTbl_TableColumnCaption("Description")).Width(250);
+                    columns.Bound(p => p.MultilingualStatus).Title(MessageColumnCaptions.BizTbl_TableColumnCaption("MultilingualStatus")).Width(150).
+                    ClientTemplate("<div style='text-align:center;'> #if(MultilingualStatus=='True'){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>");
+
+                   
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_TableColumnExt.xlsx")
+                .Filterable(true))
+
+            )
+
+            <script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#BizTbl_TableColumnExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+            </script>
+
+
+<script>
+
+   
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+
+
+        $PartText = $("#drpPart").data("kendoDropDownList").text();
+        $PartValue = $("#drpPart").val();
+
+
+        if ($PartValue) {
+            $filter.push({ field: "Table", operator: "contains", value: $PartText });
+        }
+
+        var grid = $("#BizTbl_TableColumnExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/BizTbl_TableColumn/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPart").kendoDropDownList({
+                    filter: "contains",
+                    Name: "TableID",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_TableColumnExt_Grid").data("kendoGrid").dataSource;
+        
+        datasource.filter([]);
+
+        var dropdownlistPart = $("#drpPart").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        
+    });
+</script>

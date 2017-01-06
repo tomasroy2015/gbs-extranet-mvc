@@ -1,0 +1,109 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelAvailability")</h1>
+
+<script>
+    function OnEdit(e) {
+        if (e.model.isNew() == false) {
+            $('input[name=ID]').parent().html(e.model.ID);
+        }
+    }
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelAvailabilityExt>()
+        .Name("TB_HotelAvailabilityExt_Grid")
+        .Events(events => events.Edit("OnEdit"))
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            //model.Field(p => p.Date).Editable(false);
+        })
+              .Create(update => update.Action("_Create", "TB_HotelAvailability"))
+                .Read(read => read.Action("_Read", "TB_HotelAvailability", new { TableID = (int)ViewBag.TableID }))
+             .Update(update => update.Action("_Update", "TB_HotelAvailability"))
+          .Destroy(destroy => destroy.Action("_Destroy", "TB_HotelAvailability"))
+
+        )
+
+                    .Columns(columns =>
+                    {
+                        columns.Command(
+
+                           command =>
+                           {
+                               command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                               command.Destroy().Text(Resources.Delete);
+                           }).Locked(true).Width(180);
+
+                        columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.HotelRoom).EditorTemplateName("ddlHotelRoomID").Title(MessageColumnCaptions.TB_HotelAvailabilityCaption("HotelRoomID")).Width(150).Locked(true);
+                        columns.Bound(p => p.Date).EditorTemplateName("ddlDates").ClientTemplate("#= kendo.toString(Date,'dd.MM.yyyy HH:mm:ss') #").Title(MessageColumnCaptions.TB_HotelAvailabilityCaption("DateID")).Width(200).Locked(true);
+                        columns.Bound(p => p.RoomCount).Title(MessageColumnCaptions.TB_HotelAvailabilityCaption("RoomCount")).Width(150);
+                        columns.Bound(p => p.CTA).Title(MessageColumnCaptions.TB_HotelAvailabilityCaption("CloseToArrival"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(CTA){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                        columns.Bound(p => p.CTD).Title(MessageColumnCaptions.TB_HotelAvailabilityCaption("CloseToDeparture"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(CTD){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                        columns.Bound(p => p.MinimumStay).Title(MessageColumnCaptions.TB_HotelAvailabilityCaption("MinimumStay")).Width(200);
+                        columns.Bound(p => p.Closed).Title(MessageColumnCaptions.TB_HotelAvailabilityCaption("Closed"))
+                            .ClientTemplate("<div style='text-align:center;'> #if(Closed){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+
+                    })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                  .Text(Resources.NewRecord)
+                  .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_HotelAvailabilityExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelAvailabilityExt_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>
+
+
+
+
+
+

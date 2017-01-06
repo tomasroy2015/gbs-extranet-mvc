@@ -1,0 +1,65 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_TourRegionHistory")</h1>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.Tables.TB_TourRegionHistoryExt>()
+                    .Name("TB_TourRegionHistoryGrid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+            //.Create(update => update.Action("_Create", "TB_Message"))
+                .Read(read => read.Action("_Read", "TB_TourRegionHistory", new { TableID = (int)ViewBag.TableID }))
+        //.Update(update => update.Action("_Update", "TB_Message"))
+        //.Destroy(destroy => destroy.Action("_Destroy", "TB_Message"))
+        )
+
+                    .Columns(columns =>
+                    {
+                        //columns.Command(
+
+                        //    command =>
+                        //    {
+                        //        command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                        //        command.Destroy();
+                        //    }).Locked(true).Width(180);
+
+                        columns.Bound(p => p.ID).Title("ID").Width(100).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                        columns.Bound(p => p.TourRegionID).Title(MessageColumnCaptions.TB_TourRegionHistoryCaption("TourRegionID")).Width(150);
+                        columns.Bound(p => p.TourID).Title(MessageColumnCaptions.TB_TourRegionHistoryCaption("TourID")).Width(200);
+                        columns.Bound(p => p.RegionID).Title(MessageColumnCaptions.TB_TourRegionHistoryCaption("RegionID")).Width(150);
+                        columns.Bound(p => p.LogDateTime).Title(MessageColumnCaptions.TB_TourRegionHistoryCaption("LogDateTime")).ClientTemplate("#= kendo.toString(LogDateTime,'dd/MM/yyyy') #").Width(150);
+                        columns.Bound(p => p.LogUserID).Title(MessageColumnCaptions.TB_TourRegionHistoryCaption("LogUserID")).Width(100);                       
+                    })
+                .ToolBar(tool =>
+                {
+                    // tool.Custom().Name("cmdAddNewRecord")
+                    //.Text(Resources.NewRecord)
+                    //.HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_TourRegionHistoryRpt.xlsx")
+                .Filterable(true))
+
+)
+
+
+

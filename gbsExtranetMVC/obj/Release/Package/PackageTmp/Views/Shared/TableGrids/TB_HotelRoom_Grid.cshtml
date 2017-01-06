@@ -1,0 +1,232 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelRoom")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="col-md-4  col-sm-4">
+                <div class="col-md-2  col-sm-2">
+                    <label> @MessageColumnCaptions.TB_HotelRoom("HotelID")</label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input style="width:100%" id="drphotels" />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-4">
+
+                <div class="col-md-2  col-sm-2">
+                    <label>@MessageColumnCaptions.TB_HotelRoom("RoomTypeID") </label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input style="width:100%" id="drproomtype" />
+                </div>
+
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <div class="col-md-2  col-sm-2">
+                    <label>@MessageColumnCaptions.TB_HotelRoom("Active") </label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input type="checkbox" id="chkactive" style="width: 100%; " />
+                </div>
+            </div>
+
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+   
+        $filter = new Array();
+        $Hotel = $("#drphotels").data("kendoDropDownList").text();
+        $Hotelid = $("#drphotels").val();
+        $HotelRoomType = $("#drproomtype").data("kendoDropDownList").text();
+        $HotelRoomTypeID = $("#drproomtype").val();
+        $Active = "false";
+        if ($('#chkactive').prop('checked')) {
+            $Active = "true";
+        }
+       
+        if ($Hotelid) {
+            $filter.push({ field: "Hotel", operator: "equals", value: $Hotel });
+        }
+        if ($HotelRoomTypeID) {
+            $filter.push({ field: "RoomType", operator: "equals", value: $HotelRoomType });
+        }
+        if ($Active == "true") {
+
+            $filter.push({ field: "Active", operator: "eq", value: $Active });
+        }
+        var grid = $("#TB_HotelRoom_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotelsdropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drphotels").kendoDropDownList({
+
+                    filter: "contains",
+                    optionLabel: AllSelectText,
+                    dataTextField: "Hotel",
+                    dataValueField: "HotelID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetRoomType",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drproomtype").kendoDropDownList({
+
+                    filter: "contains",
+                    optionLabel: AllSelectText,
+                    dataTextField: "RoomType",
+                    dataValueField: "RoomTypeID ",
+                    dataSource: data
+                });
+
+            }
+        })
+    }); 
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelRoom_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        document.getElementById('chkactive').checked = false;
+        var dropdownlistPart = $("#drphotels").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        var dropdownlistPart1 = $("#drproomtype").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+    });
+
+    function RefreshGrid(e) {
+        this.read();
+    }
+
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelRoomExt>()
+                        .Name("TB_HotelRoom_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                                .Create(update => update.Action("_Create", "TB_HotelRoom"))
+                                .Read(read => read.Action("_Read", "TB_HotelRoom", new { TableID = (int)ViewBag.TableID }))
+                                .Update(update => update.Action("_Update", "TB_HotelRoom"))
+                                .Destroy(destroy => destroy.Action("_Destroy", "TB_HotelRoom"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.Hotel).Title(MessageColumnCaptions.TB_HotelRoom("HotelID")).EditorTemplateName("ddlHotels").Width(350);
+                    columns.Bound(p => p.Description).Width(250).Title(MessageColumnCaptions.TB_HotelRoom("Description_en")).EditorTemplateName("TextArea").Width(200); 
+                    columns.Bound(p => p.RoomType).Title(MessageColumnCaptions.TB_HotelRoom("RoomTypeID")).EditorTemplateName("ddlRoomType").Width(350);
+                    columns.Bound(p => p.RoomCount).Title(MessageColumnCaptions.TB_HotelRoom("RoomCount")).Width(150);
+                    columns.Bound(p => p.RoomSize).Width(250).Title(MessageColumnCaptions.TB_HotelRoom("RoomSize"));
+                    columns.Bound(p => p.MaxPeopleCount).Title(MessageColumnCaptions.TB_HotelRoom("MaxPeopleCount")).Width(200);
+                    columns.Bound(p => p.MaxChildrenCount).Title(MessageColumnCaptions.TB_HotelRoom("MaxChildrenCount")).Width(200);
+                    columns.Bound(p => p.BabyCotCount).Width(150).Title(MessageColumnCaptions.TB_HotelRoom("BabyCotCount")).Width(150);
+                    columns.Bound(p => p.ExtraBedCount).Title(MessageColumnCaptions.TB_HotelRoom("ExtraBedCount")).Width(150);
+                    columns.Bound(p => p.SmokingType).Title(MessageColumnCaptions.TB_HotelRoom("SmokingTypeID")).EditorTemplateName("ddlSmokingType").Width(250);
+                    columns.Bound(p => p.ViewType).Title(MessageColumnCaptions.TB_HotelRoom("ViewTypeID")).EditorTemplateName("ddlTypeView").Width(350);
+                    columns.Bound(p => p.Promotion).Width(100).ClientTemplate("<div style='text-align:center;'> #if(Promotion){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_HotelRoom("Promotion"));
+                    columns.Bound(p => p.RelatedHotelRoomID).Width(250).Title(MessageColumnCaptions.TB_HotelRoom("RelatedHotelRoomID"));
+                    columns.Bound(p => p.Sorts).Width(150).Title(MessageColumnCaptions.TB_HotelRoom("Sort"));
+                    columns.Bound(p => p.Active).Width(100).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Title(MessageColumnCaptions.TB_HotelRoom("Active"));
+                  
+
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                            .FileName("TB_HotelRoom_Grid.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelRoom_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

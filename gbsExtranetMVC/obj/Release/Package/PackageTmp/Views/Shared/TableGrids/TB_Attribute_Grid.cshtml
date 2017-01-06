@@ -1,0 +1,102 @@
+﻿
+@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+<script>
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_Attribute")</h1>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_AttributeExt>()
+                .Name("TB_AttributeExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+            //model.Field(p => p.Date).Editable(false);
+        })
+               .Create(update => update.Action("_Create", "TB_Attribute"))
+                .Read(read => read.Action("_Read", "TB_Attribute", new { TableID = (int)ViewBag.TableID }))
+                .Update(update => update.Action("_Update", "TB_Attribute"))
+                .Destroy(destroy => destroy.Action("_Destroy", "TB_Attribute"))
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.Part).Title(MessageColumnCaptions.TB_AttributeCaption("PartID")).EditorTemplateName("ddlPart").Width(150).Locked(true);
+                    columns.Bound(p => p.AttributeType).EditorTemplateName("ddlAttributeType").Title(MessageColumnCaptions.TB_AttributeCaption("AttributeTypeID")).Width(200).EditorTemplateName("ddlAttributeType").Locked(true);
+                    columns.Bound(p => p.AttributeCategory).EditorTemplateName("ddlAttributeCategory").Title(MessageColumnCaptions.TB_AttributeCaption("AttributeHeaderID")).EditorTemplateName("ddlAttributeCategory").Width(150);
+                    columns.Bound(p => p.Name).Title(MessageColumnCaptions.TB_AttributeCaption("Name_en")).Width(200);
+                    columns.Bound(p => p.Description).Title(MessageColumnCaptions.TB_AttributeCaption("Description_en")).Width(200);
+                    columns.Bound(p => p.DataTypeID).Title(MessageColumnCaptions.TB_AttributeCaption("DataTypeID")).Width(200);
+                    columns.Bound(p => p.Unit).Title(MessageColumnCaptions.TB_AttributeCaption("UnitID")).EditorTemplateName("ddlUnit").Width(200);
+                    columns.Bound(p => p.MinValue).Title(MessageColumnCaptions.TB_AttributeCaption("MinValue")).Width(200);
+                    columns.Bound(p => p.MaxValue).Title(MessageColumnCaptions.TB_AttributeCaption("MaxValue")).Width(200);
+                    columns.Bound(p => p.Chargeable).Title(MessageColumnCaptions.TB_AttributeCaption("Chargeable")).EditorTemplateName("Checkbox").ClientTemplate("<div style='text-align:center;'> #if(Chargeable){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                    columns.Bound(p => p.Sorts).Title(MessageColumnCaptions.TB_AttributeCaption("Sort")).Width(200);
+                    columns.Bound(p => p.Active).Title(MessageColumnCaptions.TB_AttributeCaption("Active")).EditorTemplateName("Checkbox").ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(120);
+                    columns.Bound(p => p.RelatedAttribute).Title(MessageColumnCaptions.TB_AttributeCaption("RelatedAttributeID")).EditorTemplateName("ddlRelatedAttribute").Width(200);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                  .Text(Resources.NewRecord)
+                  .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("TB_AttributeExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#TB_AttributeExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+
+
+
+
+

@@ -1,0 +1,222 @@
+﻿@using Resources
+@using MessageColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("TB_HotelPromotion")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="col-md-4  col-sm-4">
+                <div class="col-md-3  col-sm-3">
+                    <label> @MessageColumnCaptions.TB_HotelPromotion("HotelID")</label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input id="drpHotel" style="width: 100%; " />
+                </div>
+
+            </div>
+            <div class="col-md-4  col-sm-4">
+
+                <div class="col-md-3  col-sm-3">
+                    <label>@MessageColumnCaptions.TB_HotelPromotion("PromotionID") </label>
+                </div>
+                <div class="col-md-8  col-sm-8">
+                    <input id="drppromotion" style="width: 100%;" />
+                </div>
+
+            </div>
+
+
+
+            <div class="col-md-2  col-sm-2" style="padding: 10px;">
+                <button id="btnfilter" class="btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#btnfilter").click(function () {
+
+        $filter = new Array();
+        $hotelid = $("#drpHotel").val();
+        $PromotionID = $("#drppromotion").val();
+        $Hoteltext = $("#drpHotel").data("kendoDropDownList").text();
+        $Promotiontext = $("#drppromotion").data("kendoDropDownList").text();
+        if ($hotelid) {
+            $filter.push({ field: "Hotel", operator: "equals", value: $Hoteltext });
+        }
+        if ($PromotionID) {
+            $filter.push({ field: "Promotion", operator: "equals", value: $Promotiontext });
+        }
+
+        var grid = $("#TB_HotelPromotion_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+    $(document).ready(function () {
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetPromotion",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drppromotion").kendoDropDownList({
+
+                    filter: "contains",
+
+                    optionLabel: AllSelectText,
+                    dataTextField: "Promotion",
+                    dataValueField: "PromotionID ",
+                    dataSource: data
+                });
+
+            }
+        })
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/DropDownLists/GetHotelsdropdown",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpHotel").kendoDropDownList({
+
+                    filter: "contains",
+
+                    optionLabel: AllSelectText,
+                    dataTextField: "Hotel",
+                    dataValueField: "HotelID ",
+                    dataSource: data
+                });
+
+            }
+        })
+
+    });
+
+
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#TB_HotelPromotion_Grid").data("kendoGrid").dataSource;
+
+        datasource.filter([]);
+
+        var dropdownlistPart = $("#drpHotel").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        var dropdownlistPart1 = $("#drppromotion").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+    });
+    function RefreshGrid(e) {
+        this.read();
+    }
+</script>
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.TB_HotelPromotionExt>()
+                                .Name("TB_HotelPromotion_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+            .Events(events => events.Error("onError").Sync("RefreshGrid"))
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                        .Create(update => update.Action("_Create", "TB_HotelPromotion"))
+                                        .Read(read => read.Action("_Read", "TB_HotelPromotion", new { TableID = (int)ViewBag.TableID }))
+                                        .Update(update => update.Action("_Update", "TB_HotelPromotion"))
+                                        .Destroy(destroy => destroy.Action("_Destroy", "TB_HotelPromotion"))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           command.Destroy().Text(Resources.Delete);
+
+                       }).Locked(true).Width(180);
+
+                    columns.Bound(p => p.ID).Width(150);
+                    columns.Bound(p => p.Hotel).Title(MessageColumnCaptions.TB_HotelPromotion("HotelID")).EditorTemplateName("ddlHotels").Width(350);
+                    columns.Bound(p => p.Promotion).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("PromotionID")).EditorTemplateName("ddlPromotion").Width(200);
+                    columns.Bound(p => p.StartDate).Title(MessageColumnCaptions.TB_HotelPromotion("StartDate")).ClientTemplate("#= kendo.toString(StartDate,'MM/dd/yyyy HH:mm:ss') #").Width(350);
+                    columns.Bound(p => p.EndDate).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("EndDate")).ClientTemplate("#= kendo.toString(EndDate,'MM/dd/yyyy HH:mm:ss') #").Width(350);
+                    columns.Bound(p => p.HasDiscount).ClientTemplate("<div style='text-align:center;'> #if(HasDiscount){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("HasDiscount"));
+                    columns.Bound(p => p.DiscountPercentage).Width(210).Title(MessageColumnCaptions.TB_HotelPromotion("DiscountPercentage"));
+                    columns.Bound(p => p.AccommodationStartDate).Title(MessageColumnCaptions.TB_HotelPromotion("AccommodationStartDate")).ClientTemplate("#= kendo.toString(AccommodationStartDate,'MM/dd/yyyy HH:mm:ss') #").EditorTemplateName("ddlDateID").Width(350);
+                    columns.Bound(p => p.AccommodationEndDate).Title(MessageColumnCaptions.TB_HotelPromotion("AccommodationEndDate")).ClientTemplate("#= kendo.toString(AccommodationEndDate,'MM/dd/yyyy HH:mm:ss') #").EditorTemplateName("ddlDateID").Width(350);
+                    columns.Bound(p => p.DayID).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("DayID"));
+                    columns.Bound(p => p.DayCount).Title(MessageColumnCaptions.TB_HotelPromotion("DayCount"));
+                    columns.Bound(p => p.EarlyBookerMargin).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("EarlyBookerMargin"));
+                    columns.Bound(p => p.LastMinuteMargin).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("LastMinuteMargin"));
+                    columns.Bound(p => p.BookingDate).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("BookingDate")).ClientTemplate("#= kendo.toString(BookingDate,'MM/dd/yyyy HH:mm:ss') #").EditorTemplateName("ddlDateID").Width(350);
+                    columns.Bound(p => p.PricePolicyID).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("PricePolicyID"));
+                    columns.Bound(p => p.SecretDeal).ClientTemplate("<div style='text-align:center;'> #if(SecretDeal){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("SecretDeal"));
+                    columns.Bound(p => p.Region).Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("Region")).EditorTemplateName("TextArea").Width(200);
+                    columns.Bound(p => p.ValidForAllRoomTypes).ClientTemplate("<div style='text-align:center;'> #if(ValidForAllRoomTypes){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("ValidForAllRoomTypes"));
+                    columns.Bound(p => p.Active).ClientTemplate("<div style='text-align:center;'> #if(Active){# <img src='/Images/checked.gif' alt='checked'> #} else {# <img src='/Images/red_cross.png' alt='redCross'> #}# </div>").Width(250).Title(MessageColumnCaptions.TB_HotelPromotion("Active"));
+
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Custom().Name("cmdAddNewRecord")
+                   .Text(Resources.NewRecord)
+                   .HtmlAttributes(new { @id = "cmdAddNewRecord" });
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+        //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                                    .FileName("TB_HotelPromotion.xlsx")
+                .Filterable(true))
+
+)
+
+
+
+<script id="AddNewRecord">
+
+    $("#cmdAddNewRecord").click(function (e) {
+
+        var table = $("#TB_HotelPromotion_Grid").data("kendoGrid");
+        var sorting = table.dataSource.sort();
+
+        if (sorting) {
+            table.dataSource.sort(null);
+        }
+        table.addRow();
+        e.preventDefault();
+        //put custom logic here
+    });
+</script>

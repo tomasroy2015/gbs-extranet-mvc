@@ -1,0 +1,275 @@
+﻿
+@using Resources
+@using MessageColumnCaptions
+@using mailColumnCaptions
+
+
+<h1 style="text-align:center;">@MessageColumnCaptions.DynamicPageName("BizTbl_UserOperation")</h1>
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 15px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                    <label style="width: 100px;margin-top: 6px;">@MessageColumnCaptions.BizTbl_UserOperationCaption("UserID")</label>
+                <input id="txtUserID" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">OperationType</label>
+                <input id="drbOperationType"  type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">Part</label>
+                <input id="drbPart"  type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">@MessageColumnCaptions.Record</label>
+                <input id="txtRecord" class="form-control" type="text" style="width:100%" />
+            </div>
+            </div>
+        <br />
+        <br />
+        <br />
+
+        <div class="col-md-12">
+            <div class="col-md-3  col-sm-3" style="padding: 0px;display: inline-flex;">
+                    <label>@Resources.Date (@Resources.FilterLowerLimitDescription)</label>
+                    <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+            </div>
+            <div class="col-md-3 col-sm-3" style="padding: 0px;display: inline-flex;">
+                    <label>@Resources.Date (@Resources.FilterUpperLimitDescription)</label>
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>
+            <div class="col-md-3 col-sm-3" style="display: inline-flex;">
+                <label style="width: 100px;margin-top: 6px;">UserSessionId</label>
+                <input id="txtUserSessionId" class="form-control" type="text" style="width:100%" />
+            </div>
+            <div class="col-md-3  col-sm-3" style="padding: 10px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.RemoveFilter</button>
+            </div>
+            </div>
+        </div>
+            @*<div class="col-md-2 col-sm-2">
+
+                <div class="col-md-12 col-sm-12 " style="padding: 8px;">
+                    <input id="txtPart" class="form-control" type="text" style="width:100%" />
+                </div>
+            </div>*@
+            
+        </div>
+ 
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.BizTbl_UserOperationExt>()
+                .Name("BizTbl_UserOperationExt_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(25)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+            model.Field(p => p.ID).Editable(false);
+        })
+                .Read(read => read.Action("_Read", "BizTbl_UserOperation", new { TableID = (int)ViewBag.TableID }))
+
+        )
+
+                .Columns(columns =>
+                {
+                    columns.Command(
+
+                       command =>
+                       {
+                           // command.Edit().UpdateText(Resources.Update).CancelText(Resources.Cancel).Text(Resources.Edit);
+                           //command.Destroy();
+                       });
+
+                    columns.Bound(p => p.ID).Width(150).Locked(true); //EditorTemplateName (/Shared/EditorTempaltes/ddlCountries) used to Display Dropdown list and it will return Int value to Controller
+                    columns.Bound(p => p.UserID).Title(MessageColumnCaptions.BizTbl_UserOperationCaption("UserID")).Width(250).Locked(true);
+                    columns.Bound(p => p.Date).Title(MessageColumnCaptions.BizTbl_UserOperationCaption("Date")).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy HH:mm:ss') #").Width(200).Locked(true);
+                    columns.Bound(p => p.OperationType).Title(MessageColumnCaptions.BizTbl_UserOperationCaption("OperationTypeID")).Width(250).Locked(true);
+                    columns.Bound(p => p.Part).Title(MessageColumnCaptions.BizTbl_UserOperationCaption("PartID")).Width(350);
+                    columns.Bound(p => p.RecordID).Title(MessageColumnCaptions.BizTbl_UserOperationCaption("RecordID")).Width(350);
+                    columns.Bound(p => p.UserSessionID).Title(MessageColumnCaptions.BizTbl_UserOperationCaption("UserSessionID")).Width(350);
+                    columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.BizTbl_UserOperationCaption("IPAddress")).Width(350);
+                    columns.Bound(p => p.OpDateTime).Hidden(true);
+                    columns.Bound(p => p.OpUserID).Hidden(true);
+                })
+                .ToolBar(tool =>
+                {
+                    tool.Excel().Text(Resources.ExporttoExcel);
+                })
+                .Editable(editable => editable.Mode(GridEditMode.InLine))
+                    .Scrollable(scrollable => scrollable.Height(430))
+                //.Scrollable().HtmlAttributes(new { @style = "width:1200px;" })
+
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("BizTbl_UserOperationExt.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+                $("#cmdAddNewRecord").click(function (e) {
+
+                    var table = $("#BizTbl_UserOperationExt_Grid").data("kendoGrid");
+                    var sorting = table.dataSource.sort();
+
+                    if (sorting) {
+                        table.dataSource.sort(null);
+                    }
+                    table.addRow();
+                    e.preventDefault();
+                    //put custom logic here
+                });
+</script>
+
+<script>
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $UserID = $("#txtUserID").val();
+        $OperationText = $("#drbOperationType").data("kendoDropDownList").text();
+        $OperationValue = $("#drbOperationType").val();
+        $PartText = $("#drbPart").data("kendoDropDownList").text();
+        $PartValue = $("#drbPart").val();
+        $Record = $("#txtRecord").val();
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+        $UserSessionId = $("#txtUserSessionId").val();
+
+       
+        // $Part1 = $("#drpPart").data("kendoDropDownList").value();
+        //alert($PartText)
+
+        if ($UserID) {
+            $filter.push({ field: "UserIDs", operator: "equals", value: String($UserID) });
+        }
+        if ($OperationValue) {
+            $filter.push({ field: "OperationType", operator: "contains", value: $OperationText });
+        }
+        if ($PartValue) {
+            $filter.push({ field: "Part", operator: "contains", value: $PartText });
+        }
+        if ($Record) {
+            $filter.push({ field: "RecordID", operator: "contains", value: String($Record) });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "Date", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "Date", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        if ($UserSessionId) {
+            $filter.push({ field: "UserSessionID", operator: "equals", value: String($UserSessionId) });
+        }
+        
+        var grid = $("#BizTbl_UserOperationExt_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    var AllSelectText = '@Resources.ListAllExpression'
+
+    $(document).ready(function () {
+        // create DateTimePicker from input HTML element
+        //$("#datetimepicker").kendoDateTimePicker({
+        //    value: new Date()
+        //});
+
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/BizTbl_UserOperation/_ReadOperationType",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbOperationType").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/BizTbl_UserOperation/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drbPart").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    optionLabel: AllSelectText,
+                    dataSource: data
+                });
+
+            }
+        })
+    });
+
+
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#BizTbl_UserOperationExt_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtUserID").val('')
+        $("#txtRecord").val('');
+        //document.getElementById('chkStatus').checked = false
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+        $("#txtUserSessionId").val('');
+
+        var dropdownlistPart = $("#drbOperationType").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        var dropdownlistPart1 = $("#drpPart").data("kendoDropDownList");
+        dropdownlistPart1.select("");
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+</script>
+
+

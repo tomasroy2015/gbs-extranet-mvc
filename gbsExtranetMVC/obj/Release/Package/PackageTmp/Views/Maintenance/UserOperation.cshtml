@@ -1,0 +1,295 @@
+﻿@using Resources
+@using MessageColumnCaptions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="color: black; text-align:center">@MessageColumnCaptions.DynamicPageName("BizTbl_UserOperation")</h1>
+
+
+<div class="jumbotron" style="text-align: left; margin-bottom: 50px;border-radius:8px;padding: 10px;font-size: 14px;font-weight: 100;line-height: 1.142857;">
+    <div class="row">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="col-md-2 col-sm-2" style="display: flex">
+                @*<div class="col-md-5 col-sm-5 col-xs-5" style="padding: 0px; margin-top: 5px;">
+                <label>@MessageColumnCaptions.UserIDUP</label>
+            </div>
+            <div class="col-md-7 col-sm-7 col-xs-7" style="padding:0px;">
+                <input id="txtFilterUserID" type="text" class="k-textbox" style="width:100%" placeholder="@MessageColumnCaptions.UserIDUP" />
+            </div>*@
+                <label style="margin-top: 6px; width:100px;">@MessageColumnCaptions.UserIDUP</label>
+                <input id="txtFilterUserID" type="text" class="k-textbox" style="width:100%" placeholder="@MessageColumnCaptions.UserIDUP" />
+            </div>
+            <div class="col-md-4 col-sm-4" style="display: flex">
+                @*<div class="col-md-4 col-sm-4 col-xs-4" style="padding: 0px; margin-top: 5px;">
+                <label>@MessageColumnCaptions.OperationTypeIDUP</label>
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-8" style="padding:0px;">
+                <input id="drpOperationType" style="width: 100%;" />
+            </div>*@
+                <label style=" width: 140px; padding-top: 6px;">@MessageColumnCaptions.OperationTypeIDUP</label>
+                <input id="drpOperationType" style="width:410px;" />
+            </div>
+            <div class="col-md-2 col-sm-2" style="display: flex">
+                @*<div class="col-md-5 col-sm-5 col-xs-5" style="padding: 0px; margin-top: 5px;">
+                <label>@MessageColumnCaptions.PartIDUP</label>
+            </div>
+            <div class="col-md-7 col-sm-7 col-xs-7" style="padding:0px;">
+                <input id="drpPart" style="width: 100%;" />
+            </div>*@
+                <label style=" width: 50px; padding-top: 6px;">@MessageColumnCaptions.PartIDUP</label>
+                <input id="drpPart" style="width: 100%;" />
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding-top:20px;">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="col-md-2 col-sm-2" style="display: flex">
+                @*<div class="col-md-5 col-sm-5 col-xs-5" style="padding: 0px; margin-top: 5px;">
+                    <label>@MessageColumnCaptions.RecordIDUP</label>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7" style="padding:0px;">
+                    <input id="txtFilterRecordID" type="text" class="k-textbox" style="width:100%" placeholder="@MessageColumnCaptions.RecordIDUP" />
+                </div>*@
+                <label style=" width: 100px; padding-top: 6px;">@MessageColumnCaptions.RecordIDUP</label>
+                <input id="txtFilterRecordID" type="text" class="k-textbox" style="width:100%" placeholder="@MessageColumnCaptions.RecordIDUP" />
+            </div>
+            <div class="col-md-2  col-sm-2" style="display: flex">
+                @*<div class="col-md-4  col-sm-4" style="padding:0px;">
+                <label>@Resources.Date  (@Resources.FilterLowerLimitDescription)</label>
+            </div>
+            <div class="col-md-8  col-sm-8" style="padding:0px;">
+                <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+            </div>*@
+                <label style=" width: 150px;">@Resources.Date  (@Resources.FilterLowerLimitDescription)</label>
+                <input type="text" id="datetimepickerStart" placeholder="@Resources.DateFieldDescription" style="width: 220px;" />
+            </div>
+            <div class="col-md-2  col-sm-2" style="display: flex">
+
+                @*<div class="col-md-4  col-sm-4" style="padding:0px;">
+                    <label>@Resources.Date (@Resources.FilterUpperLimitDescription)</label>
+                </div>
+                <div class="col-md-8  col-sm-8" style="padding:0px;">
+                    <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 100%;" />
+                </div>*@
+                <label style=" width: 150px;">@Resources.Date (@Resources.FilterUpperLimitDescription)</label>
+                <input type="text" id="datetimepickerEnd" placeholder="@Resources.DateFieldDescription" style="width: 220px;" />
+            </div>
+            <div class="col-md-2 col-sm-2" style="display: flex">
+                @*<div class="col-md-5 col-sm-5 col-xs-5" style="padding:0px;">
+                    <label>@MessageColumnCaptions.UserSessionIDUP</label>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7" style="padding:0px;">
+                    <input id="txtFilterUserSessionID" type="text" class="k-textbox" style="width:100%" placeholder="@MessageColumnCaptions.UserSessionIDUP" />
+                </div>*@
+                <label style=" width: 150px;">@MessageColumnCaptions.UserSessionIDUP</label>
+                <input id="txtFilterUserSessionID" type="text" class="k-textbox" style="width:100%" placeholder="@MessageColumnCaptions.UserSessionIDUP" />
+            </div>
+            <div class="col-md-2  col-sm-2" style="padding:0px;">
+                <button id="btnfilter" class="k-button btn btn-info" onclick="Filter()">@Resources.Filter</button>
+                <button class="k-button btn btn-info" id="btnClearFilter" onclick="clearFiter()">@Resources.FilterRemove</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@(Html.Kendo().Grid<gbsExtranetMVC.Models.Repositories.UserOperationExt>()
+                    .Name("UserOperation_Grid")
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(20)
+        .ServerOperation(true)
+        .Model(model =>
+        {
+            model.Id(p => p.ID);
+        })
+
+                                     .Read(read => read.Action("_Read", "UserOperation"))
+
+        )
+
+        .Columns(columns =>
+        {
+            columns.Bound(p => p.ID).Width(70).Locked(true);
+            columns.Bound(p => p.User).Title(MessageColumnCaptions.UserIDUP).Width(150);
+            columns.Bound(p => p.Date).Title(MessageColumnCaptions.DateUP).ClientTemplate("#= kendo.toString(Date,'dd/MM/yyyy HH:mm:ss') #").Width(200);
+            columns.Bound(p => p.OperationType).Title(MessageColumnCaptions.OperationTypeIDUP).Width(250);
+            columns.Bound(p => p.Part).Title(MessageColumnCaptions.PartIDUP).Width(120);
+            columns.Bound(p => p.RecordID).Title(MessageColumnCaptions.RecordIDUP).Width(150);
+            columns.Bound(p => p.UserSessionID).Title(MessageColumnCaptions.UserSessionIDUP).Width(150);
+            columns.Bound(p => p.IPAddress).Title(MessageColumnCaptions.IPAddressUP).Width(200);
+
+
+        })
+        .ToolBar(tool =>
+        {
+
+            tool.Excel();
+        })
+                .Scrollable(scrollable => scrollable.Height(430))
+                .Pageable(p => p.Refresh(true))
+                .Sortable()
+                .Navigatable()
+                .Groupable()
+                .Scrollable(scr => scr.Height(370))
+                .Filterable()
+                .Excel(excel => excel
+                .FileName("UserOperation.xlsx")
+                .Filterable(true))
+
+)
+
+<script id="AddNewRecord">
+
+    $("#btnClearFilter").click(function (e) {
+        e.preventDefault();
+        var datasource = $("#UserOperation_Grid").data("kendoGrid").dataSource;
+        //Clear Custom filters:
+        datasource.filter([]);
+        //Clear Fields
+        $("#txtFilterUserID").val('')
+        $("#txtFilterUserSessionID").val('')
+        $("#txtFilterRecordID").val('')
+        //$("#datetimepickerEnd").val('');
+        //$("#datetimepickerStart").val('');
+        $("#datetimepickerStart").data("kendoDatePicker").value(null);
+        $("#datetimepickerEnd").data("kendoDatePicker").value(null);
+
+        var dropdownlistOperationType = $("#drpOperationType").data("kendoDropDownList");
+        dropdownlistOperationType.select("");
+        var dropdownlistPart = $("#drpPart").data("kendoDropDownList");
+        dropdownlistPart.select("");
+        //document.getElementById('ChkFilterCommon').checked = false
+    });
+
+    $("#btnfilter").click(function () {
+        $filter = new Array();
+        $UserID = $("#txtFilterUserID").val();
+        $UserSessionID = $("#txtFilterUserSessionID").val();
+        $Record = $("#txtFilterRecordID").val();
+
+        $StartDate = $("#datetimepickerStart").data("kendoDatePicker").value();
+        $EndDate = $("#datetimepickerEnd").data("kendoDatePicker").value();
+
+        $PartText = $("#drpPart").data("kendoDropDownList").text();
+        $PartValue = $("#drpPart").val();
+
+        $OperationTypeText = $("#drpOperationType").data("kendoDropDownList").text();
+        $OperationTypeValue = $("#drpOperationType").val();
+
+
+        // $Part1 = $("#drpPart").data("kendoDropDownList").value();
+        //  alert($Part1)
+      
+        if ($UserID) {
+            $filter.push({ field: "UserID", operator: "equals", value: $UserID });
+        }
+        if ($UserSessionID) {
+            $filter.push({ field: "UserSessionID", operator: "contains", value: $UserSessionID });
+        }
+        if ($Record) {
+            $filter.push({ field: "RecordID", operator: "contains", value: $Record });
+        }
+        if ($StartDate) {
+            $filter.push({ field: "Date", operator: "IsGreaterThanOrEqualTo", value: $StartDate });
+        }
+        if ($EndDate) {
+            $filter.push({ field: "Date", operator: "IsLessThanOrEqualTo", value: $EndDate });
+        }
+        if ($PartValue) {
+            $filter.push({ field: "Part", operator: "contains", value: $PartText });
+        }
+
+        if ($OperationTypeValue) {
+            $filter.push({ field: "OperationType", operator: "contains", value: $OperationTypeText });
+        }
+
+        var grid = $("#UserOperation_Grid").data("kendoGrid");
+        grid.dataSource.filter($filter);
+    });
+
+    $(document).ready(function () {
+        // create DateTimePicker from input HTML element
+        //$("#datetimepicker").kendoDateTimePicker({
+        //    value: new Date()
+        //});
+
+
+
+        $("#datetimepickerStart").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+        $("#datetimepickerEnd").kendoDatePicker({
+            animation: {
+                close: {
+                    effects: "zoom:out",
+                    duration: 300
+                }
+            }
+        });
+
+
+
+        var json = {}
+        $.ajax({
+            type: "GET",
+            url: "/UserOperation/_ReadOperationType",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpOperationType").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    // dataValueField: "Name",
+                    dataSource: data,
+                    optionLabel: "All..."
+                });
+
+            }
+        })
+
+        $.ajax({
+            type: "GET",
+            url: "/DailyStatistics/_ReadPart",
+            data: json,
+            datatype: "json",
+            success: function (data) {
+
+                $("#drpPart").kendoDropDownList({
+                    filter: "contains",
+                    dataTextField: "Name",
+                    dataValueField: "ID ",
+                    // dataValueField: "Name",
+                    dataSource: data,
+                    optionLabel: "All..."
+                });
+
+            }
+        })
+    });
+
+    function clearFiter() {
+        $("form.k-filter-menu button[type='reset']").trigger("click");
+    }
+</script>
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-63530100-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
