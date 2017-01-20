@@ -235,7 +235,7 @@
                 RoomPriceNameArray:[RoomPriceNameArray],AvailableRoomCountNameArray:[AvailableRoomCountNameArray],MinimumStayNameArray:[MinimumStayNameArray],
                 CloseToArrivalArray:[CloseToArrivalArray],CloseToDepartureArray:[CloseToDepartureArray],ClosedArray:[ClosedArray]}
             $.ajax({
-                type: "Get",
+                type: "Post",
                 url: "/RoomRateAndAvailability/SaveRoomAvailabilityAndRate",
                 data: jsonLoadData,
                 datatype: "JSON",

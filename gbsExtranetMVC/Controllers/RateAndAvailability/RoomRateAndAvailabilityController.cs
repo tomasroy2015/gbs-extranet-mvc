@@ -236,6 +236,7 @@ namespace gbsExtranetMVC.Controllers.RateAndAvailability
             DataTable RateTable = ObjRep.GetHotelRate(Hotelid, StartDate, Enddate, AccommodationType, PricePolicy);
             return Json(ObjRep.Getdates(StartDate, Enddate, WeekDay, AvailabilityTable, RateTable, Convert.ToInt32(RoomType), MaximamPeopleCount), JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
         public JsonResult SaveRoomAvailabilityAndRate(string StartDate, string Enddate, string RoomType, string PricePolicy, string AccommodationType, string WeekDay,
             string DateIDArray,string WeekDayIDArray,string SinglePriceNameArray,string DoublePriceNameArray,string RoomPriceNameArray,
             string AvailableRoomCountNameArray, string MinimumStayNameArray, string CloseToArrivalArray, string CloseToDepartureArray, string ClosedArray)

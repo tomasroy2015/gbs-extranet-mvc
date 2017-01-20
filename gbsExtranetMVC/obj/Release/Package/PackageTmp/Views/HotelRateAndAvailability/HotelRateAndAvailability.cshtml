@@ -167,62 +167,62 @@
                             }
                          }                   
                 </tr> 
-                @foreach (var Room in ViewBag.Room)
+                  @foreach (var Room in ViewBag.Room)
+                  {
+                     var HotelRoomID = Room.ID;
+                    <tr style="height:40px">
+                        <td class="GridBar2" align="center" style="white-space:nowrap;padding:5px;">                       
+                                <label>@Room.RoomTypeName</label>
+                            <a style="margin:10px;" href="/RoomRate/RoomRate?HotelRoomID=@Room.EncryptHotelRoomID"><input type="button" class="k-button btn-blue" value="@Resources.RoomRate" /></a>
+                            <a style="margin:10px;" href="/RoomAvailability/RoomAvailability?HotelRoomID=@Room.EncryptHotelRoomID"><input type="button" class="k-button btn-blue" value="@Resources.RoomAvailability" /></a>                        
+                        </td>  
+                       @foreach (var Day in ViewBag.RoomDay)
                         {
-                            var HotelRoomID = Room.ID;
-                <tr style="height:40px">
-                    <td class="GridBar2" align="center" style="white-space:nowrap;padding:5px;">                       
-                            <label>@Room.RoomTypeName</label>
-                        <a style="margin:10px;" href="/RoomRate/RoomRate?HotelRoomID=@Room.EncryptHotelRoomID"><input type="button" class="k-button btn-blue" value="@Resources.RoomRate" /></a>
-                        <a style="margin:10px;" href="/RoomAvailability/RoomAvailability?HotelRoomID=@Room.EncryptHotelRoomID"><input type="button" class="k-button btn-blue" value="@Resources.RoomAvailability" /></a>                        
-                    </td>  
-                    @foreach (var Day in ViewBag.RoomDay)
-{
-    var RoomID = Day.HotelRoomID;
-    var hotelRoomAvailabilityText = Day.hotelRoomAvailabilityText;
-    var DateIDValue = Day.DateID;
-    //  var HotelAvailableStatus=Day.HotelAvailableStatus;
-    if (RoomID == HotelRoomID)
-    {
-        if (hotelRoomAvailabilityText == "Closed")
-        {
-            <td id="cellRoomDay" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)" class="Closed" style="cursor:pointer" align="center">
-                <a title="@Resources.Closed"></a>
-                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
-                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
-                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
-            </td>
-        }
-        else if (hotelRoomAvailabilityText == "RoomRateMissing")
-        {
-            <td onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)" style="cursor:pointer" class="RateMissing" align="center">
-                <a title="@Resources.RateMissing">@Day.lbtnAvailableRoomCount</a>
-                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
-                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
-                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
-            </td>
-        }
-        else if (hotelRoomAvailabilityText == "AvailableRoomCount")
-        {
-            <td class="Full" align="center" style="cursor:pointer" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)">
-                <a title="@Resources.Full">@Day.lbtnAvailableRoomCount</a>
-                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
-                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
-                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
-            </td>
-        }
-        else
-        {
-            <td class="Available" align="center" style="cursor:pointer" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)">
-                <a title="@Resources.Available">@Day.lbtnAvailableRoomCount</a>
-                <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
-                <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
-                <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
-            </td>
-        }
-    }
+                            var RoomID = Day.HotelRoomID;
+                            var hotelRoomAvailabilityText = Day.hotelRoomAvailabilityText;
+                            var DateIDValue = Day.DateID;
+                            //  var HotelAvailableStatus=Day.HotelAvailableStatus;
+                            if (RoomID == HotelRoomID)
+                            {
+                                if (hotelRoomAvailabilityText == "Closed")
+                                {
+                                    <td id="cellRoomDay" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)" class="Closed" style="cursor:pointer" align="center">
+                                        <a title="@Resources.Closed"></a>
+                                        <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                                        <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                                        <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+                                    </td>
+                                }
+                                else if (hotelRoomAvailabilityText == "RoomRateMissing")
+                                {
+                                    <td onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)" style="cursor:pointer" class="RateMissing" align="center">
+                                        <a title="@Resources.RateMissing">@Day.lbtnAvailableRoomCount</a>
+                                        <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                                        <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                                        <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+                                    </td>
+                                }
+                                else if (hotelRoomAvailabilityText == "AvailableRoomCount")
+                                {
+                                    <td class="Full" align="center" style="cursor:pointer" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)">
+                                        <a title="@Resources.Full">@Day.lbtnAvailableRoomCount</a>
+                                        <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                                        <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                                        <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="Available" align="center" style="cursor:pointer" onclick="CloseOpenAvailabilityDay(@Day.DateID,@Day.HotelRoomID,@Day.HotelAvailableStatus)">
+                                        <a title="@Resources.Available">@Day.lbtnAvailableRoomCount</a>
+                                        <input type="hidden" id="hidDate_@Day.DateID" value="@Day.Date" />
+                                        <input type="hidden" id="hidHotelAvailabilityStatus_@Day.DateID" value="@Day.HotelAvailableStatus" />
+                                        <input type="hidden" id="hidHotelRoomId_@Day.DateID" value="@Day.HotelRoomID" />
+                                    </td>
+                                }
+                            }
 
-}                  
+                        }                  
                 </tr>
                         }
                 <tr style="height:25px" class="GridBar">

@@ -243,7 +243,7 @@
                         }
                     });
                     //                    if (up.files.length >= maxfiles) {
-                    //                        $('#uploader_browse').hide("slow");
+                    //UploadOperation$('#uploader_browse').hide("slow");
                     //                    }
                 },
 
@@ -290,10 +290,10 @@
         });
         //tweak to reset the interface for new file upload, the core API didn't provide this functionality
         $('#btnReset').click(function () {
-          
+
             var uploader = $('#uploader').plupload();
          //  alert(uploader)
-           
+
             //clear files object
             // uploader.files.length = 0;
            // alert(uploader.files)
@@ -303,7 +303,7 @@
             uploader.plupload('getUploader').splice();
             $('.plupload_filelist_content', uploader).empty();
              uploader.value = "";
-            
+
              uploader.splice();
             // alert("ji")
             // uploader.refresh();
@@ -322,17 +322,17 @@
             //});
              //alert("hi")
             //clear the upload list
-             $('#uploader_filelist tr').each(function (idx, val) {                
+             $('#uploader_filelist tr').each(function (idx, val) {
                  $(val).remove();
-                 
+
              });
-            
+
              document.getElementById('SuccessImage').style.display = "none";
             // up.destroy();
              //initUploader();
             // alert("h2")
             // uploader.files.length = 0;
-            
+
         });
     };
 

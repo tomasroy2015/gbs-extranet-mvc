@@ -3974,6 +3974,7 @@
     <None Include="Properties\PublishProfiles\extranet15April.pubxml" />
     <None Include="Properties\PublishProfiles\extrqnetpublish.pubxml" />
     <None Include="Properties\PublishProfiles\gbsExtranetMVC.pubxml" />
+    <None Include="Properties\PublishProfiles\gbsextranetold.pubxml" />
     <None Include="Properties\PublishProfiles\gbsExtranetUpdated.pubxml" />
     <None Include="Properties\PublishProfiles\LocalPC.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
